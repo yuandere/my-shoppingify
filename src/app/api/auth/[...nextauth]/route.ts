@@ -1,43 +1,17 @@
 import NextAuth, { type NextAuthOptions } from 'next-auth';
 import GitHubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google';
-import CredentialsProvider from 'next-auth/providers/credentials';
+import EmailProvider from 'next-auth/providers/email';
+// import nodemailer from 'nodemailer';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import prisma from '@/app/lib/prisma';
 
 export const authOptions: NextAuthOptions = {
+	session: {
+		strategy: 'jwt'
+	},
 	adapter: PrismaAdapter(prisma),
 	providers: [
-		CredentialsProvider({
-			// The name to display on the sign in form (e.g. 'Sign in with...')
-			name: 'Credentials',
-			// You can pass any HTML attribute to the <input> tag through the object.
-			credentials: {
-				username: { label: 'Username', type: 'text', placeholder: 'jsmith' },
-				password: { label: 'Password', type: 'password' },
-			},
-			async authorize(credentials, req) {
-				// You need to provide your own logic here that takes the credentials
-				// submitted and returns either a object representing a user or value
-				// that is false/null if the credentials are invalid.
-				// e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
-				// You can also use the `req` object to obtain additional parameters
-				// (i.e., the request IP address)
-				const res = await fetch('/your/endpoint', {
-					method: 'POST',
-					body: JSON.stringify(credentials),
-					headers: { 'Content-Type': 'application/json' },
-				});
-				const user = await res.json();
-
-				// If no error and we have user data, return it
-				if (res.ok && user) {
-					return user;
-				}
-				// Return null if user data could not be retrieved
-				return null;
-			},
-		}),
 		GoogleProvider({
 			clientId: process.env.GOOGLE_CLIENT_ID as string,
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
@@ -53,7 +27,47 @@ export const authOptions: NextAuthOptions = {
 			clientId: process.env.GITHUB_ID as string,
 			clientSecret: process.env.GITHUB_SECRET as string,
 		}),
+		EmailProvider({
+			id: 'nodemailer',
+			name: 'email',
+			type: 'email',
+			server: process.env.EMAIL_SERVER,
+			from: process.env.EMAIL_FROM,
+		}),
 	],
+	// callbacks: {
+	// 	async jwt({ token, user }) {
+  //     const dbUser = await prisma.user.findFirst({
+  //       where: {
+  //         email: token.email as string,
+  //       },
+  //     })
+
+  //     if (!dbUser) {
+  //       if (user) {
+  //         token.id = user?.id
+  //       }
+  //       return token
+  //     }
+
+  //     return {
+  //       id: dbUser.id,
+  //       name: dbUser.name,
+  //       email: dbUser.email,
+  //       picture: dbUser.image,
+  //     }
+  //   },
+	// 	async session({ token, session }) {
+  //     if (token) {
+  //       session.user.id = token.id
+  //       session.user.name = token.name
+  //       session.user.email = token.email
+  //       session.user.image = token.picture
+  //     }
+
+  //     return session
+  //   },
+	// }
 };
 
 const handler = NextAuth(authOptions);
