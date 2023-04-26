@@ -4,11 +4,11 @@ import GoogleProvider from 'next-auth/providers/google';
 import EmailProvider from 'next-auth/providers/email';
 // import nodemailer from 'nodemailer';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
-import prisma from '@/app/lib/prisma';
+import prisma from '@/lib/prisma';
 
 export const authOptions: NextAuthOptions = {
 	session: {
-		strategy: 'jwt'
+		strategy: 'jwt',
 	},
 	adapter: PrismaAdapter(prisma),
 	providers: [
@@ -35,39 +35,11 @@ export const authOptions: NextAuthOptions = {
 			from: process.env.EMAIL_FROM,
 		}),
 	],
-	// callbacks: {
-	// 	async jwt({ token, user }) {
-  //     const dbUser = await prisma.user.findFirst({
-  //       where: {
-  //         email: token.email as string,
-  //       },
-  //     })
-
-  //     if (!dbUser) {
-  //       if (user) {
-  //         token.id = user?.id
-  //       }
-  //       return token
-  //     }
-
-  //     return {
-  //       id: dbUser.id,
-  //       name: dbUser.name,
-  //       email: dbUser.email,
-  //       picture: dbUser.image,
-  //     }
-  //   },
-	// 	async session({ token, session }) {
-  //     if (token) {
-  //       session.user.id = token.id
-  //       session.user.name = token.name
-  //       session.user.email = token.email
-  //       session.user.image = token.picture
-  //     }
-
-  //     return session
-  //   },
-	// }
+	pages: {
+		signIn: '/signIn',
+	},
+	callbacks: {
+	},
 };
 
 const handler = NextAuth(authOptions);
