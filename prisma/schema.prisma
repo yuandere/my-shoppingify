@@ -80,12 +80,13 @@ model Category {
 }
 
 model Item {
-  id         String     @id @default(cuid())
-  name       String     @db.VarChar(32)
-  imageUrl   String?
-  categoryId Int?
-  category   Category?  @relation(fields: [categoryId], references: [id])
-  ListItem   ListItem[]
+  id          String     @id @default(cuid())
+  name        String     @db.VarChar(255)
+  description String?     @db.VarChar(255)
+  imageUrl    String?
+  categoryId  Int?
+  category    Category?  @relation(fields: [categoryId], references: [id])
+  ListItem    ListItem[]
 
   @@index([categoryId])
 }
