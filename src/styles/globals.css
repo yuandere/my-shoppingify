@@ -1,27 +1,62 @@
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+/* :root {
+	--foreground-rgb: 0, 0, 0;
+	--background-start-rgb: 214, 219, 220;
+	--background-end-rgb: 255, 255, 255;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
+	:root {
+		--foreground-rgb: 255, 255, 255;
+		--background-start-rgb: 0, 0, 0;
+		--background-end-rgb: 0, 0, 0;
+	}
+} */
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+/* body {
+	color: rgb(var(--foreground-rgb));
+	background: linear-gradient(
+			to bottom,
+			transparent,
+			rgb(var(--background-end-rgb))
+		)
+		rgb(var(--background-start-rgb));
+} */
+
+@layer utilities {
+	.bg-light {
+		background-color: #fafafe;
+	}
+	.bg-theme-1 {
+		background-color: #f9a109;
+	}
+	.bg-theme-2 {
+		background-color: #80485b;
+	}
+	.bg-warning {
+		background-color: #eb5757;
+	}
+	.bg-complete {
+		background-color: #56ccf2;
+	}
+	.bg-ui {
+		background-color: #bdbdbd;
+	}
+	.text-theme-1 {
+		color: #f9a109;
+	}
+	.text-complete {
+		color: #56ccf2;
+	}
+	.text-ui {
+		color: #bdbdbd;
+	}
+	.text-ui-dark {
+		color: #34333a;
+	}
 }
