@@ -1,11 +1,7 @@
-export default function DashboardLayout({
-  children,
+export default async function DashboardLayout({
+	children,
 }: {
-  children: React.ReactNode
+	children: React.ReactNode;
 }) {
-  return (
-    <html lang="en">
-      <body>{children}</body>
-    </html>
-  )
+	return <div>{children}</div>;
 }
