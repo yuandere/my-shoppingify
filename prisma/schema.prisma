@@ -45,16 +45,18 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String     @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?    @unique
   emailVerified DateTime?
   image         String?
-  createdAt     DateTime  @default(now()) @map(name: "created_at")
-  updatedAt     DateTime  @default(now()) @map(name: "updated_at")
+  createdAt     DateTime   @default(now()) @map(name: "created_at")
+  updatedAt     DateTime   @default(now()) @map(name: "updated_at")
   accounts      Account[]
   sessions      Session[]
-  lists         List[]    @relation
+  lists         List[]     @relation
+  categories    Category[] @relation
+  items         Item[]     @relation
 
   @@map(name: "users")
 }
@@ -72,35 +74,40 @@ model List {
 }
 
 model Category {
-  id    Int    @id @default(autoincrement())
-  name  String @db.VarChar(255)
-  items Item[]
+  id      String @id @default(cuid())
+  name    String @db.VarChar(255)
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id])
+  items   Item[]
 
+  @@index([ownerId])
   @@map(name: "categories")
 }
 
 model Item {
   id          String     @id @default(cuid())
   name        String     @db.VarChar(255)
-  description String?     @db.VarChar(255)
+  description String?    @db.VarChar(255)
   imageUrl    String?
-  categoryId  Int?
+  categoryId  String?
   category    Category?  @relation(fields: [categoryId], references: [id])
+  ownerId     String
+  owner       User       @relation(fields: [ownerId], references: [id])
   ListItem    ListItem[]
 
-  @@index([categoryId])
+  @@index([categoryId, ownerId])
 }
 
 model ListItem {
   id       String  @id @default(cuid())
   itemId   String
   item     Item    @relation(fields: [itemId], references: [id])
-  ListId   String
-  List     List    @relation(fields: [ListId], references: [id])
+  listId   String
+  list     List    @relation(fields: [listId], references: [id])
   checked  Boolean @default(false)
   quantity Int
 
-  @@index([itemId, ListId])
+  @@index([itemId, listId])
 }
 
 model VerificationToken {
