@@ -1,5 +1,6 @@
 'use client';
 import { createContext, useState } from 'react';
+import { Provider as TooltipProvider } from '@radix-ui/react-tooltip';
 import { IUserSession, IUserContext } from '@/@types/dashboard';
 
 export const CurrentUserContext = createContext<IUserContext | null>(null);
@@ -62,8 +63,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
 		categoriesData: categoriesData,
 	});
 	return (
-		<CurrentUserContext.Provider value={{ currentUser, setCurrentUser }}>
-			{children}
-		</CurrentUserContext.Provider>
+		<TooltipProvider skipDelayDuration={0}>
+			<CurrentUserContext.Provider value={{ currentUser, setCurrentUser }}>
+				{children}
+			</CurrentUserContext.Provider>
+		</TooltipProvider>
 	);
 }

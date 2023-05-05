@@ -1,6 +1,14 @@
 'use client';
 import * as Avatar from '@radix-ui/react-avatar';
+import * as Tooltip from '@radix-ui/react-tooltip';
 import '@/styles/radix-avatar.css';
+import '@/styles/radix-tooltip.css';
+
+const navButtons = [
+	{ icon: 'list', tooltip: 'tooltip 1' },
+	{ icon: 'history', tooltip: 'tooltip 2' },
+	{ icon: 'show_chart', tooltip: 'tooltip 3' },
+];
 
 export default function SideBar({}) {
 	return (
@@ -16,9 +24,21 @@ export default function SideBar({}) {
 				</Avatar.Root>
 			</div>
 			<div className='flex flex-col justify-between h-56'>
-				<span className='material-icons text-ui-dark'>list</span>
-				<span className='material-icons text-ui-dark'>history</span>
-				<span className='material-icons text-ui-dark'>show_chart</span>
+				{navButtons.map((x, i) => {
+					return (
+						<Tooltip.Root key={`sidebar-btn-${i}`}>
+							<Tooltip.Trigger asChild>
+								<span className='material-icons text-ui-dark'>{x.icon}</span>
+							</Tooltip.Trigger>
+							<Tooltip.Portal>
+								<Tooltip.Content className='TooltipContent' sideOffset={5}>
+									{x.tooltip}
+									<Tooltip.Arrow className='TooltipArrow' />
+								</Tooltip.Content>
+							</Tooltip.Portal>
+						</Tooltip.Root>
+					);
+				})}
 			</div>
 			<div className='rounded-full bg-orange-400'>
 				<span className='material-icons-outlined text-white'>

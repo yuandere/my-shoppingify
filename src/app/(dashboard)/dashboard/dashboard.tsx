@@ -3,8 +3,8 @@ import { useContext } from 'react';
 import Link from 'next/link';
 import type { Session } from 'next-auth';
 import { CurrentUserContext } from '../providers';
-import SideBar from '@/components/sideBar';
-import Cart from '@/components/cart';
+import SideBar from '@/app/(dashboard)/dashboard/sideBar';
+import Cart from '@/app/(dashboard)/dashboard/cart';
 import ItemCard from '@/components/ui/itemCard';
 
 export default function Dashboard({ session }: { session?: Session }) {
