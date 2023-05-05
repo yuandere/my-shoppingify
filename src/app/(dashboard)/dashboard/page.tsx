@@ -1,14 +1,14 @@
-import Link from 'next/link';
+// import { getServerSession } from 'next-auth/next';
+// import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import Dashboard from './dashboard';
 
-export default function AppHome() {
+export default async function DashboardPage() {
+	// const session = await getServerSession(authOptions);
+	// console.log(session);
 	return (
-		<main className='flex min-h-screen flex-col items-center p-24'>
-			<div className=''>
-				<h1 className='text-xl'>dashboard/page.tsx</h1>
-				<Link href='/'>
-					<button className=''>Back to signin</button>
-				</Link>
-			</div>
+		<main className='flex min-h-screen bg-light'>
+			{/* <Dashboard session={session || undefined}></Dashboard> */}
+			<Dashboard></Dashboard>
 		</main>
 	);
 }
