@@ -73,8 +73,8 @@ const userShoppingLists = [
 				listId: 'BnsXXg',
 				checked: true,
 				quantity: 5,
-			}
-		]
+			},
+		],
 	},
 	{
 		id: 'FMopsy',
@@ -87,17 +87,23 @@ const userShoppingLists = [
 				listId: 'BnsXXg',
 				checked: false,
 				quantity: 1,
-			}
-		]
-	}
-]
+			},
+		],
+	},
+];
 
-const categoriesData = {
-	1: 'Fruit & Veg',
-	2: 'Building Materials',
-	3: 'Medicine',
-	4: 'Ready To Eat',
-};
+// const categoriesData = {
+// 	1: 'Fruit & Veg',
+// 	2: 'Building Materials',
+// 	3: 'Medicine',
+// 	4: 'Ready To Eat',
+// };
+const categoriesData = [
+	'Fruit & Veg',
+	'Building Materials',
+	'Medicine',
+	'Ready To Eat',
+];
 
 export function Providers({ children }: { children: React.ReactNode }) {
 	const [currentUser, setCurrentUser] = useState<IUserSession>({

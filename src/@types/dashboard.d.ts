@@ -1,16 +1,17 @@
 export interface IUserSession {
-	itemsData: Array<IItemsDataProps>;
-	categoriesData: { [key: number]: string };
+	itemsData: Array<IItemsData>;
+	// categoriesData: { [key: number]: string };
+	categoriesData: Array<string>;
 	userShoppingLists: Array<IUserShoppingList>;
 }
 
 interface IItemsData {
 	name: string;
 	id: string;
-	categoryId: string;
-	categoryName: string;
-	note: string;
-	img: string;
+	categoryId?: string;
+	categoryName?: string;
+	note?: string;
+	img?: string;
 }
 
 export interface IUserContext {
