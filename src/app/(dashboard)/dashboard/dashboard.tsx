@@ -1,71 +1,26 @@
 'use client';
-import { createContext, useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import Link from 'next/link';
 import type { Session } from 'next-auth';
 import { CurrentUserContext } from '../providers';
 import SideBar from '@/app/(dashboard)/dashboard/sideBar';
 import Cart from '@/app/(dashboard)/dashboard/cart';
 import ItemCard from '@/components/ui/itemCard';
-import { IItemsData } from '@/@types/dashboard';
-
-interface IItemsArray {
-	categoryName: string;
-	items: Array<IItemsData>;
-}
+import { dashboardSorter } from '@/lib/utils.js';
+import { IItemsData, IItemsArray } from '@/@types/dashboard';
 
 export default function Dashboard({ session }: { session?: Session }) {
 	// console.log(session)
 	const [activeTab, setActiveTab] = useState<string>('items');
 	const [searchTerm, setSearchTerm] = useState<string>('');
-	const [userItems, setUserItems] = useState<Array<IItemsData>>([]);
 	const currentUser = useContext(CurrentUserContext)?.currentUser;
 
 	// TODO: refactor using hashmap(?)
-	const itemsArrayExample = [
-		{
-			categoryName: 'Fruit & Veg',
-			items: [
-				{
-					name: 'banana',
-					id: 'adsgas',
-				},
-			],
-		},
-	];
 	const itemsArray: IItemsArray[] = [];
-	const unsortedItems: IItemsData[] = [];
+	const uncategorizedItems: IItemsData[] = [];
 
 	if (currentUser != undefined) {
-		for (const item of currentUser.itemsData) {
-			const categoryName = item.categoryName;
-			if (categoryName) {
-				let category = itemsArray.find(
-					(category) => category.categoryName === categoryName
-				);
-				if (category) {
-					// Add the current item to an existing category
-					category.items.push(item);
-				} else {
-					// Create a new category and add the current item to it
-					category = {
-						categoryName,
-						items: [item],
-					};
-					itemsArray.push(category);
-				}
-			} else {
-				// Add the current item to the "unsorted items" category
-				unsortedItems.push(item);
-			}
-		}
-
-		if (unsortedItems.length > 0) {
-			// Create a category for the unsorted items
-			itemsArray.push({
-				categoryName: 'Unsorted Items',
-				items: unsortedItems,
-			});
-		}
+		dashboardSorter(currentUser.itemsData, itemsArray, uncategorizedItems);
 	}
 
 	return (
@@ -88,25 +43,41 @@ export default function Dashboard({ session }: { session?: Session }) {
 						}}
 					></input>
 				</div>
-
 				{currentUser !== (null || undefined) ? (
-					itemsArray.map((item, i) => {
-						return (
-							<div className='' key={`items-category-${i}`}>
-								<h1 className='text-lg'>{item.categoryName}</h1>
-								<div className='flex'>
-									{item.items.map((item, i) => {
-										return (
-											<ItemCard
-												itemData={item}
-												key={`${item.categoryName}-${i}`}
-											></ItemCard>
-										);
-									})}
+					searchTerm != '' ? (
+						<div className='flex'>
+							{currentUser.itemsData.map((item, i) => {
+								if (
+									item.name.toLowerCase().includes(searchTerm.toLowerCase())
+								) {
+									return (
+										<ItemCard
+											itemData={item}
+											key={`${item.categoryName}-${i}`}
+										></ItemCard>
+									);
+								}
+							})}
+						</div>
+					) : (
+						itemsArray.map((item, i) => {
+							return (
+								<div className='' key={`items-category-${i}`}>
+									<h1 className='text-lg'>{item.categoryName}</h1>
+									<div className='flex'>
+										{item.items.map((item, i) => {
+											return (
+												<ItemCard
+													itemData={item}
+													key={`${item.categoryName}-${i}`}
+												></ItemCard>
+											);
+										})}
+									</div>
 								</div>
-							</div>
-						);
-					})
+							);
+						})
+					)
 				) : (
 					<div>something went wrong</div>
 				)}

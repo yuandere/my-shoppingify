@@ -1,17 +1,21 @@
 export interface IUserSession {
 	itemsData: Array<IItemsData>;
-	// categoriesData: { [key: number]: string };
 	categoriesData: Array<string>;
 	userShoppingLists: Array<IUserShoppingList>;
 }
 
-interface IItemsData {
+export interface IItemsData {
 	name: string;
 	id: string;
 	categoryId?: string;
 	categoryName?: string;
 	note?: string;
 	img?: string;
+}
+
+export interface IItemsArray {
+	categoryName: string;
+	items: Array<IItemsData>;
 }
 
 export interface IUserContext {
