@@ -1,16 +1,21 @@
-'use client';
+// 'use client';
 import * as Avatar from '@radix-ui/react-avatar';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import '@/styles/radix-avatar.css';
 import '@/styles/radix-tooltip.css';
 
 const navButtons = [
-	{ icon: 'list', tooltip: 'tooltip 1' },
-	{ icon: 'history', tooltip: 'tooltip 2' },
-	{ icon: 'show_chart', tooltip: 'tooltip 3' },
+	{ icon: 'list', tooltip: 'items' },
+	{ icon: 'history', tooltip: 'history' },
+	{ icon: 'show_chart', tooltip: 'statistics' },
 ];
 
-export default function SideBar({}) {
+interface ISidebar {
+	activeTab: string;
+	setActiveTab: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export default function SideBar({ activeTab, setActiveTab }: ISidebar) {
 	return (
 		<div className='flex flex-col justify-between items-center py-4 w-12 h-screen bg-white border border-black sm:w-16'>
 			<div className=''>
@@ -28,7 +33,7 @@ export default function SideBar({}) {
 					return (
 						<Tooltip.Root key={`sidebar-btn-${i}`}>
 							<Tooltip.Trigger asChild>
-								<span className='material-icons text-ui-dark'>{x.icon}</span>
+								<span className='material-icons text-ui-dark cursor-pointer hover:text-theme-1'>{x.icon}</span>
 							</Tooltip.Trigger>
 							<Tooltip.Portal>
 								<Tooltip.Content className='TooltipContent' sideOffset={5}>

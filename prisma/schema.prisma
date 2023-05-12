@@ -66,6 +66,7 @@ model List {
   name      String     @db.VarChar(255)
   createdAt DateTime   @default(now()) @map(name: "created_at")
   updatedAt DateTime   @default(now()) @map(name: "updated_at")
+  completed Boolean
   ownerId   String
   owner     User       @relation(fields: [ownerId], references: [id])
   items     ListItem[]
@@ -80,22 +81,24 @@ model Category {
   owner   User   @relation(fields: [ownerId], references: [id])
   items   Item[]
 
+  @@unique([id, name])
   @@index([ownerId])
   @@map(name: "categories")
 }
 
 model Item {
-  id          String     @id @default(cuid())
-  name        String     @db.VarChar(255)
-  description String?    @db.VarChar(255)
-  imageUrl    String?
-  categoryId  String?
-  category    Category?  @relation(fields: [categoryId], references: [id])
-  ownerId     String
-  owner       User       @relation(fields: [ownerId], references: [id])
-  ListItem    ListItem[]
+  id           String     @id @default(cuid())
+  name         String     @db.VarChar(255)
+  description  String?    @db.VarChar(255)
+  imageUrl     String?
+  categoryId   String?
+  categoryName String?
+  category     Category?  @relation(fields: [categoryId, categoryName], references: [id, name])
+  ownerId      String
+  owner        User       @relation(fields: [ownerId], references: [id])
+  ListItem     ListItem[]
 
-  @@index([categoryId, ownerId])
+  @@index([categoryId, categoryName, ownerId])
 }
 
 model ListItem {
