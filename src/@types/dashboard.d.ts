@@ -4,6 +4,19 @@ export interface IUserSession {
 	userShoppingLists: Array<IUserShoppingList>;
 }
 
+interface IUserShoppingLists {
+	id: string;
+	name: string;
+	completed: boolean;
+	items: IListItem;
+}
+
+export interface IUserContext {
+	currentUser: IUserSession;
+	setCurrentUser: Dispatch<SetStateAction<IUserSession>>;
+}
+
+//itemsView
 export interface IItemsData {
 	name: string;
 	id: string;
@@ -18,22 +31,28 @@ export interface IItemsArray {
 	items: Array<IItemsData>;
 }
 
-export interface IUserContext {
-	currentUser: IUserSession;
-	setCurrentUser: Dispatch<SetStateAction<IUserSession>>;
-}
-
-interface IUserShoppingLists {
+//cart
+export interface IListItem {
 	id: string;
 	name: string;
-	completed: boolean;
-	items: IListItem;
-}
-
-interface IListItem {
-	id: string;
+	categoryName?: string;
 	itemId: string;
 	listId: string;
 	checked: boolean;
 	quantity: number;
+}
+
+export interface IListItemsArray {
+	categoryName: string;
+	items: Array<IListItem>;
+}
+
+export interface IUserShoppingList {
+	id: string;
+	name: string;
+	createdAt: Date;
+	updatedAt: Date;
+	completed: boolean;
+	ownerId: string;
+	items: Array<IListItem>;
 }

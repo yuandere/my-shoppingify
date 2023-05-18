@@ -57,11 +57,16 @@ const itemsData = [
 const userShoppingLists = [
 	{
 		id: 'BnsXXg',
+		ownerId: 'owner id here',
 		name: 'test list 1',
 		completed: false,
+		createdAt: new Date('December 17, 1995 03:24:00'),
+		updatedAt: new Date('December 17, 1995 03:24:00'),
 		items: [
 			{
 				id: 'GbdfRY',
+				name: 'List Item 1',
+				categoryName: 'Building Materials',
 				itemId: 'sdthdhr',
 				listId: 'BnsXXg',
 				checked: false,
@@ -69,6 +74,7 @@ const userShoppingLists = [
 			},
 			{
 				id: 'pbudmm',
+				name: 'List Item 2',
 				itemId: 'vrsdrg',
 				listId: 'BnsXXg',
 				checked: true,
@@ -78,11 +84,16 @@ const userShoppingLists = [
 	},
 	{
 		id: 'FMopsy',
+		ownerId: 'owner id here',
 		name: 'test list 2',
 		completed: true,
+		createdAt: new Date('December 17, 1995 03:24:00'),
+		updatedAt: new Date('December 17, 1995 03:24:00'),
 		items: [
 			{
 				id: 'GbdfRY',
+				name: 'List Item 1',
+				categoryName: 'Building Materials',
 				itemId: 'sdthdhr',
 				listId: 'BnsXXg',
 				checked: false,
@@ -92,12 +103,6 @@ const userShoppingLists = [
 	},
 ];
 
-// const categoriesData = {
-// 	1: 'Fruit & Veg',
-// 	2: 'Building Materials',
-// 	3: 'Medicine',
-// 	4: 'Ready To Eat',
-// };
 const categoriesData = [
 	'Fruit & Veg',
 	'Building Materials',
