@@ -1,9 +1,9 @@
 'use client';
 import { useState } from 'react';
 import type { Session } from 'next-auth';
-import ItemsView from './itemsView';
-import HistoryView from './historyView';
-import StatisticsView from './statisticsView';
+import ItemsView from '@/components/dashboard/itemsView';
+import HistoryView from '@/components/dashboard/historyView';
+import StatisticsView from '@/components/dashboard/statisticsView';
 import SideBar from './sideBar';
 import Cart from './cart';
 

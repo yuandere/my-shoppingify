@@ -1,9 +1,15 @@
 'use client';
 import { createContext, useState } from 'react';
 import { Provider as TooltipProvider } from '@radix-ui/react-tooltip';
-import { IUserSession, IUserContext } from '@/@types/dashboard';
+import {
+	IUserSession,
+	IUserContext,
+	ICartStatesContext,
+} from '@/@types/dashboard';
+
 
 export const CurrentUserContext = createContext<IUserContext | null>(null);
+export const CartStatesContext = createContext<ICartStatesContext | null>(null);
 
 const itemsData = [
 	{
@@ -191,16 +197,29 @@ const categoriesData = [
 	'Ready To Eat',
 ];
 
+// TODO: "don't set state through context for perf reasons" so add logic to set user data here, remove setCurrentUser from currentusercontext
+
 export function Providers({ children }: { children: React.ReactNode }) {
 	const [currentUser, setCurrentUser] = useState<IUserSession>({
 		itemsData: itemsData,
 		categoriesData: categoriesData,
 		userShoppingLists: userShoppingLists,
 	});
+	const [isCartAddingItem, setIsCartAddingItem] = useState<boolean>(false);
+	const [isCartViewingItem, setIsCartViewingItem] = useState<boolean>(false);
 	return (
 		<TooltipProvider skipDelayDuration={0}>
 			<CurrentUserContext.Provider value={{ currentUser, setCurrentUser }}>
-				{children}
+				<CartStatesContext.Provider
+					value={{
+						isCartAddingItem,
+						setIsCartAddingItem,
+						isCartViewingItem,
+						setIsCartViewingItem,
+					}}
+				>
+					{children}
+				</CartStatesContext.Provider>
 			</CurrentUserContext.Provider>
 		</TooltipProvider>
 	);

@@ -7,6 +7,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      animation: {
+        fadeInFromLeft: 'fadeInFromLeft 0.3s ease-in-out forwards',
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
@@ -15,9 +18,20 @@ module.exports = {
       boxShadow: {
         'center': '0 35px 60px -15px rgba(0, 0, 0, 0.3)',
       },
+      colors: {
+        'theme-1': '#f9a109',
+        'warning': '#eb5757',
+        'complete': '#56ccf2',
+      },
       fontFamily: {
         sans: ['var(--font-poppins)'],
-      }
+      },
+      keyframes: {
+        fadeInFromLeft: {
+          '0%': { opacity: 0, transform: 'translateX(-50%)' },
+          '100%': { opacity: 1, transform: 'translateX(0%)' }
+        }
+      },
     },
   },
   plugins: [],

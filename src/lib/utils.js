@@ -24,7 +24,7 @@ export const dashboardSorter = (itemsData, itemsArray, uncategorizedItems) => {
   // creates a category for the unsorted items
   if (uncategorizedItems.length > 0) {
     itemsArray.push({
-      categoryName: ' ',
+      categoryName: 'Uncategorized',
       items: uncategorizedItems,
     });
   }

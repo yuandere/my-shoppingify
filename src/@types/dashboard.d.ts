@@ -16,6 +16,13 @@ export interface IUserContext {
 	setCurrentUser: Dispatch<SetStateAction<IUserSession>>;
 }
 
+export interface ICartStatesContext {
+	isCartAddingItem: boolean;
+	setIsCartAddingItem: Dispatch<SetStateAction<boolean>>;
+	isCartViewingItem: boolean;
+	setIsCartViewingItem: Dispatch<SetStateAction<boolean>>;
+}
+
 //itemsView
 export interface IItemsData {
 	name: string;

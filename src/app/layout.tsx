@@ -1,9 +1,8 @@
-// import NextAuthProvider from '@/providers';
 import { Poppins } from 'next/font/google';
 import '@/styles/globals.css';
 
 const poppins = Poppins({
-	weight: ['400'],
+	weight: ['400', '500', '600'],
 	subsets: ['latin'],
 	variable: '--font-poppins',
 	display: 'swap',
@@ -22,7 +21,6 @@ export default function RootLayout({
 	return (
 		<html lang='en' className={`${poppins.variable}`}>
 			<body>
-				{/* <NextAuthProvider>{children}</NextAuthProvider> */}
 				{children}
 			</body>
 		</html>

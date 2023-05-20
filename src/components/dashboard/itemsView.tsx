@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
 import Link from 'next/link';
-import { CurrentUserContext } from '../providers';
+import { CurrentUserContext } from '../../app/(dashboard)/providers';
 import ItemCard from '@/components/itemCard';
 import { dashboardSorter } from '@/lib/utils';
 import { IItemsArray, IItemsData } from '@/@types/dashboard';
