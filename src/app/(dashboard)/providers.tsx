@@ -1,12 +1,12 @@
 'use client';
 import { createContext, useState } from 'react';
+import { Provider as ToastProvider } from '@radix-ui/react-toast';
 import { Provider as TooltipProvider } from '@radix-ui/react-tooltip';
 import {
 	IUserSession,
 	IUserContext,
 	ICartStatesContext,
 } from '@/@types/dashboard';
-
 
 export const CurrentUserContext = createContext<IUserContext | null>(null);
 export const CartStatesContext = createContext<ICartStatesContext | null>(null);
@@ -42,7 +42,6 @@ const itemsData = [
 		categoryId: 'wertyu',
 		categoryName: 'Building Materials',
 		note: 'KFC baybeee',
-		img: '',
 	},
 	{
 		name: 'aaaaaaaaaaaaaaaaaaaaaa',
@@ -50,13 +49,11 @@ const itemsData = [
 		categoryId: 'wertyu',
 		categoryName: 'Building Materials',
 		note: 'KFC baybeee',
-		img: '',
 	},
 	{
 		name: 'this is a test string with 5pc vitriol',
 		id: 'sdthdhr',
 		note: 'KFC baybeee',
-		img: '',
 	},
 ];
 
@@ -209,18 +206,20 @@ export function Providers({ children }: { children: React.ReactNode }) {
 	const [isCartViewingItem, setIsCartViewingItem] = useState<boolean>(false);
 	return (
 		<TooltipProvider skipDelayDuration={0}>
-			<CurrentUserContext.Provider value={{ currentUser, setCurrentUser }}>
-				<CartStatesContext.Provider
-					value={{
-						isCartAddingItem,
-						setIsCartAddingItem,
-						isCartViewingItem,
-						setIsCartViewingItem,
-					}}
-				>
-					{children}
-				</CartStatesContext.Provider>
-			</CurrentUserContext.Provider>
+			<ToastProvider>
+				<CurrentUserContext.Provider value={{ currentUser, setCurrentUser }}>
+					<CartStatesContext.Provider
+						value={{
+							isCartAddingItem,
+							setIsCartAddingItem,
+							isCartViewingItem,
+							setIsCartViewingItem,
+						}}
+					>
+						{children}
+					</CartStatesContext.Provider>
+				</CurrentUserContext.Provider>
+			</ToastProvider>
 		</TooltipProvider>
 	);
 }

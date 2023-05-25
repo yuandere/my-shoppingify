@@ -1,0 +1,91 @@
+input,
+textarea,
+button,
+select {
+  all: unset;
+  box-sizing: border-box;
+}
+
+.FormRoot {
+  width: 260px;
+}
+
+.FormField {
+  display: grid;
+  margin-bottom: 10px;
+}
+
+.FormLabel {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 35px;
+  color: black;
+}
+
+.FormMessage {
+  font-size: 13px;
+  color: red;
+  opacity: 0.8;
+}
+
+.Input,
+.Textarea,
+.Select {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  outline: none;
+
+  font-size: 14px;
+  color: black;
+  background-color: #fafafe;
+  box-shadow: 0 0 0 1px black;
+}
+.Input:hover,
+.Textarea:hover,
+.Select:hover {
+  box-shadow: 0 0 0 1px black;
+}
+.Input:focus,
+.Textarea:focus,
+.Select:focus {
+  box-shadow: 0 0 0 2px #f97316;
+}
+
+.Input,
+.Select {
+  padding: 0 10px;
+  height: 35px;
+  line-height: 1;
+}
+
+.Textarea {
+  resize: none;
+  padding: 10px;
+}
+
+
+.Button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  padding: 0 15px;
+  font-size: 15px;
+  line-height: 1;
+  font-weight: 500;
+  height: 35px;
+  width: 100%;
+
+  background-color: white;
+  color: purple;
+  box-shadow: 0 2px 10px black;
+}
+.Button:hover {
+  background-color: lightgoldenrodyellow;
+}
+.Button:focus {
+  box-shadow: 0 0 0 2px black;
+}

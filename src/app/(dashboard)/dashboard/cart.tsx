@@ -1,10 +1,8 @@
 import { useContext, useState } from 'react';
 import Image from 'next/image';
 import { CurrentUserContext, CartStatesContext } from '../providers';
-import {
-	CartAddItem,
-	CartViewItem,
-} from '@/components/dashboard/cartItemViews';
+import CartAddItem from '@/components/dashboard/cartAddItem';
+import CartViewItem from '@/components/dashboard/cartViewItem';
 import ListItem from '@/components/listItem';
 import { dashboardSorter } from '@/lib/utils';
 import { IItemsData, IListItemsArray, IListItem } from '@/@types/dashboard';
@@ -43,7 +41,7 @@ export default function Cart({ itemDetails }: { itemDetails?: IItemsData }) {
 			) : cartStates?.isCartViewingItem ? (
 				<CartViewItem />
 			) : (
-				<div className='flex flex-col items-center w-64 h-screen bg-theme-3 sm:w-72'>
+				<div className='flex flex-col items-center w-72 h-screen bg-theme-3 sm:w-80'>
 					<div className='flex relative rounded-3xl bg-theme-2 mt-8 px-4 py-2 h-36 w-72'>
 						<Image
 							src={addItemGraphic}
@@ -54,9 +52,9 @@ export default function Cart({ itemDetails }: { itemDetails?: IItemsData }) {
 						<div className='absolute right-4 top-0 flex flex-col justify-center w-36 h-full space-y-2 text-sm'>
 							<p className='text-white'>{`Didn't find what you need?`}</p>
 							<button
-								className='grid place-items-center w-28 h-8 rounded-lg bg-white cursor-pointer'
+								className='grid place-items-center w-28 h-8 rounded-lg bg-white cursor-pointer transition hover:bg-[#FFF0DE]'
 								onClick={() => {
-									console.log('add new item clicked');
+									cartStates?.setIsCartAddingItem(true);
 								}}
 							>
 								Add item
@@ -65,25 +63,17 @@ export default function Cart({ itemDetails }: { itemDetails?: IItemsData }) {
 					</div>
 
 					{/* TESTING SECTION */}
-					<div className='border-2 border-red-500 p-8'>
+					<div className='border-2 border-red-500 p-4'>
 						<button
-							className='rounded-full bg-theme-1 text-white'
-							onClick={() => {
-								cartStates?.setIsCartAddingItem(true);
-							}}
-						>
-							ADD
-						</button>
-						<button
-							className='rounded-full bg-theme-1 text-white'
+							className='rounded-full bg-theme-1 text-white p-2'
 							onClick={() => {
 								cartStates?.setIsCartViewingItem(true);
 							}}
 						>
-							VIEW
+							VIEW ITEM
 						</button>
 					</div>
-					
+
 					{selectedList != undefined ? (
 						<div className='flex flex-col w-full px-8 py-6 overflow-y-auto'>
 							<div className='flex items-center justify-between mb-4'>
