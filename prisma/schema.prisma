@@ -98,19 +98,22 @@ model Item {
   owner        User       @relation(fields: [ownerId], references: [id])
   ListItem     ListItem[]
 
+  @@unique([name, id])
   @@index([categoryId, categoryName, ownerId])
 }
 
 model ListItem {
-  id       String  @id @default(cuid())
-  itemId   String
-  item     Item    @relation(fields: [itemId], references: [id])
-  listId   String
-  list     List    @relation(fields: [listId], references: [id])
-  checked  Boolean @default(false)
-  quantity Int
+  id           String  @id @default(cuid())
+  name         String  @db.VarChar(255)
+  itemId       String
+  categoryName String?
+  item         Item    @relation(fields: [name, itemId], references: [name, id])
+  listId       String
+  list         List    @relation(fields: [listId], references: [id])
+  checked      Boolean @default(false)
+  quantity     Int
 
-  @@index([itemId, listId])
+  @@index([name, itemId, listId])
 }
 
 model VerificationToken {

@@ -63,3 +63,7 @@
 		color: #34333a;
 	}
 }
+
+input[type="checkbox"] {
+	background-color: #f9a109
+}
