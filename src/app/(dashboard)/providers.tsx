@@ -40,7 +40,7 @@ const itemsData = [
 		name: 'This item is long and takes up all the space and then some so here is a cutoff',
 		id: 'htrsdrg',
 		categoryId: 'wertyu',
-		categoryName: 'Building Materials',
+		categoryName: 'Building Materials Building Materials Building Materials',
 		note: 'KFC baybeee',
 	},
 	{
@@ -204,6 +204,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 	});
 	const [isCartAddingItem, setIsCartAddingItem] = useState<boolean>(false);
 	const [isCartViewingItem, setIsCartViewingItem] = useState<boolean>(false);
+	const [isCartEditingState, setIsCartEditingState] = useState<boolean>(false);
 	return (
 		<TooltipProvider skipDelayDuration={0}>
 			<ToastProvider>
@@ -214,6 +215,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
 							setIsCartAddingItem,
 							isCartViewingItem,
 							setIsCartViewingItem,
+							isCartEditingState,
+							setIsCartEditingState
 						}}
 					>
 						{children}

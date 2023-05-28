@@ -21,6 +21,8 @@ export interface ICartStatesContext {
 	setIsCartAddingItem: Dispatch<SetStateAction<boolean>>;
 	isCartViewingItem: boolean;
 	setIsCartViewingItem: Dispatch<SetStateAction<boolean>>;
+	isCartEditingState: boolean;
+	setIsCartEditingState: Dispatch<SetStateAction<boolean>>;
 }
 
 //itemsView

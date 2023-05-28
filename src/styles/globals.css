@@ -39,7 +39,7 @@
 		background-color: #80485b;
 	}
 	.bg-theme-3 {
-		background-color: #FFF0DE;
+		background-color: #fff0de;
 	}
 	.bg-warning {
 		background-color: #eb5757;
@@ -64,6 +64,6 @@
 	}
 }
 
-input[type="checkbox"] {
-	background-color: #f9a109
+input[type='checkbox'] {
+	background-color: #f9a109;
 }

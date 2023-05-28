@@ -1,10 +1,10 @@
-input,
+/* input,
 textarea,
 button,
 select {
   all: unset;
   box-sizing: border-box;
-}
+} */
 
 .FormRoot {
   width: 260px;
@@ -41,13 +41,11 @@ select {
   font-size: 14px;
   color: black;
   background-color: #fafafe;
-  box-shadow: 0 0 0 1px black;
+  box-shadow: 0 0 0 2px #bdbdbd;
 }
 .Input:hover,
 .Textarea:hover,
-.Select:hover {
-  box-shadow: 0 0 0 1px black;
-}
+.Select:hover,
 .Input:focus,
 .Textarea:focus,
 .Select:focus {
@@ -67,7 +65,7 @@ select {
 }
 
 
-.Button {
+.ButtonForm {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -83,9 +81,9 @@ select {
   color: purple;
   box-shadow: 0 2px 10px black;
 }
-.Button:hover {
+.ButtonForm:hover {
   background-color: lightgoldenrodyellow;
 }
-.Button:focus {
+.ButtonForm:focus {
   box-shadow: 0 0 0 2px black;
 }

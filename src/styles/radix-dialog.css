@@ -1,11 +1,11 @@
-button,
+/* button,
 fieldset,
 input {
   all: unset;
-}
+} */
 
 .DialogOverlay {
-  background-color: var(--blackA9);
+  background-color: rgba(0, 0, 0, 0.25);
   position: fixed;
   inset: 0;
   animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -32,51 +32,44 @@ input {
 .DialogTitle {
   margin: 0;
   font-weight: 500;
-  color: var(--mauve12);
   font-size: 17px;
 }
 
 .DialogDescription {
+  text-align: center;
   margin: 10px 0 20px;
-  color: var(--mauve11);
   font-size: 15px;
   line-height: 1.5;
 }
 
-.Button {
+.ButtonDialog {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
+  border-radius: 8px;
   padding: 0 15px;
-  font-size: 15px;
   line-height: 1;
-  font-weight: 500;
-  height: 35px;
+  cursor: pointer;
+  outline: none;
 }
-.Button.violet {
-  background-color: white;
-  color: var(--violet11);
-  box-shadow: 0 2px 10px var(--blackA7);
+.ButtonDialog.white:hover {
+  background-color: #fff0de;
 }
-.Button.violet:hover {
-  background-color: var(--mauve3);
+.ButtonDialog.white:focus {
+  box-shadow: 0 0 0 2px #f97316;
 }
-.Button.violet:focus {
-  box-shadow: 0 0 0 2px black;
+.ButtonDialog.green {
+  background-color: lightgreen;
+  color: forestgreen;
 }
-.Button.green {
-  background-color: var(--green4);
-  color: var(--green11);
+.ButtonDialog.green:hover {
+  background-color: rgb(110, 216, 110);
 }
-.Button.green:hover {
-  background-color: var(--green5);
-}
-.Button.green:focus {
-  box-shadow: 0 0 0 2px var(--green7);
+.ButtonDialog.green:focus {
+  box-shadow: 0 0 0 2px rgb(110, 216, 110);
 }
 
-.IconButton {
+.IconButtonDialog {
   font-family: inherit;
   border-radius: 100%;
   height: 25px;
@@ -84,16 +77,13 @@ input {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--violet11);
   position: absolute;
   top: 10px;
   right: 10px;
 }
-.IconButton:hover {
-  background-color: var(--violet4);
-}
-.IconButton:focus {
-  box-shadow: 0 0 0 2px var(--violet7);
+
+.IconButtonDialog:focus {
+  box-shadow: 0 0 0 2px #f97316;
 }
 
 .Fieldset {
@@ -105,7 +95,6 @@ input {
 
 .Label {
   font-size: 15px;
-  color: var(--violet11);
   width: 90px;
   text-align: right;
 }
@@ -120,12 +109,12 @@ input {
   padding: 0 10px;
   font-size: 15px;
   line-height: 1;
-  color: var(--violet11);
-  box-shadow: 0 0 0 1px var(--violet7);
+  color: purple;
+  box-shadow: 0 0 0 1px purple;
   height: 35px;
 }
 .Input:focus {
-  box-shadow: 0 0 0 2px var(--violet8);
+  box-shadow: 0 0 0 2px purple;
 }
 
 @keyframes overlayShow {

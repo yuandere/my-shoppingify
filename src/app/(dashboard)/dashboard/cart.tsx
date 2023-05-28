@@ -52,7 +52,7 @@ export default function Cart({ itemDetails }: { itemDetails?: IItemsData }) {
 						<div className='absolute right-4 top-0 flex flex-col justify-center w-36 h-full space-y-2 text-sm'>
 							<p className='text-white'>{`Didn't find what you need?`}</p>
 							<button
-								className='grid place-items-center w-28 h-8 rounded-lg bg-white cursor-pointer transition hover:bg-[#FFF0DE]'
+								className='grid place-items-center w-28 h-8 rounded-lg bg-white cursor-pointer transition drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)] hover:drop-shadow-[0_2px_9px_rgba(0,0,0,0.14)] hover:bg-[#FFF0DE]'
 								onClick={() => {
 									cartStates?.setIsCartAddingItem(true);
 								}}
@@ -81,10 +81,14 @@ export default function Cart({ itemDetails }: { itemDetails?: IItemsData }) {
 								<span
 									className='material-icons select-none cursor-pointer text-lg'
 									onClick={() => {
-										console.log('list pencil icon clicked');
+										if (cartStates?.isCartEditingState) {
+											cartStates?.setIsCartEditingState(false);
+										} else {
+											cartStates?.setIsCartEditingState(true);
+										}
 									}}
 								>
-									edit
+									{cartStates?.isCartEditingState ? 'checklist' : 'edit'}
 								</span>
 							</div>
 							{listItemsArray.map((item, i) => {
@@ -93,7 +97,7 @@ export default function Cart({ itemDetails }: { itemDetails?: IItemsData }) {
 										<p className='text-xs text-[#888888] my-2'>
 											{item.categoryName}
 										</p>
-										<div className='flex flex-col space-y-4'>
+										<div className='flex flex-col items-center space-y-4'>
 											{item.items.map((item, i) => {
 												return (
 													<ListItem
