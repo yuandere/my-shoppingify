@@ -78,7 +78,7 @@ export default function CartAddItem() {
 							<option value=''></option>
 							{categoriesList?.map((category, idx) => {
 								return (
-									<option key={`category-${idx}`} value={category}>
+									<option key={`category-${idx}`} value={category} className='font-sans'>
 										{category}
 									</option>
 								);

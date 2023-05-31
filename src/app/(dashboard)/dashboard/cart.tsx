@@ -1,5 +1,6 @@
 import { useContext, useState } from 'react';
 import Image from 'next/image';
+import * as Tooltip from '@radix-ui/react-tooltip';
 import { CurrentUserContext, CartStatesContext } from '../providers';
 import CartAddItem from '@/components/dashboard/cartAddItem';
 import CartViewItem from '@/components/dashboard/cartViewItem';
@@ -78,18 +79,28 @@ export default function Cart({ itemDetails }: { itemDetails?: IItemsData }) {
 						<div className='flex flex-col w-full px-8 py-6 overflow-y-auto'>
 							<div className='flex items-center justify-between mb-4'>
 								<p className='text-xl font-medium'>{selectedList.name}</p>
-								<span
-									className='material-icons select-none cursor-pointer text-lg'
-									onClick={() => {
-										if (cartStates?.isCartEditingState) {
-											cartStates?.setIsCartEditingState(false);
-										} else {
-											cartStates?.setIsCartEditingState(true);
-										}
-									}}
-								>
-									{cartStates?.isCartEditingState ? 'checklist' : 'edit'}
-								</span>
+								<Tooltip.Root>
+									<Tooltip.Trigger asChild>
+										<span
+											className='material-icons select-none cursor-pointer text-lg hover:scale-125'
+											onClick={() => {
+												if (cartStates?.isCartEditingState) {
+													cartStates?.setIsCartEditingState(false);
+												} else {
+													cartStates?.setIsCartEditingState(true);
+												}
+											}}
+										>
+											{cartStates?.isCartEditingState ? 'checklist' : 'edit'}
+										</span>
+									</Tooltip.Trigger>
+									<Tooltip.Portal>
+										<Tooltip.Content className='TooltipContent' sideOffset={5}>
+											edit/complete
+											<Tooltip.Arrow className='TooltipArrow' />
+										</Tooltip.Content>
+									</Tooltip.Portal>
+								</Tooltip.Root>
 							</div>
 							{listItemsArray.map((item, i) => {
 								return (

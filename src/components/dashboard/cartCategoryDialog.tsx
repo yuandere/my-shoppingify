@@ -21,7 +21,7 @@ export default function CategoryDialog({
 	return (
 		<Dialog.Root>
 			<Dialog.Trigger asChild>
-				<button className='ButtonDialog white text-sm w-full h-10 mt-2 transition bg-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)] hover:drop-shadow-[0_2px_9px_rgba(0,0,0,0.14)]'>
+				<button className='ButtonDialog white w-full text-sm h-10 mt-2 transition bg-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)] hover:drop-shadow-[0_2px_9px_rgba(0,0,0,0.14)]'>
 					Add category
 				</button>
 			</Dialog.Trigger>
@@ -56,7 +56,7 @@ export default function CategoryDialog({
 					>
 						<Dialog.Close asChild>
 							<button
-								className='ButtonDialog green h-10'
+								className='ButtonDialog px-[15px] green h-10'
 								onClick={() => {
 									newCategoriesList.push(newCategoryName);
 									setCategoriesList(newCategoriesList);
