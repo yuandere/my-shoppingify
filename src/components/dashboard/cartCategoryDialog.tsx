@@ -32,7 +32,7 @@ export default function CategoryDialog({
 					<Dialog.Description className='DialogDescription'>
 						Enter a new item category here
 					</Dialog.Description>
-					<fieldset className='Fieldset'>
+					<fieldset className='Fieldset mt-8'>
 						<label className='Label' htmlFor='name'>
 							Name
 						</label>

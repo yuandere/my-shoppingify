@@ -64,7 +64,7 @@ export default function ListItem({ listItem }: { listItem: IListItem }) {
 				></input>
 			)}
 			<p
-				className={`w-3/5 font-medium break-words${
+				className={`w-3/5 font-medium select-none break-words${
 					isChecked ? ' line-through' : ''
 				}`}
 			>

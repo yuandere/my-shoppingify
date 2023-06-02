@@ -53,7 +53,7 @@ export default function CartAddItem() {
 					<Form.Control asChild>
 						<textarea
 							className='Textarea'
-							maxLength={999}
+							maxLength={128}
 							placeholder='Enter a note'
 						/>
 					</Form.Control>

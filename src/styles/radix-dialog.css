@@ -13,7 +13,7 @@ input {
 
 .DialogContent {
   background-color: white;
-  border-radius: 6px;
+  border-radius: 14px;
   box-shadow: hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
   position: fixed;
   top: 50%;
@@ -36,9 +36,9 @@ input {
 }
 
 .DialogDescription {
-  text-align: center;
+  /* text-align: center; */
   margin: 10px 0 20px;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.5;
 }
 
@@ -94,7 +94,7 @@ input {
 
 .Label {
   font-size: 15px;
-  width: 90px;
+  /* width: 90px; */
   text-align: right;
 }
 
