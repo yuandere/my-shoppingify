@@ -4,6 +4,7 @@ import * as Tooltip from '@radix-ui/react-tooltip';
 import { CurrentUserContext, CartStatesContext } from '../providers';
 import CartAddItem from '@/components/dashboard/cartAddItem';
 import CartViewItem from '@/components/dashboard/cartViewItem';
+import CartActionBar from '@/components/dashboard/cartActionBar';
 import ListItem from '@/components/listItem';
 import { dashboardSorter } from '@/lib/utils';
 import { IItemsData, IListItemsArray, IListItem } from '@/@types/dashboard';
@@ -11,13 +12,11 @@ import addItemGraphic from '@/assets/source.svg';
 import cartGraphic from '@/assets/undraw_shopping_app_flsj 1.svg';
 
 export default function Cart({ itemDetails }: { itemDetails?: IItemsData }) {
+	// ## may still need to use this for data mgmt after i get it set up
 	// const [selectedList, setSelectedList] = useState<IUserShoppingList | null>(null);
 	// if (currentUser && currentUser.userShoppingLists) {
 	// 	console.log(currentUser.userShoppingLists[0])
 	// }
-
-	const [isUnsavedList, setIsUnsavedList] = useState<boolean>(false);
-	const [isEditingList, setIsEditingList] = useState<boolean>(false);
 
 	const currentUser = useContext(CurrentUserContext)?.currentUser;
 	const cartStates = useContext(CartStatesContext);
@@ -63,7 +62,7 @@ export default function Cart({ itemDetails }: { itemDetails?: IItemsData }) {
 						</div>
 					</div>
 
-					{/* TESTING SECTION */}
+					{/* TESTING BTN TO ACCESS VIEW ITEM */}
 					<div className='border-2 border-red-500 p-4'>
 						<button
 							className='rounded-full bg-theme-1 text-white p-2'
@@ -133,12 +132,7 @@ export default function Cart({ itemDetails }: { itemDetails?: IItemsData }) {
 							></Image>
 						</div>
 					)}
-
-					<div className='grid place-items-center w-full mt-auto p-8 bg-white'>
-						<div className='border border-black'>
-							<p>this is the action bar</p>
-						</div>
-					</div>
+					<CartActionBar></CartActionBar>
 				</div>
 			)}
 		</>
