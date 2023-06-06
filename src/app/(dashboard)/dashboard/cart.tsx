@@ -1,8 +1,10 @@
 import { useContext, useState } from 'react';
 import Image from 'next/image';
+import * as Tooltip from '@radix-ui/react-tooltip';
 import { CurrentUserContext, CartStatesContext } from '../providers';
 import CartAddItem from '@/components/dashboard/cartAddItem';
 import CartViewItem from '@/components/dashboard/cartViewItem';
+import CartActionBar from '@/components/dashboard/cartActionBar';
 import ListItem from '@/components/listItem';
 import { dashboardSorter } from '@/lib/utils';
 import { IItemsData, IListItemsArray, IListItem } from '@/@types/dashboard';
@@ -10,13 +12,11 @@ import addItemGraphic from '@/assets/source.svg';
 import cartGraphic from '@/assets/undraw_shopping_app_flsj 1.svg';
 
 export default function Cart({ itemDetails }: { itemDetails?: IItemsData }) {
+	// ## may still need to use this for data mgmt after i get it set up
 	// const [selectedList, setSelectedList] = useState<IUserShoppingList | null>(null);
 	// if (currentUser && currentUser.userShoppingLists) {
 	// 	console.log(currentUser.userShoppingLists[0])
 	// }
-
-	const [isUnsavedList, setIsUnsavedList] = useState<boolean>(false);
-	const [isEditingList, setIsEditingList] = useState<boolean>(false);
 
 	const currentUser = useContext(CurrentUserContext)?.currentUser;
 	const cartStates = useContext(CartStatesContext);
@@ -52,7 +52,7 @@ export default function Cart({ itemDetails }: { itemDetails?: IItemsData }) {
 						<div className='absolute right-4 top-0 flex flex-col justify-center w-36 h-full space-y-2 text-sm'>
 							<p className='text-white'>{`Didn't find what you need?`}</p>
 							<button
-								className='grid place-items-center w-28 h-8 rounded-lg bg-white cursor-pointer transition hover:bg-[#FFF0DE]'
+								className='grid place-items-center w-28 h-8 rounded-lg bg-white cursor-pointer transition drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)] hover:drop-shadow-[0_2px_9px_rgba(0,0,0,0.14)] hover:bg-[#FFF0DE]'
 								onClick={() => {
 									cartStates?.setIsCartAddingItem(true);
 								}}
@@ -62,7 +62,7 @@ export default function Cart({ itemDetails }: { itemDetails?: IItemsData }) {
 						</div>
 					</div>
 
-					{/* TESTING SECTION */}
+					{/* TESTING BTN TO ACCESS VIEW ITEM */}
 					<div className='border-2 border-red-500 p-4'>
 						<button
 							className='rounded-full bg-theme-1 text-white p-2'
@@ -78,14 +78,28 @@ export default function Cart({ itemDetails }: { itemDetails?: IItemsData }) {
 						<div className='flex flex-col w-full px-8 py-6 overflow-y-auto'>
 							<div className='flex items-center justify-between mb-4'>
 								<p className='text-xl font-medium'>{selectedList.name}</p>
-								<span
-									className='material-icons select-none cursor-pointer text-lg'
-									onClick={() => {
-										console.log('list pencil icon clicked');
-									}}
-								>
-									edit
-								</span>
+								<Tooltip.Root>
+									<Tooltip.Trigger asChild>
+										<span
+											className='material-icons select-none cursor-pointer text-lg hover:scale-125'
+											onClick={() => {
+												if (cartStates?.isCartEditingState) {
+													cartStates?.setIsCartEditingState(false);
+												} else {
+													cartStates?.setIsCartEditingState(true);
+												}
+											}}
+										>
+											{cartStates?.isCartEditingState ? 'checklist' : 'edit'}
+										</span>
+									</Tooltip.Trigger>
+									<Tooltip.Portal>
+										<Tooltip.Content className='TooltipContent' sideOffset={5}>
+											edit/complete
+											<Tooltip.Arrow className='TooltipArrow' />
+										</Tooltip.Content>
+									</Tooltip.Portal>
+								</Tooltip.Root>
 							</div>
 							{listItemsArray.map((item, i) => {
 								return (
@@ -93,7 +107,7 @@ export default function Cart({ itemDetails }: { itemDetails?: IItemsData }) {
 										<p className='text-xs text-[#888888] my-2'>
 											{item.categoryName}
 										</p>
-										<div className='flex flex-col space-y-4'>
+										<div className='flex flex-col items-center space-y-4'>
 											{item.items.map((item, i) => {
 												return (
 													<ListItem
@@ -118,12 +132,7 @@ export default function Cart({ itemDetails }: { itemDetails?: IItemsData }) {
 							></Image>
 						</div>
 					)}
-
-					<div className='grid place-items-center w-full mt-auto p-8 bg-white'>
-						<div className='border border-black'>
-							<p>this is the action bar</p>
-						</div>
-					</div>
+					<CartActionBar></CartActionBar>
 				</div>
 			)}
 		</>

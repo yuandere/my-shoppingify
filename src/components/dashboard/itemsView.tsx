@@ -52,7 +52,7 @@ export default function ItemsView() {
 						{itemsArray.map((item, i) => {
 							return (
 								<div className='' key={`items-category-${i}`}>
-									<h1 className='text-lg'>{item.categoryName}</h1>
+									<h1 className='text-lg max-w-xs'>{item.categoryName}</h1>
 									<div className='flex'>
 										{item.items.map((item, i) => {
 											return (

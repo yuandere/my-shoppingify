@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import * as Form from '@radix-ui/react-form';
 import {
 	CartStatesContext,
@@ -7,15 +7,20 @@ import {
 import CategoryDialog from './cartCategoryDialog';
 import '@/styles/radix-form.css';
 
-// TODO: iterate through category names and map to select options
-// TODO: add radix dialog button to add category
+// TODO: hookup add new item and category info to db
 
 export default function CartAddItem() {
+	const [categoriesList, setCategoriesList] = useState<
+		Array<string> | undefined
+	>(undefined);
 	const cartStates = useContext(CartStatesContext);
 	const categories = useContext(CurrentUserContext)?.currentUser.categoriesData;
+	useEffect(() => {
+		setCategoriesList(categories);
+	}, [categories]);
 
 	return (
-		<div className='flex flex-col items-center w-72 h-screen p-8 bg-light border border-red-500 sm:w-80'>
+		<div className='flex flex-col items-center w-72 h-screen p-8 bg-light sm:w-80'>
 			<h1 className='text-lg font-medium'>Add a new item</h1>
 			<Form.Root className='FormRoot'>
 				<Form.Field className='FormField' name='name'>
@@ -48,7 +53,7 @@ export default function CartAddItem() {
 					<Form.Control asChild>
 						<textarea
 							className='Textarea'
-							maxLength={999}
+							maxLength={128}
 							placeholder='Enter a note'
 						/>
 					</Form.Control>
@@ -71,9 +76,9 @@ export default function CartAddItem() {
 					<Form.Control asChild>
 						<select className='Select'>
 							<option value=''></option>
-							{categories?.map((category, idx) => {
+							{categoriesList?.map((category, idx) => {
 								return (
-									<option key={`category-${idx}`} value={category}>
+									<option key={`category-${idx}`} value={category} className='font-sans'>
 										{category}
 									</option>
 								);
@@ -81,16 +86,22 @@ export default function CartAddItem() {
 						</select>
 					</Form.Control>
 				</Form.Field>
-				<CategoryDialog></CategoryDialog>
-				<div className='flex items-center mt-8 space-x-1'>
-					<p
-						className='w-28 text-center text-sm cursor-pointer hover:underline'
-						onClick={() => {
-							cartStates?.setIsCartAddingItem(false);
-						}}
-					>
-						cancel
-					</p>
+				<CategoryDialog
+					categoriesList={categoriesList}
+					setCategoriesList={setCategoriesList}
+				></CategoryDialog>
+				<div className='flex items-center justify-center mt-8 space-x-1'>
+					<button className='grid place-items-center'>
+						<p
+							className='w-28 text-center text-sm cursor-pointer hover:underline'
+							onClick={() => {
+								cartStates?.setIsCartAddingItem(false);
+							}}
+						>
+							cancel
+						</p>
+					</button>
+
 					<Form.Submit asChild>
 						<button
 							className='grid place-items-center w-28 h-12 rounded-lg bg-orange-400 text-white text-sm cursor-pointer transition hover:bg-orange-600'
