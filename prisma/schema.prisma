@@ -99,21 +99,23 @@ model Item {
   ListItem     ListItem[]
 
   @@unique([name, id])
-  @@index([categoryId, categoryName, ownerId])
+  @@index([categoryId, categoryName])
+  @@index([ownerId])
 }
 
 model ListItem {
   id           String  @id @default(cuid())
   name         String  @db.VarChar(255)
-  itemId       String
   categoryName String?
-  item         Item    @relation(fields: [name, itemId], references: [name, id])
+  itemId       String
+  item         Item    @relation(fields: [itemId], references: [id])
   listId       String
   list         List    @relation(fields: [listId], references: [id])
   checked      Boolean @default(false)
-  quantity     Int
+  quantity     Int     @default(1)
 
-  @@index([name, itemId, listId])
+  @@index([itemId])
+  @@index([listId])
 }
 
 model VerificationToken {
