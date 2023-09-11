@@ -1,29 +1,43 @@
 import prisma from '@/lib/prisma';
 import { NextResponse, NextRequest } from 'next/server';
-import { authOptions } from '../auth/[...nextauth]/route';
-import { getServerSession } from 'next-auth/next';
+import { getToken } from 'next-auth/jwt';
 import {
 	itemCardAdd,
 	itemCardDelete,
 } from '../../../../prisma/itemCard.schema';
 
+interface IItemCardsFetch {
+	userId: string;
+}
 interface IItemCardAdd {
 	name: string;
 	description?: string;
 	imageUrl?: string;
 	categoryId?: string;
+	userId: string;
 }
 interface IItemCardDelete {
 	itemId: string;
 }
 
 export async function POST(req: NextRequest, res: NextResponse) {
+	let userId = null;
+	try {
+		const token = await getToken({ req });
+		userId = token?.sub;
+	} catch (error) {
+		const err = error as Error;
+		return NextResponse.json({ error: err.message, success: false });
+	}
 	try {
 		const body = await req.json();
+		body.userId = userId;
 		if (!body.action) {
 			throw new Error('Action specifier is missing or incorrect');
 		}
 		switch (body.action) {
+			case 'fetch':
+				return await fetchItemCards(req, res, body);
 			case 'add':
 				const resultAdd = itemCardAdd.safeParse(body);
 				if (!resultAdd.success) {
@@ -49,6 +63,24 @@ export async function POST(req: NextRequest, res: NextResponse) {
 	}
 }
 
+async function fetchItemCards(
+	req: NextRequest,
+	res: NextResponse,
+	body: IItemCardsFetch
+) {
+	try {
+		const itemCards = await prisma.item.findMany();
+		return NextResponse.json({
+			message: 'Item cards successfully retrieved',
+			success: true,
+			data: itemCards,
+		});
+	} catch (error) {
+		const err = error as Error;
+		return NextResponse.json({ message: err.message, success: false });
+	}
+}
+
 async function addItemCard(
 	req: NextRequest,
 	res: NextResponse,
@@ -60,7 +92,7 @@ async function addItemCard(
 				name: body.name,
 				owner: {
 					connect: {
-						id: 'clgu4e0tl0000v3v89i3xw9sv',
+						id: body.userId,
 					},
 				},
 				...(body.description ? { description: body.description } : null),
@@ -76,10 +108,10 @@ async function addItemCard(
 					: null),
 			},
 		});
-		console.log(newItem);
 		return NextResponse.json({
 			message: 'Item card successfully added',
 			success: true,
+			data: newItem,
 		});
 	} catch (error) {
 		console.error('Request error', error);
