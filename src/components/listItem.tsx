@@ -23,6 +23,13 @@ export default function ListItem({ listItem }: { listItem: IListItem }) {
 		}
 	};
 
+	// TODO: add logic to delete list item and toast here
+	const handleDeleteListItem = (
+		event: React.MouseEvent<HTMLDivElement, MouseEvent>
+	) => {
+		console.log('handleDeleteListItem', event.currentTarget);
+	};
+
 	const handleQuantityChange = (add: boolean) => {
 		if (add && itemQuantity < 99) {
 			setItemQuantity(itemQuantity + 1);
@@ -31,10 +38,12 @@ export default function ListItem({ listItem }: { listItem: IListItem }) {
 		}
 	};
 
-	const updateQuantityReq = () => {
-		// check for changes to list copy before API call?
-		console.log('API req to update quantity called');
-	};
+	// TODO: add quantity logic here
+	useEffect(() => {
+		const updateQuantityReq = setTimeout(() => {
+			console.log('quantity updated');
+		}, 3000);
+	}, [itemQuantity]);
 
 	useEffect(() => {
 		setItemQuantity(listItem.quantity);
@@ -43,7 +52,6 @@ export default function ListItem({ listItem }: { listItem: IListItem }) {
 	useEffect(() => {
 		if (!cartStates?.isCartEditingState && isEditingListItem) {
 			setIsEditingListItem(false);
-			updateQuantityReq();
 		}
 	}, [cartStates?.isCartEditingState, isEditingListItem]);
 
@@ -55,7 +63,6 @@ export default function ListItem({ listItem }: { listItem: IListItem }) {
 				!listItemRef.current.contains(event.target as Node)
 			) {
 				setIsEditingListItem(false);
-				updateQuantityReq();
 			}
 		};
 		document.addEventListener('mousedown', handleClickOutside);
@@ -79,7 +86,6 @@ export default function ListItem({ listItem }: { listItem: IListItem }) {
 					className='accent-theme-1 bg-white w-4 h-4 cursor-pointer'
 					checked={isChecked ? true : false}
 					onChange={(e) => {
-						console.log('checkbox clicked');
 						if (e.target.checked === true) {
 							setIsChecked(true);
 							console.log('req to check');
@@ -106,6 +112,7 @@ export default function ListItem({ listItem }: { listItem: IListItem }) {
 						className='grid items-center bg-theme-1 rounded-lg text-white cursor-pointer transition select-none hover:bg-orange-600'
 						onClick={(e) => {
 							e.stopPropagation();
+							handleDeleteListItem(e);
 						}}
 					>
 						<span className='material-icons-outlined m-1 text-lg'>delete</span>

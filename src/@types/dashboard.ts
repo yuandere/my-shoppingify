@@ -13,16 +13,16 @@ interface IUserShoppingLists {
 
 export interface IUserContext {
 	currentUser: IUserSession;
-	setCurrentUser: Dispatch<SetStateAction<IUserSession>>;
+	setCurrentUser: React.Dispatch<React.SetStateAction<IUserSession>>;
 }
 
 export interface ICartStatesContext {
 	isCartAddingItem: boolean;
-	setIsCartAddingItem: Dispatch<SetStateAction<boolean>>;
+	setIsCartAddingItem: React.Dispatch<React.SetStateAction<boolean>>;
 	isCartViewingItem: boolean;
-	setIsCartViewingItem: Dispatch<SetStateAction<boolean>>;
+	setIsCartViewingItem: React.Dispatch<React.SetStateAction<boolean>>;
 	isCartEditingState: boolean;
-	setIsCartEditingState: Dispatch<SetStateAction<boolean>>;
+	setIsCartEditingState: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 //itemsView
