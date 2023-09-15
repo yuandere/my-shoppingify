@@ -1,20 +1,48 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState, useRef, useMemo } from 'react';
 import Link from 'next/link';
-import { CurrentUserContext } from '../../app/(dashboard)/providers';
+import {
+	CurrentUserContext,
+	CartStatesContext,
+} from '../../app/(dashboard)/providers';
 import ItemCard from '@/components/itemCard';
 import { dashboardSorter } from '@/lib/utils';
 import { IItemsArray, IItemsData } from '@/@types/dashboard';
 
+// TODO: change currentUser conditional render -> "something went wrong" to showing that there are no items if itemsArray is empty, and prompt user to add some
+// TODO: format search results
+
 export default function ItemsView() {
 	const [searchTerm, setSearchTerm] = useState<string>('');
+	const fetchRef = useRef<boolean>(false);
 	const currentUser = useContext(CurrentUserContext)?.currentUser;
+	const cartStates = useContext(CartStatesContext);
+	const [itemsData, setItemsData] = useState<Array<IItemsData>>([]);
 
-	const itemsArray: IItemsArray[] = [];
-	const uncategorizedItems: IItemsData[] = [];
+	const itemsArray: IItemsArray[] = useMemo(() => [], []);
+	const uncategorizedItems: IItemsData[] = useMemo(() => [], []);
 
-	if (currentUser != undefined) {
-		dashboardSorter(currentUser.itemsData, itemsArray, uncategorizedItems);
-	}
+	useEffect(() => {
+		if (fetchRef.current) {
+			return;
+		}
+		const itemCardsRequest = new Request('/api/itemCard', {
+			method: 'POST',
+			body: `{"action": "fetch"}`,
+		});
+		fetch(itemCardsRequest)
+			.then((response) => {
+				return response.json();
+			})
+			.then((value) => {
+				setItemsData(value.data);
+				dashboardSorter(value.data, itemsArray, uncategorizedItems);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+		fetchRef.current = true;
+	}, [itemsArray, uncategorizedItems]);
+
 	return (
 		<div className='flex flex-col items-center md:min-w-[640px]'>
 			<Link href='/'>
@@ -36,7 +64,7 @@ export default function ItemsView() {
 			{currentUser !== (null || undefined) ? (
 				searchTerm != '' ? (
 					<div className='flex'>
-						{currentUser.itemsData.map((item, i) => {
+						{itemsData.map((item, i) => {
 							if (item.name.toLowerCase().includes(searchTerm.toLowerCase())) {
 								return (
 									<ItemCard
@@ -69,7 +97,7 @@ export default function ItemsView() {
 						<div
 							className='group grid place-items-center h-12 w-12 rounded-full bg-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)] cursor-pointer transition hover:scale-[1.03] hover:bg-theme-3 hover:drop-shadow-[0_2px_9px_rgba(0,0,0,0.14)]'
 							onClick={() => {
-								console.log('add new item clicked');
+								cartStates?.setIsCartAddingItem(true);
 							}}
 						>
 							<span className='material-icons transition text-ui cursor-pointer group-hover:text-ui-dark'>
