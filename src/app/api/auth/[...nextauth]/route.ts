@@ -29,8 +29,8 @@ export const authOptions: NextAuthOptions = {
 			clientSecret: process.env.GITHUB_SECRET as string,
 		}),
 		EmailProvider({
-			id: 'nodemailer',
-			name: 'email',
+			// id: 'nodemailer',
+			// name: 'email',
 			type: 'email',
 			server: process.env.EMAIL_SERVER,
 			from: process.env.EMAIL_FROM,
@@ -40,6 +40,18 @@ export const authOptions: NextAuthOptions = {
 		signIn: '/signIn',
 	},
 	callbacks: {
+		async jwt({ token, account, profile}) {
+			if (account) {
+				console.log(token, account, profile);
+				token.accessToken = account.access_token;
+				// token.id = profile.id;
+			}
+			return token
+		},
+		async session({ session, token, user }) {
+			console.log(session, token, user);
+			return session
+		}
 	},
 };
 
