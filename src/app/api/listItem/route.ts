@@ -5,7 +5,7 @@ import {
 	listItemRequest,
 	listItemChangeQuantity,
 	listItemChangeChecked,
-} from '../../../../prisma/listItem.schema';
+} from '../../../../prisma/dashboard.schema';
 
 interface IListItemRequest {
 	listItemId: string;

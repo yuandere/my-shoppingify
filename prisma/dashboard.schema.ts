@@ -1,5 +1,16 @@
 import { z } from 'zod';
 
+// itemCard api schemas
+export const itemCardAdd = z.object({
+  name: z.string().min(1),
+  description: z.string().min(1).optional(),
+  imageUrl: z.string().min(1).optional(),
+  categoryId: z.string().min(1).optional(),
+})
+
+export const itemCardDelete = z.string().cuid();
+
+//listItem api schemas
 export const listItemRequest = z.object({
 	listItemId: z.string().cuid(),
 	listId: z.string().cuid(),

@@ -4,11 +4,8 @@ import { getToken } from 'next-auth/jwt';
 import {
 	itemCardAdd,
 	itemCardDelete,
-} from '../../../../prisma/itemCard.schema';
+} from '../../../../prisma/dashboard.schema';
 
-interface IItemCardsFetch {
-	userId: string;
-}
 interface IItemCardAdd {
 	name: string;
 	description?: string;
@@ -37,7 +34,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
 		}
 		switch (body.action) {
 			case 'fetch':
-				return await fetchItemCards(req, res, body);
+				return await fetchItemCards(body);
 			case 'add':
 				const resultAdd = itemCardAdd.safeParse(body);
 				if (!resultAdd.success) {
@@ -45,7 +42,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
 					const zodIssues = resultAdd.error.issues;
 					throw new Error(`zod found ${zodIssues.length} issue(s)`);
 				}
-				return await addItemCard(req, res, body);
+				return await addItemCard(body);
 			case 'delete':
 				const resultDelete = itemCardDelete.safeParse(body.itemId);
 				if (!resultDelete.success) {
@@ -53,7 +50,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
 					const zodIssues = resultDelete.error.issues;
 					throw new Error(`zod found ${zodIssues.length} issue(s)`);
 				}
-				return await deleteItemCard(req, res, body);
+				return await deleteItemCard(body);
 			default:
 				throw new Error('Action not recognized');
 		}
@@ -63,13 +60,11 @@ export async function POST(req: NextRequest, res: NextResponse) {
 	}
 }
 
-async function fetchItemCards(
-	req: NextRequest,
-	res: NextResponse,
-	body: IItemCardsFetch
-) {
+async function fetchItemCards(body: { userId: string }) {
 	try {
-		const itemCards = await prisma.item.findMany();
+		const itemCards = await prisma.item.findMany({
+			where: { ownerId: body.userId },
+		});
 		return NextResponse.json({
 			message: 'Item cards successfully retrieved',
 			success: true,
@@ -81,11 +76,7 @@ async function fetchItemCards(
 	}
 }
 
-async function addItemCard(
-	req: NextRequest,
-	res: NextResponse,
-	body: IItemCardAdd
-) {
+async function addItemCard(body: IItemCardAdd) {
 	try {
 		const newItem = await prisma.item.create({
 			data: {
@@ -122,11 +113,7 @@ async function addItemCard(
 	}
 }
 
-async function deleteItemCard(
-	req: NextRequest,
-	res: NextResponse,
-	body: IItemCardDelete
-) {
+async function deleteItemCard(body: IItemCardDelete) {
 	try {
 		const result = await prisma.item.delete({
 			where: {
