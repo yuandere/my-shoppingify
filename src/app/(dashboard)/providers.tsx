@@ -172,7 +172,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 	const [isCartEditingState, setIsCartEditingState] = useState<boolean>(false);
 	return (
 		<TooltipProvider skipDelayDuration={0}>
-			<ToastProvider duration={2000}>
+			<ToastProvider>
 				<CurrentUserContext.Provider value={{ currentUser, setCurrentUser }}>
 					<CartStatesContext.Provider
 						value={{

@@ -1,3 +1,10 @@
+export interface IToastProps {
+	title: string;
+	content: string;
+	altText: string;
+	style?: string;
+}
+
 export interface IUserSession {
 	itemsData: Array<IItemsData>;
 	categoriesData: Array<string>;
