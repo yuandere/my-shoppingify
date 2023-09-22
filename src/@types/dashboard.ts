@@ -72,3 +72,8 @@ export interface IUserShoppingList {
 	ownerId: string;
 	items: Array<IListItem>;
 }
+
+export interface ICategoriesData {
+	id: string;
+	name: string;
+}

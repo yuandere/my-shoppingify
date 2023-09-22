@@ -20,6 +20,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
 		switch (body.action) {
 			case 'fetchCategory':
 				return await fetchCategory(body);
+			case 'addCategory':
+				return await addCategory(body);
 			default:
 				throw new Error('Action not recognized');
 		}
@@ -29,17 +31,36 @@ export async function POST(req: NextRequest, res: NextResponse) {
 	}
 }
 
-async function fetchCategory(
-	body: { userId: string }
-) {
+async function fetchCategory(body: { userId: string }) {
 	try {
 		const categories = await prisma.category.findMany({
 			where: { ownerId: body.userId },
+			select: { id: true, name: true },
 		});
 		return NextResponse.json({
 			message: `Categories for user ${body.userId} fetched`,
 			success: true,
 			data: categories,
+		});
+	} catch (error) {
+		const err = error as Error;
+		return NextResponse.json({
+			error: err.message,
+			success: false,
+		});
+	}
+}
+
+async function addCategory(body: { userId: string; name: string }) {
+	try {
+		const newCategory = await prisma.category.create({
+			data: {
+				name: body.name,
+				ownerId: body.userId,
+			},
+		});
+		return NextResponse.json({
+			message: `New category '${newCategory.name}' created with id ${newCategory.id}`,
 		});
 	} catch (error) {
 		const err = error as Error;

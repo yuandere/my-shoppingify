@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect, FormEvent } from 'react';
+import { useContext, useState, useEffect, useRef, FormEvent } from 'react';
 import * as Form from '@radix-ui/react-form';
 import {
 	CartStatesContext,
@@ -6,7 +6,7 @@ import {
 } from '@/app/(dashboard)/providers';
 import CategoryDialog from './cartCategoryDialog';
 import { Toast } from '../toast';
-import { IToastProps } from '@/@types/dashboard';
+import { IToastProps, ICategoriesData } from '@/@types/dashboard';
 import '@/styles/radix-form.css';
 
 // TODO: hookup add new item and category info to db
@@ -20,13 +20,12 @@ export default function CartAddItem() {
 		altText: 'generic text',
 	});
 	const [categoriesList, setCategoriesList] = useState<
-		Array<string> | undefined
+		Array<ICategoriesData> | undefined
 	>(undefined);
 	const cartStates = useContext(CartStatesContext);
-	const categories = useContext(CurrentUserContext)?.currentUser.categoriesData;
-	useEffect(() => {
-		setCategoriesList(categories);
-	}, [categories]);
+	// const categories = useContext(CurrentUserContext)?.currentUser.categoriesData;
+	const fetchRef = useRef<boolean>(false);
+	const [fetchFlag, setFetchFlag] = useState<boolean>(false);
 
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		const data = Object.fromEntries(new FormData(e.currentTarget));
@@ -72,15 +71,41 @@ export default function CartAddItem() {
 			});
 	};
 
+	// useEffect(() => {
+	// 	setCategoriesList(categories);
+	// }, [categories]);
+
+	useEffect(() => {
+		if (fetchRef.current) {
+			return;
+		}
+		console.log('fetch effect running');
+		const categoriesRequest = new Request('/api/util', {
+			method: 'POST',
+			body: `{"action": "fetchCategory"}`,
+		});
+		fetch(categoriesRequest)
+			.then((response) => {
+				return response.json();
+			})
+			.then((value) => {
+				setCategoriesList(value.data);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+		fetchRef.current = true;
+	}, [fetchFlag]);
+
 	return (
 		<div className='flex flex-col items-center w-72 h-screen p-8 bg-light sm:w-80'>
 			<Toast
 				open={toastOpen}
 				onOpenChange={setToastOpen}
 				title={toastProps.title}
-				content='Your item has been added'
-				altText='text alttext'
-				style='Success'
+				content={toastProps.content}
+				altText={toastProps.altText}
+				style={toastProps.style}
 			></Toast>
 			<h1 className='text-lg font-medium'>Add a new item</h1>
 			<Form.Root
@@ -153,10 +178,11 @@ export default function CartAddItem() {
 								return (
 									<option
 										key={`category-${idx}`}
-										value={category}
+										value={category.name}
 										className='font-sans'
+										data-index={idx}
 									>
-										{category}
+										{category.name}
 									</option>
 								);
 							})}
@@ -164,8 +190,10 @@ export default function CartAddItem() {
 					</Form.Control>
 				</Form.Field>
 				<CategoryDialog
-					categoriesList={categoriesList}
-					setCategoriesList={setCategoriesList}
+					// categoriesList={categoriesList}
+					// setCategoriesList={setCategoriesList}
+					setFetchFlag={setFetchFlag}
+					fetchRef={fetchRef}
 				></CategoryDialog>
 				<div className='flex items-center justify-center mt-8 space-x-1'>
 					<button className='grid place-items-center'>
