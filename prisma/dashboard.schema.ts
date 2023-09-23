@@ -32,3 +32,6 @@ export const listItemChangeQuantity = listItemRequest.extend({
 export const listItemChangeChecked = listItemRequest.extend({
 	checked: z.boolean(),
 });
+
+//util schemas
+export const categoryAdd = z.string();

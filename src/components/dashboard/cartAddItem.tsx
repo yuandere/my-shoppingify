@@ -1,15 +1,11 @@
 import { useContext, useState, useEffect, useRef, FormEvent } from 'react';
 import * as Form from '@radix-ui/react-form';
-import {
-	CartStatesContext,
-	CurrentUserContext,
-} from '@/app/(dashboard)/providers';
+import { CartStatesContext } from '@/app/(dashboard)/providers';
 import CategoryDialog from './cartCategoryDialog';
 import { Toast } from '../toast';
 import { IToastProps, ICategoriesData } from '@/@types/dashboard';
 import '@/styles/radix-form.css';
 
-// TODO: hookup add new item and category info to db
 // TODO: add visual confirmation of any api calls (loading indicators, toasts, etc)
 
 export default function CartAddItem() {
@@ -23,9 +19,9 @@ export default function CartAddItem() {
 		Array<ICategoriesData> | undefined
 	>(undefined);
 	const cartStates = useContext(CartStatesContext);
-	// const categories = useContext(CurrentUserContext)?.currentUser.categoriesData;
 	const fetchRef = useRef<boolean>(false);
 	const [fetchFlag, setFetchFlag] = useState<boolean>(false);
+	const [activeCategory, setActiveCategory] = useState<string>('');
 
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		const data = Object.fromEntries(new FormData(e.currentTarget));
@@ -33,9 +29,12 @@ export default function CartAddItem() {
 			action: 'add',
 		};
 		for (const key in data) {
-			if (data[key] != '') {
+			if (data[key] != '' && key != 'categoryId') {
 				newData[key] = data[key];
 			}
+		}
+		if (activeCategory != '') {
+			newData.categoryId = activeCategory;
 		}
 		const addRequest = new Request('/api/itemCard', {
 			method: 'POST',
@@ -71,15 +70,18 @@ export default function CartAddItem() {
 			});
 	};
 
-	// useEffect(() => {
-	// 	setCategoriesList(categories);
-	// }, [categories]);
+	const handleSelectionChange = (selectionIndex: number) => {
+		if (selectionIndex > 0 && categoriesList) {
+			setActiveCategory(categoriesList[selectionIndex - 1].id);
+		} else {
+			setActiveCategory('');
+		}
+	};
 
 	useEffect(() => {
 		if (fetchRef.current) {
 			return;
 		}
-		console.log('fetch effect running');
 		const categoriesRequest = new Request('/api/util', {
 			method: 'POST',
 			body: `{"action": "fetchCategory"}`,
@@ -172,7 +174,10 @@ export default function CartAddItem() {
 						<Form.Label className='FormLabel'>Category (optional)</Form.Label>
 					</div>
 					<Form.Control asChild>
-						<select className='Select'>
+						<select
+							className='Select'
+							onChange={(e) => handleSelectionChange(e.target.selectedIndex)}
+						>
 							<option value=''></option>
 							{categoriesList?.map((category, idx) => {
 								return (
@@ -180,7 +185,6 @@ export default function CartAddItem() {
 										key={`category-${idx}`}
 										value={category.name}
 										className='font-sans'
-										data-index={idx}
 									>
 										{category.name}
 									</option>
@@ -190,8 +194,6 @@ export default function CartAddItem() {
 					</Form.Control>
 				</Form.Field>
 				<CategoryDialog
-					// categoriesList={categoriesList}
-					// setCategoriesList={setCategoriesList}
 					setFetchFlag={setFetchFlag}
 					fetchRef={fetchRef}
 				></CategoryDialog>

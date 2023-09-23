@@ -31,8 +31,7 @@ export default function CategoryDialog({
 			.then((response) => {
 				return response.json();
 			})
-			.then((value) => {
-				console.log(value.data);
+			.then(() => {
 				setToastProps({
 					title: 'Success',
 					content: 'Category added',

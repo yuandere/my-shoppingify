@@ -1,6 +1,8 @@
+import { z } from 'zod';
 import prisma from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import { categoryAdd } from '../../../../prisma/dashboard.schema';
 
 export async function POST(req: NextRequest, res: NextResponse) {
 	let userId = null;
@@ -21,6 +23,12 @@ export async function POST(req: NextRequest, res: NextResponse) {
 			case 'fetchCategory':
 				return await fetchCategory(body);
 			case 'addCategory':
+				const resultAdd = categoryAdd.safeParse(body.name);
+				if (!resultAdd.success) {
+					console.log(resultAdd.error.format());
+					const zodIssues = resultAdd.error.issues;
+					throw new Error(`zod found ${zodIssues.length} issue(s)`);
+				}
 				return await addCategory(body);
 			default:
 				throw new Error('Action not recognized');
