@@ -5,13 +5,13 @@ import { IToastProps } from '@/@types/dashboard';
 import '@/styles/radix-dialog.css';
 
 interface ICategoryDialog {
-	setFetchFlag: React.Dispatch<React.SetStateAction<boolean>>;
-	fetchRef: React.MutableRefObject<boolean>;
+	setCategoryFetchFlag: React.Dispatch<React.SetStateAction<boolean>>;
+	categoryFetchRef: React.MutableRefObject<boolean>;
 }
 
 export default function CategoryDialog({
-	setFetchFlag,
-	fetchRef,
+	setCategoryFetchFlag,
+	categoryFetchRef,
 }: ICategoryDialog) {
 	const [toastOpen, setToastOpen] = useState<boolean>(false);
 	const [toastProps, setToastProps] = useState<IToastProps>({
@@ -39,8 +39,8 @@ export default function CategoryDialog({
 					style: 'Success',
 				});
 				setToastOpen(true);
-				fetchRef.current = false;
-				setFetchFlag(true);
+				categoryFetchRef.current = false;
+				setCategoryFetchFlag(true);
 			})
 			.catch((error) => {
 				console.log(error);

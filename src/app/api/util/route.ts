@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import prisma from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';

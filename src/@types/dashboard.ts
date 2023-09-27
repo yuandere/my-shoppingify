@@ -23,6 +23,12 @@ export interface IUserContext {
 	setCurrentUser: React.Dispatch<React.SetStateAction<IUserSession>>;
 }
 
+export interface IDashboardStatesContext {
+	itemsFetchFlag: boolean;
+	setItemsFetchFlag: React.Dispatch<React.SetStateAction<boolean>>;
+	itemsFetchRef: React.MutableRefObject<boolean>;
+}
+
 export interface ICartStatesContext {
 	isCartAddingItem: boolean;
 	setIsCartAddingItem: React.Dispatch<React.SetStateAction<boolean>>;

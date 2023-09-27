@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect, useRef, FormEvent } from 'react';
 import * as Form from '@radix-ui/react-form';
-import { CartStatesContext } from '@/app/(dashboard)/providers';
+import { CartStatesContext, DashboardStatesContext } from '@/app/(dashboard)/providers';
 import CategoryDialog from './cartCategoryDialog';
 import { Toast } from '../toast';
 import { IToastProps, ICategoriesData } from '@/@types/dashboard';
@@ -15,13 +15,16 @@ export default function CartAddItem() {
 		content: 'Content',
 		altText: 'generic text',
 	});
+	const dashboardStates = useContext(DashboardStatesContext);
+	const cartStates = useContext(CartStatesContext);
 	const [categoriesList, setCategoriesList] = useState<
 		Array<ICategoriesData> | undefined
 	>(undefined);
-	const cartStates = useContext(CartStatesContext);
-	const fetchRef = useRef<boolean>(false);
-	const [fetchFlag, setFetchFlag] = useState<boolean>(false);
+	const categoryFetchRef = useRef<boolean>(false);
+	const [categoryFetchFlag, setCategoryFetchFlag] = useState<boolean>(false);
 	const [activeCategory, setActiveCategory] = useState<string>('');
+	const setItemsFetchFlag = dashboardStates?.setItemsFetchFlag;
+	const itemsFetchRef = dashboardStates?.itemsFetchRef;
 
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		const data = Object.fromEntries(new FormData(e.currentTarget));
@@ -53,6 +56,10 @@ export default function CartAddItem() {
 						style: 'Success',
 					});
 					setToastOpen(true);
+					if (setItemsFetchFlag && itemsFetchRef) {
+						setItemsFetchFlag(true);
+						itemsFetchRef.current = false;
+					}
 					setTimeout(() => {
 						cartStates?.setIsCartAddingItem(false);
 					}, 5000);
@@ -79,7 +86,7 @@ export default function CartAddItem() {
 	};
 
 	useEffect(() => {
-		if (fetchRef.current) {
+		if (categoryFetchRef.current) {
 			return;
 		}
 		const categoriesRequest = new Request('/api/util', {
@@ -96,8 +103,8 @@ export default function CartAddItem() {
 			.catch((error) => {
 				console.log(error);
 			});
-		fetchRef.current = true;
-	}, [fetchFlag]);
+		categoryFetchRef.current = true;
+	}, [categoryFetchFlag]);
 
 	return (
 		<div className='flex flex-col items-center w-72 h-screen p-8 bg-light sm:w-80'>
@@ -194,8 +201,8 @@ export default function CartAddItem() {
 					</Form.Control>
 				</Form.Field>
 				<CategoryDialog
-					setFetchFlag={setFetchFlag}
-					fetchRef={fetchRef}
+					setCategoryFetchFlag={setCategoryFetchFlag}
+					categoryFetchRef={categoryFetchRef}
 				></CategoryDialog>
 				<div className='flex items-center justify-center mt-8 space-x-1'>
 					<button className='grid place-items-center'>
