@@ -24,9 +24,13 @@ export interface IUserContext {
 }
 
 export interface IDashboardStatesContext {
+	setToastOpen: React.Dispatch<React.SetStateAction<boolean>>;
+	setToastProps: React.Dispatch<React.SetStateAction<IToastProps>>;
 	itemsFetchFlag: boolean;
 	setItemsFetchFlag: React.Dispatch<React.SetStateAction<boolean>>;
 	itemsFetchRef: React.MutableRefObject<boolean>;
+	selectedItem: IItemsData | null;
+	setSelectedItem: React.Dispatch<React.SetStateAction<IItemsData | null>>;
 }
 
 export interface ICartStatesContext {
@@ -44,8 +48,8 @@ export interface IItemsData {
 	id: string;
 	categoryId?: string;
 	categoryName?: string;
-	note?: string;
-	img?: string;
+	description?: string;
+	imageUrl?: string;
 }
 
 export interface IItemsArray {

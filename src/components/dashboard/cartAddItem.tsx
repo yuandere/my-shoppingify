@@ -1,20 +1,16 @@
 import { useContext, useState, useEffect, useRef, FormEvent } from 'react';
 import * as Form from '@radix-ui/react-form';
-import { CartStatesContext, DashboardStatesContext } from '@/app/(dashboard)/providers';
+import {
+	CartStatesContext,
+	DashboardStatesContext,
+} from '@/app/(dashboard)/providers';
 import CategoryDialog from './cartCategoryDialog';
-import { Toast } from '../toast';
-import { IToastProps, ICategoriesData } from '@/@types/dashboard';
+import { ICategoriesData } from '@/@types/dashboard';
 import '@/styles/radix-form.css';
 
 // TODO: add visual confirmation of any api calls (loading indicators, toasts, etc)
 
 export default function CartAddItem() {
-	const [toastOpen, setToastOpen] = useState<boolean>(false);
-	const [toastProps, setToastProps] = useState<IToastProps>({
-		title: 'Title',
-		content: 'Content',
-		altText: 'generic text',
-	});
 	const dashboardStates = useContext(DashboardStatesContext);
 	const cartStates = useContext(CartStatesContext);
 	const [categoriesList, setCategoriesList] = useState<
@@ -25,8 +21,17 @@ export default function CartAddItem() {
 	const [activeCategory, setActiveCategory] = useState<string>('');
 	const setItemsFetchFlag = dashboardStates?.setItemsFetchFlag;
 	const itemsFetchRef = dashboardStates?.itemsFetchRef;
+	const submitBtnRef = useRef<HTMLButtonElement>(null);
+	const setToastOpen = dashboardStates?.setToastOpen;
+	const setToastProps = dashboardStates?.setToastProps;
 
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+		if (!setToastOpen || !setToastProps) {
+			return;
+		}
+		if (submitBtnRef && submitBtnRef.current != null) {
+			submitBtnRef.current.disabled = true;
+		}
 		const data = Object.fromEntries(new FormData(e.currentTarget));
 		const newData: { [key: string]: string | FormDataEntryValue } = {
 			action: 'add',
@@ -60,9 +65,7 @@ export default function CartAddItem() {
 						setItemsFetchFlag(true);
 						itemsFetchRef.current = false;
 					}
-					setTimeout(() => {
-						cartStates?.setIsCartAddingItem(false);
-					}, 5000);
+					cartStates?.setIsCartAddingItem(false);
 				}
 			})
 			.catch((err) => {
@@ -74,6 +77,9 @@ export default function CartAddItem() {
 					style: 'Error',
 				});
 				setToastOpen(true);
+				if (submitBtnRef && submitBtnRef.current != null) {
+					submitBtnRef.current.disabled = false;
+				}
 			});
 	};
 
@@ -108,14 +114,6 @@ export default function CartAddItem() {
 
 	return (
 		<div className='flex flex-col items-center w-72 h-screen p-8 bg-light sm:w-80'>
-			<Toast
-				open={toastOpen}
-				onOpenChange={setToastOpen}
-				title={toastProps.title}
-				content={toastProps.content}
-				altText={toastProps.altText}
-				style={toastProps.style}
-			></Toast>
 			<h1 className='text-lg font-medium'>Add a new item</h1>
 			<Form.Root
 				className='FormRoot'
@@ -220,6 +218,7 @@ export default function CartAddItem() {
 						<button
 							type='submit'
 							className='grid place-items-center w-28 h-12 rounded-lg bg-orange-400 text-white text-sm cursor-pointer transition hover:bg-orange-600'
+							ref={submitBtnRef}
 						>
 							Save
 						</button>
