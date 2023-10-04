@@ -31,25 +31,25 @@ export const authOptions: NextAuthOptions = {
 		EmailProvider({
 			// id: 'nodemailer',
 			// name: 'email',
-			type: 'email',
+			// type: 'email',
 			server: process.env.EMAIL_SERVER,
 			from: process.env.EMAIL_FROM,
 		}),
 	],
-	pages: {
-		signIn: '/signIn',
-	},
+	// pages: {
+	// 	signIn: '/signIn',
+	// },
 	callbacks: {
 		async jwt({ token, account, profile}) {
 			if (account) {
-				console.log(token, account, profile);
+				console.log('JWT CALLBACK:', token, account, profile);
 				token.accessToken = account.access_token;
 				// token.id = profile.id;
 			}
 			return token
 		},
 		async session({ session, token, user }) {
-			console.log(session, token, user);
+			console.log('SESSION CALLBACK', session, token, user);
 			return session
 		}
 	},
