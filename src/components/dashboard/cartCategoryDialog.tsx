@@ -1,22 +1,57 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import '@/styles/radix-dialog.css';
+import { DashboardStatesContext } from '@/app/(dashboard)/providers';
 
 interface ICategoryDialog {
-	categoriesList: Array<string> | undefined;
-	setCategoriesList: React.Dispatch<React.SetStateAction<string[] | undefined>>;
+	setCategoryFetchFlag: React.Dispatch<React.SetStateAction<boolean>>;
+	categoryFetchRef: React.MutableRefObject<boolean>;
 }
 
 export default function CategoryDialog({
-	categoriesList,
-	setCategoriesList,
+	setCategoryFetchFlag,
+	categoryFetchRef,
 }: ICategoryDialog) {
 	const [newCategoryName, setNewCategoryName] = useState<string>('');
+	const dashboardStates = useContext(DashboardStatesContext);
+	const setToastOpen = dashboardStates?.setToastOpen;
+	const setToastProps = dashboardStates?.setToastProps;
 
-	let newCategoriesList: string[] = [];
-	if (categoriesList != undefined) {
-		newCategoriesList = [...categoriesList];
-	}
+	const handleAddCategory = async () => {
+		if (setToastOpen === undefined || setToastProps === undefined) {
+			return;
+		}
+		const categoriesRequest = new Request('/api/util', {
+			method: 'POST',
+			body: `{"action": "addCategory",
+		"name": "${newCategoryName}"}`,
+		});
+		fetch(categoriesRequest)
+			.then((response) => {
+				return response.json();
+			})
+			.then(() => {
+				setToastProps({
+					title: 'Success',
+					content: 'Category added',
+					altText: 'your category has been added',
+					style: 'Success',
+				});
+				setToastOpen(true);
+				categoryFetchRef.current = false;
+				setCategoryFetchFlag(true);
+			})
+			.catch((error) => {
+				console.log(error);
+				setToastProps({
+					title: 'Error',
+					content: 'Category not added',
+					altText: 'your category was not added',
+					style: 'Error',
+				});
+				setToastOpen(true);
+			});
+	};
 
 	return (
 		<Dialog.Root>
@@ -28,7 +63,6 @@ export default function CategoryDialog({
 			<Dialog.Portal>
 				<Dialog.Overlay className='DialogOverlay' />
 				<Dialog.Content className='DialogContent'>
-					{/* <Dialog.Title className='DialogTitle'>Add category</Dialog.Title> */}
 					<Dialog.Description className='DialogDescription'>
 						Enter a new item category here
 					</Dialog.Description>
@@ -58,8 +92,10 @@ export default function CategoryDialog({
 							<button
 								className='ButtonDialog px-[15px] green h-10'
 								onClick={() => {
-									newCategoriesList.push(newCategoryName);
-									setCategoriesList(newCategoriesList);
+									if (newCategoryName === '') {
+										return;
+									}
+									handleAddCategory();
 								}}
 							>
 								Add

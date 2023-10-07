@@ -1,14 +1,20 @@
 'use client';
-import { createContext, useState } from 'react';
+import { createContext, useState, useRef } from 'react';
 import { Provider as ToastProvider } from '@radix-ui/react-toast';
 import { Provider as TooltipProvider } from '@radix-ui/react-tooltip';
+import { Toast } from '@/components/toast';
 import {
 	IUserSession,
 	IUserContext,
+	IDashboardStatesContext,
 	ICartStatesContext,
+	IToastProps,
+	IItemsData,
 } from '@/@types/dashboard';
 
 export const CurrentUserContext = createContext<IUserContext | null>(null);
+export const DashboardStatesContext =
+	createContext<IDashboardStatesContext | null>(null);
 export const CartStatesContext = createContext<ICartStatesContext | null>(null);
 
 const itemsData = [
@@ -167,6 +173,17 @@ export function Providers({ children }: { children: React.ReactNode }) {
 		categoriesData: categoriesData,
 		userShoppingLists: userShoppingLists,
 	});
+
+	const [toastOpen, setToastOpen] = useState<boolean>(false);
+	const [toastProps, setToastProps] = useState<IToastProps>({
+		title: 'Title',
+		content: 'Content',
+		altText: 'generic text',
+	});
+	const [itemsFetchFlag, setItemsFetchFlag] = useState<boolean>(false);
+	const itemsFetchRef = useRef<boolean>(false);
+	const [selectedItem, setSelectedItem] = useState<IItemsData | null>(null);
+
 	const [isCartAddingItem, setIsCartAddingItem] = useState<boolean>(false);
 	const [isCartViewingItem, setIsCartViewingItem] = useState<boolean>(false);
 	const [isCartEditingState, setIsCartEditingState] = useState<boolean>(false);
@@ -174,18 +191,38 @@ export function Providers({ children }: { children: React.ReactNode }) {
 		<TooltipProvider skipDelayDuration={0}>
 			<ToastProvider>
 				<CurrentUserContext.Provider value={{ currentUser, setCurrentUser }}>
-					<CartStatesContext.Provider
+					<DashboardStatesContext.Provider
 						value={{
-							isCartAddingItem,
-							setIsCartAddingItem,
-							isCartViewingItem,
-							setIsCartViewingItem,
-							isCartEditingState,
-							setIsCartEditingState
+							setToastOpen,
+							setToastProps,
+							itemsFetchFlag,
+							setItemsFetchFlag,
+							itemsFetchRef,
+							selectedItem,
+							setSelectedItem,
 						}}
 					>
-						{children}
-					</CartStatesContext.Provider>
+						<CartStatesContext.Provider
+							value={{
+								isCartAddingItem,
+								setIsCartAddingItem,
+								isCartViewingItem,
+								setIsCartViewingItem,
+								isCartEditingState,
+								setIsCartEditingState,
+							}}
+						>
+							<Toast
+								open={toastOpen}
+								onOpenChange={setToastOpen}
+								title={toastProps.title}
+								content={toastProps.content}
+								altText={toastProps.altText}
+								style={toastProps.style}
+							></Toast>
+							{children}
+						</CartStatesContext.Provider>
+					</DashboardStatesContext.Provider>
 				</CurrentUserContext.Provider>
 			</ToastProvider>
 		</TooltipProvider>

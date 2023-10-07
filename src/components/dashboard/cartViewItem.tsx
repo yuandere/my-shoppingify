@@ -2,14 +2,64 @@ import { useContext } from 'react';
 import Image from 'next/image';
 import {
 	CartStatesContext,
-	CurrentUserContext,
+	DashboardStatesContext,
 } from '@/app/(dashboard)/providers';
-// TODO: remove CurrentUserContext, make itemdata a required prop
 
 export default function CartViewItem() {
+	const dashboardStates = useContext(DashboardStatesContext);
 	const cartStates = useContext(CartStatesContext);
-	// TODO*: remove this line
-	const exampleData = useContext(CurrentUserContext)?.currentUser.itemsData[0];
+	const setToastOpen = dashboardStates?.setToastOpen;
+	const setToastProps = dashboardStates?.setToastProps;
+	const setItemsFetchFlag = dashboardStates?.setItemsFetchFlag;
+	const itemsFetchRef = dashboardStates?.itemsFetchRef;
+	const itemData = dashboardStates?.selectedItem;
+
+	const handleDelete = async () => {
+		if (!itemData || !setToastOpen || !setToastProps) {
+			return;
+		}
+		const deleteRequest = new Request('/api/itemCard', {
+			method: 'POST',
+			body: JSON.stringify({
+				action: 'delete',
+				itemId: itemData.id,
+			}),
+		});
+		fetch(deleteRequest)
+			.then((response) => {
+				return response.json();
+			})
+			.then((value) => {
+				if (value.success === true) {
+					setToastProps({
+						title: 'Success',
+						content: 'Your item has been deleted',
+						altText: 'your item has been deleted',
+						style: 'Success',
+					});
+					setToastOpen(true);
+					if (setItemsFetchFlag && itemsFetchRef) {
+						setItemsFetchFlag(true);
+						itemsFetchRef.current = false;
+					}
+					cartStates?.setIsCartViewingItem(false);
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+				setToastProps({
+					title: 'Error',
+					content: 'Item not deleted',
+					altText: 'your item was not deleted',
+					style: 'Error',
+				});
+				setToastOpen(true);
+			});
+	};
+
+	const handleAddToList = async () => {
+		console.log('under construction');
+	};
 
 	return (
 		<div className='flex flex-col items-center w-72 h-screen p-8 bg-white sm:w-80'>
@@ -23,51 +73,49 @@ export default function CartViewItem() {
 			</p>
 			<div
 				className={`h-44 w-full mt-6 rounded-2xl overflow-hidden${
-					exampleData?.img ? '' : ' grid place-items-center w-20'
+					itemData?.imageUrl ? '' : ' grid place-items-center w-20'
 				}`}
 			>
 				<Image
 					src={
-						exampleData?.img
-							? exampleData.img
+						itemData?.imageUrl
+							? itemData.imageUrl
 							: 'https://img.icons8.com/?size=64&id=j1UxMbqzPi7n&format=png'
 					}
 					height={200}
 					width={300}
 					alt='image for item'
-					className={exampleData?.img ? 'h-full w-full object-cover' : 'object-none'}
+					className={
+						itemData?.imageUrl ? 'h-full w-full object-cover' : 'object-none'
+					}
 				></Image>
 			</div>
 			<div className='w-full mt-4'>
 				<p className='text-xs text-ui mt-6'>name</p>
-				<h1 className='mt-1 text-lg'>{exampleData?.name}</h1>
-				{exampleData?.categoryName ? (
+				<h1 className='mt-1 text-lg'>{itemData?.name}</h1>
+				{itemData?.categoryName ? (
 					<>
 						<p className='text-xs text-ui mt-6'>category</p>
-						<h1 className='mt-1'>{exampleData.categoryName}</h1>
+						<h1 className='mt-1'>{itemData.categoryName}</h1>
 					</>
 				) : null}
-				{exampleData?.note ? (
+				{itemData?.description ? (
 					<>
-						<p className='text-xs text-ui mt-6'>note</p>
-						<h1 className='mt-1'>{exampleData.note}</h1>
+						<p className='text-xs text-ui mt-6'>description</p>
+						<h1 className='mt-1'>{itemData.description}</h1>
 					</>
 				) : null}
 			</div>
 			<div className='flex items-center mt-8 space-x-1'>
 				<p
 					className='w-28 text-center text-sm cursor-pointer hover:underline'
-					onClick={() => {
-						console.log('delete clicked');
-					}}
+					onClick={() => handleDelete()}
 				>
 					delete
 				</p>
 				<button
 					className='grid place-items-center w-28 h-12 rounded-lg bg-orange-400 text-white text-sm cursor-pointer transition hover:bg-orange-600'
-					onClick={() => {
-						console.log('add item to list clicked');
-					}}
+					onClick={() => handleAddToList()}
 				>
 					Add to list
 				</button>

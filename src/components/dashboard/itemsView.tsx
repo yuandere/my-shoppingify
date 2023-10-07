@@ -1,28 +1,32 @@
-import { useContext, useEffect, useState, useRef, useMemo } from 'react';
+import { useContext, useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import {
 	CurrentUserContext,
 	CartStatesContext,
+	DashboardStatesContext,
 } from '../../app/(dashboard)/providers';
 import ItemCard from '@/components/itemCard';
 import { dashboardSorter } from '@/lib/utils';
 import { IItemsArray, IItemsData } from '@/@types/dashboard';
 
+// TODO: add visual confirmation of fetch/loading
 // TODO: change currentUser conditional render -> "something went wrong" to showing that there are no items if itemsArray is empty, and prompt user to add some
 // TODO: format search results
 
 export default function ItemsView() {
-	const [searchTerm, setSearchTerm] = useState<string>('');
-	const fetchRef = useRef<boolean>(false);
 	const currentUser = useContext(CurrentUserContext)?.currentUser;
+	const dashboardStates = useContext(DashboardStatesContext);
 	const cartStates = useContext(CartStatesContext);
+	const [searchTerm, setSearchTerm] = useState<string>('');
 	const [itemsData, setItemsData] = useState<Array<IItemsData>>([]);
+	const itemsFetchFlag = dashboardStates?.itemsFetchFlag;
+	const itemsFetchRef = dashboardStates?.itemsFetchRef;
 
 	const itemsArray: IItemsArray[] = useMemo(() => [], []);
 	const uncategorizedItems: IItemsData[] = useMemo(() => [], []);
 
 	useEffect(() => {
-		if (fetchRef.current) {
+		if (itemsFetchRef === undefined || itemsFetchRef.current) {
 			return;
 		}
 		const itemCardsRequest = new Request('/api/itemCard', {
@@ -31,6 +35,8 @@ export default function ItemsView() {
 		});
 		fetch(itemCardsRequest)
 			.then((response) => {
+				itemsArray.length = 0;
+				uncategorizedItems.length = 0;
 				return response.json();
 			})
 			.then((value) => {
@@ -40,8 +46,8 @@ export default function ItemsView() {
 			.catch((error) => {
 				console.log(error);
 			});
-		fetchRef.current = true;
-	}, [itemsArray, uncategorizedItems]);
+		itemsFetchRef.current = true;
+	}, [itemsArray, uncategorizedItems, itemsFetchFlag, itemsFetchRef]);
 
 	return (
 		<div className='flex flex-col items-center md:min-w-[640px]'>

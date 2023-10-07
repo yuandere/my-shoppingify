@@ -12,7 +12,7 @@ export default function Home() {
 				</Link>
 			</div>
 			<div className='rounded-xl border border-zinc-500'>
-				<Link href='/signIn'>
+				<Link href='/api/auth/signin'>
 					<button className=''>Sign in page</button>
 				</Link>
 			</div>
