@@ -2,7 +2,6 @@ import NextAuth, { type NextAuthOptions } from 'next-auth';
 import GitHubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google';
 import EmailProvider from 'next-auth/providers/email';
-// import nodemailer from 'nodemailer';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import prisma from '@/lib/prisma';
 
@@ -29,9 +28,6 @@ export const authOptions: NextAuthOptions = {
 			clientSecret: process.env.GITHUB_SECRET as string,
 		}),
 		EmailProvider({
-			// id: 'nodemailer',
-			// name: 'email',
-			// type: 'email',
 			server: process.env.EMAIL_SERVER,
 			from: process.env.EMAIL_FROM,
 		}),
@@ -49,7 +45,8 @@ export const authOptions: NextAuthOptions = {
 			return token
 		},
 		async session({ session, token, user }) {
-			console.log('SESSION CALLBACK', session, token, user);
+			// console.log('SESSION CALLBACK', session, token, user);
+			session.user.id = token.sub;
 			return session
 		}
 	},
