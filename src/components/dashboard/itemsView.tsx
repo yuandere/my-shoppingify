@@ -7,6 +7,7 @@ import {
 } from '../../app/(dashboard)/providers';
 import ItemCard from '@/components/itemCard';
 import { dashboardSorter } from '@/lib/utils';
+import { getItems } from '@/lib/getItems';
 import { IItemsArray, IItemsData } from '@/@types/dashboard';
 
 // TODO: add visual confirmation of fetch/loading
@@ -19,6 +20,8 @@ export default function ItemsView() {
 	const cartStates = useContext(CartStatesContext);
 	const [searchTerm, setSearchTerm] = useState<string>('');
 	const [itemsData, setItemsData] = useState<Array<IItemsData>>([]);
+
+	const id = currentUser?.id;
 	const itemsFetchFlag = dashboardStates?.itemsFetchFlag;
 	const itemsFetchRef = dashboardStates?.itemsFetchRef;
 
@@ -26,18 +29,14 @@ export default function ItemsView() {
 	const uncategorizedItems: IItemsData[] = useMemo(() => [], []);
 
 	useEffect(() => {
-		if (itemsFetchRef === undefined || itemsFetchRef.current) {
+		if (itemsFetchRef === undefined || itemsFetchRef.current || !id) {
 			return;
 		}
-		const itemCardsRequest = new Request('/api/itemCard', {
-			method: 'POST',
-			body: `{"action": "fetch"}`,
-		});
-		fetch(itemCardsRequest)
+		getItems(id)
 			.then((response) => {
 				itemsArray.length = 0;
 				uncategorizedItems.length = 0;
-				return response.json();
+				return response;
 			})
 			.then((value) => {
 				setItemsData(value.data);
@@ -47,17 +46,17 @@ export default function ItemsView() {
 				console.log(error);
 			});
 		itemsFetchRef.current = true;
-	}, [itemsArray, uncategorizedItems, itemsFetchFlag, itemsFetchRef]);
+	}, [itemsArray, uncategorizedItems, itemsFetchFlag, itemsFetchRef, id]);
 
 	return (
-		<div className='flex flex-col items-center md:min-w-[640px]'>
+		<div className='flex flex-col items-center w-full px-4 md:min-w-[640px]'>
 			<Link href='/'>
 				<button className='border border-black p-2 rounded-full hover:bg-orange-400'>
 					Back to home
 				</button>
 			</Link>
-			<div className='bg-white p-2 rounded-xl text-sm flex items-center drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)] focus-within:drop-shadow-[0_2px_9px_rgba(0,0,0,0.14)]'>
-				<span className='material-icons'>search</span>
+			<div className='bg-white p-2 rounded-xl text-sm flex items-center mb-4 drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)] focus-within:drop-shadow-[0_2px_9px_rgba(0,0,0,0.14)]'>
+				<span className='material-icons select-none'>search</span>
 				<input
 					className='outline-none'
 					type='search'

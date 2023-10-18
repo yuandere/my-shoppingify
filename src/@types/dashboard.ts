@@ -6,9 +6,14 @@ export interface IToastProps {
 }
 
 export interface IUserSession {
-	itemsData: Array<IItemsData>;
-	categoriesData: Array<string>;
-	userShoppingLists: Array<IUserShoppingList>;
+	name?: string | null;
+	email?: string | null;
+	image?: string | null;
+	id?: string | null;
+	//TODO: remove below
+	itemsData?: Array<IItemsData>;
+	categoriesData?: Array<string>;
+	userShoppingLists?: Array<IUserShoppingList>;
 }
 
 interface IUserShoppingLists {

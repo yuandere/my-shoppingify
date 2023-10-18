@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useState, useRef } from 'react';
+import { createContext, useState, useRef, useEffect } from 'react';
 import { Provider as ToastProvider } from '@radix-ui/react-toast';
 import { Provider as TooltipProvider } from '@radix-ui/react-tooltip';
 import { Toast } from '@/components/toast';
@@ -11,6 +11,7 @@ import {
 	IToastProps,
 	IItemsData,
 } from '@/@types/dashboard';
+import { Session } from 'next-auth';
 
 export const CurrentUserContext = createContext<IUserContext | null>(null);
 export const DashboardStatesContext =
@@ -167,19 +168,27 @@ const categoriesData = [
 
 // TODO: "don't set state through context for perf reasons" so add logic to set user data here, remove setCurrentUser from currentusercontext
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export function Providers({
+	children,
+	session,
+}: {
+	children: React.ReactNode;
+	session: Session | null;
+}) {
 	const [currentUser, setCurrentUser] = useState<IUserSession>({
-		itemsData: itemsData,
-		categoriesData: categoriesData,
+		// TODO: remove
+		// itemsData: itemsData,
+		// categoriesData: categoriesData,
 		userShoppingLists: userShoppingLists,
 	});
-
 	const [toastOpen, setToastOpen] = useState<boolean>(false);
 	const [toastProps, setToastProps] = useState<IToastProps>({
 		title: 'Title',
 		content: 'Content',
 		altText: 'generic text',
 	});
+
+	//TODO: review behavior for the 3 below
 	const [itemsFetchFlag, setItemsFetchFlag] = useState<boolean>(false);
 	const itemsFetchRef = useRef<boolean>(false);
 	const [selectedItem, setSelectedItem] = useState<IItemsData | null>(null);
@@ -187,6 +196,21 @@ export function Providers({ children }: { children: React.ReactNode }) {
 	const [isCartAddingItem, setIsCartAddingItem] = useState<boolean>(false);
 	const [isCartViewingItem, setIsCartViewingItem] = useState<boolean>(false);
 	const [isCartEditingState, setIsCartEditingState] = useState<boolean>(false);
+
+	useEffect(() => {
+		if (session) {
+			const user = session.user;
+			setCurrentUser({
+				name: user.name,
+				email: user.email,
+				image: user.image,
+				id: user.id,
+				//TODO: remove
+				userShoppingLists: userShoppingLists
+			});
+		}
+	}, [session]);
+
 	return (
 		<TooltipProvider skipDelayDuration={0}>
 			<ToastProvider>
