@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import Image from 'next/image';
+import { useQueryClient } from '@tanstack/react-query'
 import {
 	CartStatesContext,
 	DashboardStatesContext,
@@ -10,9 +11,8 @@ export default function CartViewItem() {
 	const cartStates = useContext(CartStatesContext);
 	const setToastOpen = dashboardStates?.setToastOpen;
 	const setToastProps = dashboardStates?.setToastProps;
-	const setItemsFetchFlag = dashboardStates?.setItemsFetchFlag;
-	const itemsFetchRef = dashboardStates?.itemsFetchRef;
 	const itemData = dashboardStates?.selectedItem;
+	const queryClient = useQueryClient();
 
 	const handleDelete = async () => {
 		if (!itemData || !setToastOpen || !setToastProps) {
@@ -38,11 +38,8 @@ export default function CartViewItem() {
 						style: 'Success',
 					});
 					setToastOpen(true);
-					if (setItemsFetchFlag && itemsFetchRef) {
-						setItemsFetchFlag(true);
-						itemsFetchRef.current = false;
-					}
 					cartStates?.setIsCartViewingItem(false);
+					queryClient.invalidateQueries({ queryKey: ['itemCards'] });
 				}
 			})
 			.catch((err) => {

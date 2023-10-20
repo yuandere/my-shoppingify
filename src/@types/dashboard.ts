@@ -31,9 +31,6 @@ export interface IUserContext {
 export interface IDashboardStatesContext {
 	setToastOpen: React.Dispatch<React.SetStateAction<boolean>>;
 	setToastProps: React.Dispatch<React.SetStateAction<IToastProps>>;
-	itemsFetchFlag: boolean;
-	setItemsFetchFlag: React.Dispatch<React.SetStateAction<boolean>>;
-	itemsFetchRef: React.MutableRefObject<boolean>;
 	selectedItem: IItemsData | null;
 	setSelectedItem: React.Dispatch<React.SetStateAction<IItemsData | null>>;
 }
