@@ -6,7 +6,7 @@ import {
 import { getServerSession } from 'next-auth';
 import Dashboard from './dashboard';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { getItems } from '@/lib/fetchers';
+import { getItems, getLists } from '@/lib/fetchers';
 
 export default async function DashboardPage() {
 	const queryClient = new QueryClient();
@@ -17,7 +17,12 @@ export default async function DashboardPage() {
 			queryKey: ['itemCards'],
 			queryFn: () => getItems(id),
 		});
+		await queryClient.prefetchQuery({
+			queryKey: ['lists'],
+			queryFn: () => getLists(id),
+		});
 	}
+	// TODO: prefetch shopping lists
 
 	return (
 		<main className='flex min-h-screen bg-light'>

@@ -11,10 +11,10 @@ export async function POST(req: NextRequest) {
 	}
 }
 
-async function fetchItemCards(body: { id: string }) {
+async function fetchItemCards(body: { userId: string }) {
 	try {
 		const itemCards = await prisma.item.findMany({
-			where: { ownerId: body.id },
+			where: { ownerId: body.userId },
 		});
 		return NextResponse.json({
 			message: 'Item cards successfully retrieved',
