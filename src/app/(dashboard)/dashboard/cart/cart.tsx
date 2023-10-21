@@ -1,10 +1,10 @@
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import Image from 'next/image';
 import * as Tooltip from '@radix-ui/react-tooltip';
-import { CurrentUserContext, CartStatesContext } from '../providers';
-import CartAddItem from '@/components/dashboard/cartAddItem';
-import CartViewItem from '@/components/dashboard/cartViewItem';
-import CartActionBar from '@/components/dashboard/cartActionBar';
+import { CurrentUserContext, CartStatesContext } from '../../providers';
+import CartAddItem from '@/app/(dashboard)/dashboard/cart/cartAddItem';
+import CartViewItem from '@/app/(dashboard)/dashboard/cart/cartViewItem';
+import CartActionBar from '@/app/(dashboard)/dashboard/cart/cartActionBar';
 import ListItem from '@/components/listItem';
 import { dashboardSorter } from '@/lib/utils';
 import { IItemsData, IListItemsArray, IListItem } from '@/@types/dashboard';
@@ -20,7 +20,11 @@ export default function Cart({ itemDetails }: { itemDetails?: IItemsData }) {
 
 	const currentUser = useContext(CurrentUserContext)?.currentUser;
 	const cartStates = useContext(CartStatesContext);
-	const selectedList = currentUser?.userShoppingLists[0];
+	let selectedList = null;
+
+	if (currentUser?.userShoppingLists) {
+		selectedList = currentUser?.userShoppingLists[0];
+	}
 
 	const listItemsArray: IListItemsArray[] = [];
 	const uncategorizedListItems: IListItem[] = [];
@@ -60,18 +64,6 @@ export default function Cart({ itemDetails }: { itemDetails?: IItemsData }) {
 								Add item
 							</button>
 						</div>
-					</div>
-
-					{/* TESTING BTN TO ACCESS VIEW ITEM */}
-					<div className='border-2 border-red-500 p-4'>
-						<button
-							className='rounded-full bg-theme-1 text-white p-2'
-							onClick={() => {
-								cartStates?.setIsCartViewingItem(true);
-							}}
-						>
-							VIEW ITEM
-						</button>
 					</div>
 
 					{selectedList != undefined ? (

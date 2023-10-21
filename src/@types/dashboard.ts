@@ -59,6 +59,16 @@ export interface IItemsArray {
 	items: Array<IItemsData>;
 }
 
+//historyView
+export interface IList {
+	id: string;
+	createdAt: string;
+	updatedAt: string;
+	completed: boolean;
+	name: string;
+	ownerId: string;
+}
+
 //cart
 export interface IListItem {
 	id: string;

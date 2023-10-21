@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
-import { CurrentUserContext, CartStatesContext } from '../../app/(dashboard)/providers';
+import { CurrentUserContext, CartStatesContext } from '../providers';
 import ItemCard from '@/components/itemCard';
 import { dashboardSorter } from '@/lib/utils';
 import { getItems } from '@/lib/fetchers';
