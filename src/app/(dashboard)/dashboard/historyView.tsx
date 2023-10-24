@@ -1,6 +1,8 @@
 import { useContext, useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { CurrentUserContext } from '../providers';
+import ShoppingList from '@/components/shoppingList';
+import { getLists } from '@/lib/fetchers';
 import { IList } from '@/@types/dashboard';
 
 export default function HistoryView() {
@@ -28,7 +30,14 @@ export default function HistoryView() {
 			{isPending ? <span>Loading...</span> : null}
 			{isError ? <span>Error: {error.message}</span> : null}
 			{data && lists ? (
-				<div className=''>{lists.length} items found. Under construction</div>
+				lists.map((list, i) => {
+					return (
+						<ShoppingList
+							listProps={list}
+							key={`shoppinglist-${i}`}
+						></ShoppingList>
+					);
+				})
 			) : (
 				<span>Something went wrong</span>
 			)}
