@@ -3,10 +3,18 @@ import { useQuery } from '@tanstack/react-query';
 import { CurrentUserContext } from '../providers';
 import ShoppingList from '@/components/shoppingList';
 import { getLists } from '@/lib/fetchers';
+import { listsSorter } from '@/lib/utils';
 import { IList } from '@/@types/dashboard';
 
+interface IListObject {
+	lists: Array<IList>;
+	monthYear: string;
+}
+
 export default function HistoryView() {
-	const [lists, setLists] = useState<Array<IList> | null>(null);
+	const [sortedLists, setSortedLists] = useState<Array<IListObject> | null>(
+		null
+	);
 	const currentUser = useContext(CurrentUserContext)?.currentUser;
 	const id = currentUser?.id;
 	const { isPending, isError, data, error } = useQuery({
@@ -19,8 +27,7 @@ export default function HistoryView() {
 		if (!data) {
 			return;
 		}
-		console.log(data.data);
-		setLists(data.data);
+		setSortedLists(listsSorter(data.data));
 	}, [data]);
 	return (
 		<div className='flex flex-col md:min-w-[640px]'>
@@ -29,13 +36,22 @@ export default function HistoryView() {
 			</div>
 			{isPending ? <span>Loading...</span> : null}
 			{isError ? <span>Error: {error.message}</span> : null}
-			{data && lists ? (
-				lists.map((list, i) => {
+			{data && sortedLists ? (
+				sortedLists.map((sortedObject, idx) => {
 					return (
-						<ShoppingList
-							listProps={list}
-							key={`shoppinglist-${i}`}
-						></ShoppingList>
+						<>
+							<h3 className='text-xl font-semibold' key={`sorted-month-${idx}`}>
+								{sortedObject.monthYear}
+							</h3>
+							{sortedObject.lists.map((list, idx) => {
+								return (
+									<ShoppingList
+										listProps={list}
+										key={`shopping-list-${idx}`}
+									></ShoppingList>
+								);
+							})}
+						</>
 					);
 				})
 			) : (
