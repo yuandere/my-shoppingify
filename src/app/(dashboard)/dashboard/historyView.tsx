@@ -39,19 +39,19 @@ export default function HistoryView() {
 			{data && sortedLists ? (
 				sortedLists.map((sortedObject, idx) => {
 					return (
-						<>
-							<h3 className='text-xl font-semibold' key={`sorted-month-${idx}`}>
+						<div key={`sorted-month-${idx}`}>
+							<h3 className='text-xl font-semibold'>
 								{sortedObject.monthYear}
 							</h3>
-							{sortedObject.lists.map((list, idx) => {
+							{sortedObject.lists.map((list, innerIdx) => {
 								return (
 									<ShoppingList
 										listProps={list}
-										key={`shopping-list-${idx}`}
+										key={`shopping-list-${idx}-${innerIdx}`}
 									></ShoppingList>
 								);
 							})}
-						</>
+						</div>
 					);
 				})
 			) : (

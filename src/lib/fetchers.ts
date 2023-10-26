@@ -42,3 +42,14 @@ export const getLists = async (id: string) => {
 	}
 	return response.json();
 };
+
+export const getListItems = async (id: string) => {
+	const listItemsRequest = new Request(
+		`${process.env.NEXT_PUBLIC_URL}/api/listItem/get?id=${id}`
+	);
+	const response = await fetch(listItemsRequest);
+	if (!response.ok) {
+		throw new Error('fetch went wrong');
+	}
+	return response.json();
+};

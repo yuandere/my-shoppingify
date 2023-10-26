@@ -19,6 +19,8 @@ export const listAdd = z.object({
 export const listDelete = z.string().cuid();
 
 //listItem api schemas
+export const listItemsGet = z.string().cuid();
+
 export const listItemRequest = z.object({
 	listItemId: z.string().cuid(),
 	listId: z.string().cuid(),

@@ -58,6 +58,5 @@ export const listsSorter = (lists) => {
       lists
     });
   }
-  console.log(result);
   return result;
 }

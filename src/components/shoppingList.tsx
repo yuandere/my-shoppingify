@@ -1,9 +1,15 @@
+import { useContext } from 'react';
+import { DashboardStatesContext } from '@/app/(dashboard)/providers';
 import { IList } from '@/@types/dashboard';
 
 export default function ShoppingList({ listProps }: { listProps: IList }) {
-  const createdAt = new Date(listProps.createdAt).toDateString();
+	const dashStates = useContext(DashboardStatesContext);
+	const createdAt = new Date(listProps.createdAt).toDateString();
 	return (
-		<div className='flex items-center justify-between'>
+		<div
+			className='flex items-center justify-between select-none border-black cursor-pointer hover:border-2'
+			onClick={() => dashStates?.setSelectedList(listProps)}
+		>
 			<p>{listProps.name}</p>
 			<div className='flex items-center'>
 				<span className='material-icons'>calendar</span>

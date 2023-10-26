@@ -10,17 +10,6 @@ export interface IUserSession {
 	email?: string | null;
 	image?: string | null;
 	id?: string | null;
-	//TODO: remove below
-	itemsData?: Array<IItemsData>;
-	categoriesData?: Array<string>;
-	userShoppingLists?: Array<IUserShoppingList>;
-}
-
-interface IUserShoppingLists {
-	id: string;
-	name: string;
-	completed: boolean;
-	items: IListItem;
 }
 
 export interface IUserContext {
@@ -33,6 +22,8 @@ export interface IDashboardStatesContext {
 	setToastProps: React.Dispatch<React.SetStateAction<IToastProps>>;
 	selectedItem: IItemsData | null;
 	setSelectedItem: React.Dispatch<React.SetStateAction<IItemsData | null>>;
+	selectedList: IList | null;
+	setSelectedList: React.Dispatch<React.SetStateAction<IList | null>>;
 }
 
 export interface ICartStatesContext {
