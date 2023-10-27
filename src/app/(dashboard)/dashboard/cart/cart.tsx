@@ -29,7 +29,7 @@ export default function Cart() {
 	const listItemsArray: IListItemsArray[] = useMemo(() => [], []);
 	const uncategorizedListItems: IListItem[] = useMemo(() => [], []);
 
-	const { isPending, isError, data, error } = useQuery({
+	const { fetchStatus, isError, data, error } = useQuery({
 		queryKey: ['listItems', listId],
 		// @ts-ignore
 		queryFn: () => getListItems(listId),
@@ -73,7 +73,6 @@ export default function Cart() {
 							</button>
 						</div>
 					</div>
-					{isPending ? <span>Loading...</span> : null}
 					{isError ? <span>Error{error.message}</span> : null}
 					{data ? (
 						<div className='flex flex-col w-full px-8 py-6 overflow-y-auto'>
@@ -122,6 +121,8 @@ export default function Cart() {
 								);
 							})}
 						</div>
+					) : fetchStatus === 'fetching' ? (
+						<div>Loading...</div>
 					) : (
 						<div className='flex flex-col items-center justify-between h-full mb-0'>
 							<p className='invisible'>formatting text</p>
