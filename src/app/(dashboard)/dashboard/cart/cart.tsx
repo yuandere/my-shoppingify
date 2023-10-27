@@ -1,38 +1,50 @@
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
+import { useQuery } from '@tanstack/react-query';
 import * as Tooltip from '@radix-ui/react-tooltip';
-import { CurrentUserContext, CartStatesContext } from '../providers';
-import CartAddItem from '@/components/dashboard/cartAddItem';
-import CartViewItem from '@/components/dashboard/cartViewItem';
-import CartActionBar from '@/components/dashboard/cartActionBar';
+import { CartStatesContext, DashboardStatesContext } from '../../providers';
+import CartAddItem from '@/app/(dashboard)/dashboard/cart/cartAddItem';
+import CartViewItem from '@/app/(dashboard)/dashboard/cart/cartViewItem';
+import CartActionBar from '@/app/(dashboard)/dashboard/cart/cartActionBar';
 import ListItem from '@/components/listItem';
+import { getListItems } from '@/lib/fetchers';
 import { dashboardSorter } from '@/lib/utils';
-import { IItemsData, IListItemsArray, IListItem } from '@/@types/dashboard';
+import {
+	IListItemsArray,
+	IUserShoppingList,
+	IListItem,
+} from '@/@types/dashboard';
 import addItemGraphic from '@/assets/source.svg';
 import cartGraphic from '@/assets/undraw_shopping_app_flsj 1.svg';
 
-export default function Cart({ itemDetails }: { itemDetails?: IItemsData }) {
-	// ## may still need to use this for data mgmt after i get it set up
-	// const [selectedList, setSelectedList] = useState<IUserShoppingList | null>(null);
-	// if (currentUser && currentUser.userShoppingLists) {
-	// 	console.log(currentUser.userShoppingLists[0])
-	// }
+// TODO: useMutation, listItem API interactions
 
-	const currentUser = useContext(CurrentUserContext)?.currentUser;
+export default function Cart() {
+	const [selectedListItems, setSelectedListItems] =
+		useState<IUserShoppingList | null>(null);
+	const dashStates = useContext(DashboardStatesContext);
 	const cartStates = useContext(CartStatesContext);
-	const selectedList = currentUser?.userShoppingLists[0];
+	const selectedList = dashStates?.selectedList;
+	const listId = selectedList?.id;
+	const listItemsArray: IListItemsArray[] = useMemo(() => [], []);
+	const uncategorizedListItems: IListItem[] = useMemo(() => [], []);
 
-	const listItemsArray: IListItemsArray[] = [];
-	const uncategorizedListItems: IListItem[] = [];
-	if (currentUser != undefined) {
-		dashboardSorter(
-			selectedList?.items,
-			listItemsArray,
-			uncategorizedListItems
-		);
-	}
-	// console.log(selectedList);
-	// console.log(listItemsArray);
+	const { fetchStatus, isError, data, error } = useQuery({
+		queryKey: ['listItems', listId],
+		// @ts-ignore
+		queryFn: () => getListItems(listId),
+		enabled: !!listId,
+	});
+
+	useEffect(() => {
+		if (!data) {
+			return;
+		}
+		listItemsArray.length = 0;
+		uncategorizedListItems.length = 0;
+		setSelectedListItems(data.data);
+		dashboardSorter(data.data, listItemsArray, uncategorizedListItems);
+	}, [data, listItemsArray, selectedListItems, uncategorizedListItems]);
 
 	return (
 		<>
@@ -61,23 +73,11 @@ export default function Cart({ itemDetails }: { itemDetails?: IItemsData }) {
 							</button>
 						</div>
 					</div>
-
-					{/* TESTING BTN TO ACCESS VIEW ITEM */}
-					<div className='border-2 border-red-500 p-4'>
-						<button
-							className='rounded-full bg-theme-1 text-white p-2'
-							onClick={() => {
-								cartStates?.setIsCartViewingItem(true);
-							}}
-						>
-							VIEW ITEM
-						</button>
-					</div>
-
-					{selectedList != undefined ? (
+					{isError ? <span>Error{error.message}</span> : null}
+					{data ? (
 						<div className='flex flex-col w-full px-8 py-6 overflow-y-auto'>
 							<div className='flex items-center justify-between mb-4'>
-								<p className='text-xl font-medium'>{selectedList.name}</p>
+								<p className='text-xl font-medium'>{selectedList?.name}</p>
 								<Tooltip.Root>
 									<Tooltip.Trigger asChild>
 										<span
@@ -121,6 +121,8 @@ export default function Cart({ itemDetails }: { itemDetails?: IItemsData }) {
 								);
 							})}
 						</div>
+					) : fetchStatus === 'fetching' ? (
+						<div>Loading...</div>
 					) : (
 						<div className='flex flex-col items-center justify-between h-full mb-0'>
 							<p className='invisible'>formatting text</p>

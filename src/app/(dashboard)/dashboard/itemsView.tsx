@@ -1,13 +1,10 @@
 import { useContext, useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
-import {
-	CurrentUserContext,
-	CartStatesContext,
-	DashboardStatesContext,
-} from '../../app/(dashboard)/providers';
+import { useQuery } from '@tanstack/react-query';
+import { CurrentUserContext, CartStatesContext } from '../providers';
 import ItemCard from '@/components/itemCard';
 import { dashboardSorter } from '@/lib/utils';
-import { getItems } from '@/lib/getItems';
+import { getItems } from '@/lib/fetchers';
 import { IItemsArray, IItemsData } from '@/@types/dashboard';
 
 // TODO: add visual confirmation of fetch/loading
@@ -16,37 +13,29 @@ import { IItemsArray, IItemsData } from '@/@types/dashboard';
 
 export default function ItemsView() {
 	const currentUser = useContext(CurrentUserContext)?.currentUser;
-	const dashboardStates = useContext(DashboardStatesContext);
 	const cartStates = useContext(CartStatesContext);
 	const [searchTerm, setSearchTerm] = useState<string>('');
 	const [itemsData, setItemsData] = useState<Array<IItemsData>>([]);
-
 	const id = currentUser?.id;
-	const itemsFetchFlag = dashboardStates?.itemsFetchFlag;
-	const itemsFetchRef = dashboardStates?.itemsFetchRef;
-
 	const itemsArray: IItemsArray[] = useMemo(() => [], []);
 	const uncategorizedItems: IItemsData[] = useMemo(() => [], []);
 
+	const { isPending, isError, data, error } = useQuery({
+		queryKey: ['itemCards'],
+		// @ts-ignore
+		queryFn: () => getItems(id),
+		enabled: !!id,
+	});
+
 	useEffect(() => {
-		if (itemsFetchRef === undefined || itemsFetchRef.current || !id) {
+		if (!data) {
 			return;
 		}
-		getItems(id)
-			.then((response) => {
-				itemsArray.length = 0;
-				uncategorizedItems.length = 0;
-				return response;
-			})
-			.then((value) => {
-				setItemsData(value.data);
-				dashboardSorter(value.data, itemsArray, uncategorizedItems);
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-		itemsFetchRef.current = true;
-	}, [itemsArray, uncategorizedItems, itemsFetchFlag, itemsFetchRef, id]);
+		itemsArray.length = 0;
+		uncategorizedItems.length = 0;
+		setItemsData(data.data);
+		dashboardSorter(data.data, itemsArray, uncategorizedItems);
+	}, [itemsArray, uncategorizedItems, data]);
 
 	return (
 		<div className='flex flex-col items-center w-full px-4 md:min-w-[640px]'>
@@ -66,6 +55,8 @@ export default function ItemsView() {
 					}}
 				></input>
 			</div>
+			{isPending ? <span>Loading...</span> : null}
+			{isError ? <span>Error: {error.message}</span> : null}
 			{currentUser !== (null || undefined) ? (
 				searchTerm != '' ? (
 					<div className='flex'>

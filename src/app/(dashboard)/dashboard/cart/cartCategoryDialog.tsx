@@ -1,21 +1,15 @@
 import { useState, useContext } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import * as Dialog from '@radix-ui/react-dialog';
 import '@/styles/radix-dialog.css';
 import { DashboardStatesContext } from '@/app/(dashboard)/providers';
 
-interface ICategoryDialog {
-	setCategoryFetchFlag: React.Dispatch<React.SetStateAction<boolean>>;
-	categoryFetchRef: React.MutableRefObject<boolean>;
-}
-
-export default function CategoryDialog({
-	setCategoryFetchFlag,
-	categoryFetchRef,
-}: ICategoryDialog) {
+export default function CategoryDialog() {
 	const [newCategoryName, setNewCategoryName] = useState<string>('');
 	const dashboardStates = useContext(DashboardStatesContext);
 	const setToastOpen = dashboardStates?.setToastOpen;
 	const setToastProps = dashboardStates?.setToastProps;
+	const queryClient = useQueryClient();
 
 	const handleAddCategory = async () => {
 		if (setToastOpen === undefined || setToastProps === undefined) {
@@ -38,8 +32,7 @@ export default function CategoryDialog({
 					style: 'Success',
 				});
 				setToastOpen(true);
-				categoryFetchRef.current = false;
-				setCategoryFetchFlag(true);
+				queryClient.invalidateQueries({ queryKey: ['itemCategories'] });
 			})
 			.catch((error) => {
 				console.log(error);

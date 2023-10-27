@@ -1,14 +1,14 @@
 import { useContext, useState, useEffect, useRef, FormEvent } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import * as Form from '@radix-ui/react-form';
 import {
 	CartStatesContext,
 	DashboardStatesContext,
 } from '@/app/(dashboard)/providers';
 import CategoryDialog from './cartCategoryDialog';
+import { getCategories } from '@/lib/fetchers';
 import { ICategoriesData } from '@/@types/dashboard';
 import '@/styles/radix-form.css';
-
-// TODO: add visual confirmation of any api calls (loading indicators, toasts, etc)
 
 export default function CartAddItem() {
 	const dashboardStates = useContext(DashboardStatesContext);
@@ -16,14 +16,23 @@ export default function CartAddItem() {
 	const [categoriesList, setCategoriesList] = useState<
 		Array<ICategoriesData> | undefined
 	>(undefined);
-	const categoryFetchRef = useRef<boolean>(false);
-	const [categoryFetchFlag, setCategoryFetchFlag] = useState<boolean>(false);
 	const [activeCategory, setActiveCategory] = useState<string>('');
-	const setItemsFetchFlag = dashboardStates?.setItemsFetchFlag;
-	const itemsFetchRef = dashboardStates?.itemsFetchRef;
 	const submitBtnRef = useRef<HTMLButtonElement>(null);
 	const setToastOpen = dashboardStates?.setToastOpen;
 	const setToastProps = dashboardStates?.setToastProps;
+	const queryClient = useQueryClient();
+
+	const { data } = useQuery({
+		queryKey: ['itemCategories'],
+		queryFn: () => getCategories(),
+	});
+
+	useEffect(() => {
+		if (!data) {
+			return;
+		}
+		setCategoriesList(data.data);
+	}, [data]);
 
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		if (!setToastOpen || !setToastProps) {
@@ -61,11 +70,8 @@ export default function CartAddItem() {
 						style: 'Success',
 					});
 					setToastOpen(true);
-					if (setItemsFetchFlag && itemsFetchRef) {
-						setItemsFetchFlag(true);
-						itemsFetchRef.current = false;
-					}
 					cartStates?.setIsCartAddingItem(false);
+					queryClient.invalidateQueries({ queryKey: ['itemCards'] });
 				}
 			})
 			.catch((err) => {
@@ -90,27 +96,6 @@ export default function CartAddItem() {
 			setActiveCategory('');
 		}
 	};
-
-	useEffect(() => {
-		if (categoryFetchRef.current) {
-			return;
-		}
-		const categoriesRequest = new Request('/api/util', {
-			method: 'POST',
-			body: `{"action": "fetchCategory"}`,
-		});
-		fetch(categoriesRequest)
-			.then((response) => {
-				return response.json();
-			})
-			.then((value) => {
-				setCategoriesList(value.data);
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-		categoryFetchRef.current = true;
-	}, [categoryFetchFlag]);
 
 	return (
 		<div className='flex flex-col items-center w-72 h-screen p-8 bg-light sm:w-80'>
@@ -198,10 +183,7 @@ export default function CartAddItem() {
 						</select>
 					</Form.Control>
 				</Form.Field>
-				<CategoryDialog
-					setCategoryFetchFlag={setCategoryFetchFlag}
-					categoryFetchRef={categoryFetchRef}
-				></CategoryDialog>
+				<CategoryDialog></CategoryDialog>
 				<div className='flex items-center justify-center mt-8 space-x-1'>
 					<button className='grid place-items-center'>
 						<p

@@ -11,7 +11,7 @@ export default function CartActionBar() {
 	const [isListSaved, setIsListSaved] = useState<boolean>(false);
 	const cartStates = useContext(CartStatesContext);
 	const currentUser = useContext(CurrentUserContext)?.currentUser;
-	const isListCompleted = currentUser?.userShoppingLists[0].completed;
+	// const isListCompleted = currentUser?.userShoppingLists[0].completed;
 	const handleSaveList = () => {
 		console.log('handle save list');
 	};

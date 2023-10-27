@@ -1,11 +1,11 @@
 'use client';
 import { useState } from 'react';
 import type { Session } from 'next-auth';
-import ItemsView from '@/components/dashboard/itemsView';
-import HistoryView from '@/components/dashboard/historyView';
-import StatisticsView from '@/components/dashboard/statisticsView';
+import ItemsView from '@/app/(dashboard)/dashboard/itemsView';
+import HistoryView from '@/app/(dashboard)/dashboard/historyView';
+import StatisticsView from '@/app/(dashboard)/dashboard/statisticsView';
 import SideBar from './sideBar';
-import Cart from './cart';
+import Cart from './cart/cart';
 
 export default function Dashboard({ session }: { session?: Session }) {
 	// console.log(session)

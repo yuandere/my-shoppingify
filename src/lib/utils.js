@@ -29,3 +29,34 @@ export const dashboardSorter = (itemsData, itemsArray, uncategorizedItems) => {
     });
   }
 }
+
+export const listsSorter = (lists) => {
+  const parsedLists = lists.map(list => ({
+    ...list,
+    updatedAt: new Date(list.updatedAt)
+  }));
+
+  const sortedLists = parsedLists.sort((a, b) => b.updatedAt - a.updatedAt);
+
+  const result = [];
+  const monthYearMap = new Map();
+
+  sortedLists.forEach(list => {
+    const updatedAtDate = list.updatedAt;
+    const monthYear = `${updatedAtDate.toLocaleString('en-US', { month: 'long' })} ${updatedAtDate.getFullYear()}`;
+
+    if (!monthYearMap.has(monthYear)) {
+      monthYearMap.set(monthYear, []);
+    }
+
+    monthYearMap.get(monthYear).push(list);
+  });
+
+  for (const [monthYear, lists] of monthYearMap.entries()) {
+    result.push({
+      monthYear,
+      lists
+    });
+  }
+  return result;
+}

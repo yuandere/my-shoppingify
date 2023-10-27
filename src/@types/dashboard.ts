@@ -10,17 +10,6 @@ export interface IUserSession {
 	email?: string | null;
 	image?: string | null;
 	id?: string | null;
-	//TODO: remove below
-	itemsData?: Array<IItemsData>;
-	categoriesData?: Array<string>;
-	userShoppingLists?: Array<IUserShoppingList>;
-}
-
-interface IUserShoppingLists {
-	id: string;
-	name: string;
-	completed: boolean;
-	items: IListItem;
 }
 
 export interface IUserContext {
@@ -31,11 +20,10 @@ export interface IUserContext {
 export interface IDashboardStatesContext {
 	setToastOpen: React.Dispatch<React.SetStateAction<boolean>>;
 	setToastProps: React.Dispatch<React.SetStateAction<IToastProps>>;
-	itemsFetchFlag: boolean;
-	setItemsFetchFlag: React.Dispatch<React.SetStateAction<boolean>>;
-	itemsFetchRef: React.MutableRefObject<boolean>;
 	selectedItem: IItemsData | null;
 	setSelectedItem: React.Dispatch<React.SetStateAction<IItemsData | null>>;
+	selectedList: IList | null;
+	setSelectedList: React.Dispatch<React.SetStateAction<IList | null>>;
 }
 
 export interface ICartStatesContext {
@@ -60,6 +48,16 @@ export interface IItemsData {
 export interface IItemsArray {
 	categoryName: string;
 	items: Array<IItemsData>;
+}
+
+//historyView
+export interface IList {
+	id: string;
+	createdAt: string;
+	updatedAt: string;
+	completed: boolean;
+	name: string;
+	ownerId: string;
 }
 
 //cart
