@@ -20,10 +20,14 @@ export interface IUserContext {
 export interface IDashboardStatesContext {
 	setToastOpen: React.Dispatch<React.SetStateAction<boolean>>;
 	setToastProps: React.Dispatch<React.SetStateAction<IToastProps>>;
-	selectedItem: IItemsData | null;
-	setSelectedItem: React.Dispatch<React.SetStateAction<IItemsData | null>>;
+	isViewingList: boolean;
+	setIsViewingList: React.Dispatch<React.SetStateAction<boolean>>;
+	selectedItem: IItemCard | null;
+	setSelectedItem: React.Dispatch<React.SetStateAction<IItemCard | null>>;
 	selectedList: IList | null;
 	setSelectedList: React.Dispatch<React.SetStateAction<IList | null>>;
+	selectedListItems: Array<IItemsArray> | null;
+	setSelectedListItems: React.Dispatch<React.SetStateAction<Array<IItemsArray> | null>>;
 }
 
 export interface ICartStatesContext {
@@ -36,18 +40,23 @@ export interface ICartStatesContext {
 }
 
 //itemsView
-export interface IItemsData {
+export interface IItemCard {
 	name: string;
 	id: string;
 	categoryId?: string;
 	categoryName?: string;
 	description?: string;
 	imageUrl?: string;
+	// listitem props
+	itemId?: string;
+	listId?: string;
+	quantity?: number;
+	checked?: boolean;
 }
 
 export interface IItemsArray {
 	categoryName: string;
-	items: Array<IItemsData>;
+	items: Array<IItemCard>;
 }
 
 //historyView
@@ -69,11 +78,6 @@ export interface IListItem {
 	listId: string;
 	checked: boolean;
 	quantity: number;
-}
-
-export interface IListItemsArray {
-	categoryName: string;
-	items: Array<IListItem>;
 }
 
 export interface IUserShoppingList {

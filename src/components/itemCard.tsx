@@ -42,7 +42,7 @@ export default function ItemCard({ itemData }: { itemData: IItemCard }) {
 				{shouldTruncate ? `${itemData.name.slice(0, 21)}...` : itemData.name}
 			</p>
 			{itemData.listId ? (
-				<span className='accent-theme-1 text-xs'>
+				<span className='text-theme-1 text-xs'>
 					{itemData.quantity === 1 ? '1 pc' : `${itemData.quantity} pcs`}
 				</span>
 			) : (

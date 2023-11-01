@@ -5,7 +5,7 @@ import ShoppingList from '@/components/shoppingList';
 import ItemCard from '@/components/itemCard';
 import { getLists, getListItems } from '@/lib/fetchers';
 import { listsSorter, dashboardSorter } from '@/lib/utils';
-import { IList, IListItem, IListItemsArray } from '@/@types/dashboard';
+import { IList, IItemsArray, IListItem } from '@/@types/dashboard';
 
 interface IListObject {
 	lists: Array<IList>;
@@ -22,9 +22,9 @@ export default function HistoryView() {
 	const listId = dashStates?.selectedList?.id;
 	const isViewingList = dashStates?.isViewingList;
 	const setIsViewingList = dashStates?.setIsViewingList;
-	const selectedListItems = dashStates?.selectedListItems;
+	const selectedList = dashStates?.selectedList;
 	const setSelectedListItems = dashStates?.setSelectedListItems;
-	const listItemsArray: IListItemsArray[] = useMemo(() => [], []);
+	const listItemsArray: IItemsArray[] = useMemo(() => [], []);
 	const uncategorizedListItems: IListItem[] = useMemo(() => [], []);
 
 	const listsQuery = useQuery({
@@ -52,7 +52,6 @@ export default function HistoryView() {
 		if (!listItemsQuery.data || !setSelectedListItems || !setIsViewingList) {
 			return;
 		}
-		// TODO: set selected list items here, add to context
 		listItemsArray.length = 0;
 		uncategorizedListItems.length = 0;
 		dashboardSorter(
@@ -60,7 +59,7 @@ export default function HistoryView() {
 			listItemsArray,
 			uncategorizedListItems
 		);
-		setSelectedListItems(listItemsQuery.data.data);
+		setSelectedListItems(listItemsArray);
 		setIsViewingList(true);
 	}, [
 		listItemsArray,
@@ -89,6 +88,7 @@ export default function HistoryView() {
 					{listItemsQuery.isError ? (
 						<span>Error: {listItemsQuery.error.message}</span>
 					) : null}
+					{selectedList ? <h2 className='text-xl font-semibold mb-4'>{selectedList.name}</h2> : null}
 					{listItemsArray.length === 0 ? (
 						<span>No items found</span>
 					) : (
