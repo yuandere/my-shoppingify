@@ -1,8 +1,9 @@
 import { useContext, useState, useRef, useEffect } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { CartStatesContext } from '@/app/(dashboard)/providers';
 import { IListItem } from '@/@types/dashboard';
 
-export default function ListItem({ listItem }: { listItem: IListItem }) {
+export default function CartListItem({ listItem }: { listItem: IListItem }) {
 	const [isEditingListItem, setIsEditingListItem] = useState<boolean>(false);
 	const [isChecked, setIsChecked] = useState<boolean>(false);
 	const [itemQuantity, setItemQuantity] = useState<number>(0);

@@ -1,9 +1,12 @@
 import { useState, useEffect, useRef, useContext } from 'react';
 import * as Tooltip from '@radix-ui/react-tooltip';
-import { IItemsData } from '@/@types/dashboard';
-import { DashboardStatesContext, CartStatesContext } from '@/app/(dashboard)/providers';
+import { IItemCard } from '@/@types/dashboard';
+import {
+	DashboardStatesContext,
+	CartStatesContext,
+} from '@/app/(dashboard)/providers';
 
-export default function ItemCard({ itemData }: { itemData: IItemsData }) {
+export default function ItemCard({ itemData }: { itemData: IItemCard }) {
 	// TODO: remove name truncate code after setting limit on chars when adding new items
 	const dashboardStates = useContext(DashboardStatesContext);
 	const cartStates = useContext(CartStatesContext);
@@ -38,25 +41,31 @@ export default function ItemCard({ itemData }: { itemData: IItemsData }) {
 			<p ref={ref} className='mr-1 break-words w-[120px]'>
 				{shouldTruncate ? `${itemData.name.slice(0, 21)}...` : itemData.name}
 			</p>
-			<Tooltip.Root>
-				<Tooltip.Trigger asChild>
-					<span
-						className='material-icons transition text-ui cursor-pointer hover:text-ui-dark'
-						onClick={(e) => {
-							e.stopPropagation();
-							console.log('add to list clicked');
-						}}
-					>
-						add
-					</span>
-				</Tooltip.Trigger>
-				<Tooltip.Portal>
-					<Tooltip.Content className='TooltipContent' sideOffset={5}>
-						Add to list
-						<Tooltip.Arrow className='TooltipArrow' />
-					</Tooltip.Content>
-				</Tooltip.Portal>
-			</Tooltip.Root>
+			{itemData.listId ? (
+				<span className='accent-theme-1 text-xs'>
+					{itemData.quantity === 1 ? '1 pc' : `${itemData.quantity} pcs`}
+				</span>
+			) : (
+				<Tooltip.Root>
+					<Tooltip.Trigger asChild>
+						<span
+							className='material-icons transition text-ui cursor-pointer hover:text-ui-dark'
+							onClick={(e) => {
+								e.stopPropagation();
+								console.log('add to list clicked');
+							}}
+						>
+							add
+						</span>
+					</Tooltip.Trigger>
+					<Tooltip.Portal>
+						<Tooltip.Content className='TooltipContent' sideOffset={5}>
+							Add to list
+							<Tooltip.Arrow className='TooltipArrow' />
+						</Tooltip.Content>
+					</Tooltip.Portal>
+				</Tooltip.Root>
+			)}
 		</div>
 	);
 }

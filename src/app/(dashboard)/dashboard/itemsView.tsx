@@ -5,7 +5,7 @@ import { CurrentUserContext, CartStatesContext } from '../providers';
 import ItemCard from '@/components/itemCard';
 import { dashboardSorter } from '@/lib/utils';
 import { getItems } from '@/lib/fetchers';
-import { IItemsArray, IItemsData } from '@/@types/dashboard';
+import { IItemsArray, IItemCard } from '@/@types/dashboard';
 
 // TODO: add visual confirmation of fetch/loading
 // TODO: change currentUser conditional render -> "something went wrong" to showing that there are no items if itemsArray is empty, and prompt user to add some
@@ -15,10 +15,10 @@ export default function ItemsView() {
 	const currentUser = useContext(CurrentUserContext)?.currentUser;
 	const cartStates = useContext(CartStatesContext);
 	const [searchTerm, setSearchTerm] = useState<string>('');
-	const [itemsData, setItemsData] = useState<Array<IItemsData>>([]);
+	const [itemsData, setItemsData] = useState<Array<IItemCard>>([]);
 	const id = currentUser?.id;
 	const itemsArray: IItemsArray[] = useMemo(() => [], []);
-	const uncategorizedItems: IItemsData[] = useMemo(() => [], []);
+	const uncategorizedItems: IItemCard[] = useMemo(() => [], []);
 
 	const { isPending, isError, data, error } = useQuery({
 		queryKey: ['itemCards'],
@@ -73,12 +73,12 @@ export default function ItemsView() {
 					</div>
 				) : (
 					<>
-						{itemsArray.map((item, i) => {
+						{itemsArray.map((category, i) => {
 							return (
 								<div className='' key={`items-category-${i}`}>
-									<h1 className='text-lg max-w-xs'>{item.categoryName}</h1>
+									<h1 className='text-lg max-w-xs'>{category.categoryName}</h1>
 									<div className='flex'>
-										{item.items.map((item, i) => {
+										{category.items.map((item, i) => {
 											return (
 												<ItemCard
 													itemData={item}
