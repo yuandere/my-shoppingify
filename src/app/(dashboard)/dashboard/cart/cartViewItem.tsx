@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import Image from 'next/image';
-import { useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query';
 import {
 	CartStatesContext,
 	DashboardStatesContext,
@@ -40,6 +40,14 @@ export default function CartViewItem() {
 					setToastOpen(true);
 					cartStates?.setIsCartViewingItem(false);
 					queryClient.invalidateQueries({ queryKey: ['itemCards'] });
+				} else {
+					setToastProps({
+						title: 'Error',
+						content: 'Item not deleted',
+						altText: 'your item was not deleted',
+						style: 'Danger',
+					});
+					setToastOpen(true);
 				}
 			})
 			.catch((err) => {
@@ -48,7 +56,7 @@ export default function CartViewItem() {
 					title: 'Error',
 					content: 'Item not deleted',
 					altText: 'your item was not deleted',
-					style: 'Error',
+					style: 'Danger',
 				});
 				setToastOpen(true);
 			});

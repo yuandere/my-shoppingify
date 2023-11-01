@@ -80,7 +80,7 @@ export default function CartAddItem() {
 					title: 'Error',
 					content: 'Item not added',
 					altText: 'your item was not added',
-					style: 'Error',
+					style: 'Danger',
 				});
 				setToastOpen(true);
 				if (submitBtnRef && submitBtnRef.current != null) {

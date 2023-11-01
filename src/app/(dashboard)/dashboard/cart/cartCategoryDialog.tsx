@@ -40,7 +40,7 @@ export default function CategoryDialog() {
 					title: 'Error',
 					content: 'Category not added',
 					altText: 'your category was not added',
-					style: 'Error',
+					style: 'Danger',
 				});
 				setToastOpen(true);
 			});
