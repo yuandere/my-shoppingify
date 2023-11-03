@@ -5,6 +5,7 @@ import {
 	itemCardAdd,
 	itemCardDelete,
 } from '../../../../prisma/dashboard.schema';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 interface IItemCardAdd {
 	name: string;
@@ -125,10 +126,12 @@ async function deleteItemCard(body: IItemCardDelete) {
 			success: true,
 		});
 	} catch (error) {
+		const err = error as PrismaClientKnownRequestError;
 		console.error('Request error', error);
 		return NextResponse.json({
 			error: 'Error deleting item card',
 			success: false,
+			code: err.code,
 		});
 	}
 }

@@ -41,10 +41,14 @@ export default function CartViewItem() {
 					cartStates?.setIsCartViewingItem(false);
 					queryClient.invalidateQueries({ queryKey: ['itemCards'] });
 				} else {
+					let content = 'Item not deleted';
+					if (value.code === 'P2014') {
+						content = 'Items present on a list cannot be deleted';
+					}
 					setToastProps({
 						title: 'Error',
-						content: 'Item not deleted',
-						altText: 'your item was not deleted',
+						content: content,
+						altText: content,
 						style: 'Danger',
 					});
 					setToastOpen(true);
