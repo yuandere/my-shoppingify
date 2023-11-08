@@ -30,9 +30,11 @@ export default function ItemCard({ itemData }: { itemData: IItemCard }) {
 
 	return (
 		<div
-			className='flex items-center justify-between rounded-xl drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)] w-48 min-h-min max-h-20 bg-white mx-2 my-4 p-4 cursor-pointer transition hover:bg-theme-3 hover:scale-[1.03] hover:drop-shadow-[0_2px_9px_rgba(0,0,0,0.14)]'
+			className={`flex items-center justify-between rounded-xl drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)] w-48 min-h-min max-h-20 bg-white mx-2 my-4 p-4 select-none transition hover:bg-theme-3 hover:scale-[1.03] hover:drop-shadow-[0_2px_9px_rgba(0,0,0,0.14)] ${
+				!itemData.listId ? 'cursor-pointer' : null
+			}`}
 			onClick={() => {
-				if (setSelectedItem && setIsCartViewingItem) {
+				if (setSelectedItem && setIsCartViewingItem && !itemData.listId) {
 					setSelectedItem(itemData);
 					setIsCartViewingItem(true);
 				}

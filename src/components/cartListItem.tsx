@@ -1,15 +1,59 @@
-import { useContext, useState, useRef, useEffect } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { CartStatesContext } from '@/app/(dashboard)/providers';
+import { useContext, useState, useRef, useEffect, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { useDebounce } from '@uidotdev/usehooks';
+import {
+	CartStatesContext,
+	DashboardStatesContext,
+} from '@/app/(dashboard)/providers';
 import { IListItem } from '@/@types/dashboard';
 
 export default function CartListItem({ listItem }: { listItem: IListItem }) {
 	const [isEditingListItem, setIsEditingListItem] = useState<boolean>(false);
 	const [isChecked, setIsChecked] = useState<boolean>(false);
-	const [itemQuantity, setItemQuantity] = useState<number>(0);
-	const cartStates = useContext(CartStatesContext);
+	const [itemQuantity, setItemQuantity] = useState<number>(listItem.quantity);
 	const listItemRef = useRef<HTMLDivElement>(null);
 	const checkboxRef = useRef<HTMLInputElement>(null);
+	const dashStates = useContext(DashboardStatesContext);
+	const cartStates = useContext(CartStatesContext);
+	const debouncedChecked = useDebounce(isChecked, 700);
+	const queryClient = useQueryClient();
+
+	const requestChangeQuantity = useCallback(async () => {
+		console.log('req change qty firing');
+		if (itemQuantity === listItem.quantity) {
+			return;
+		}
+		const data = {
+			action: 'quantity',
+			quantity: itemQuantity,
+			listId: listItem.listId,
+			listItemId: listItem.id,
+		};
+		fetch('/api/listItem', {
+			method: 'POST',
+			body: JSON.stringify(data),
+		})
+			.then((response) => {
+				// TODO: explore usemutation to optimistically update list items, setquery to new data
+				if (response.ok) {
+					queryClient.invalidateQueries({
+						queryKey: ['listItems', listItem.listId],
+					});
+				}
+			})
+			.catch((error) => {
+				const err = error as Error;
+				console.error(error);
+				dashStates?.setToastProps({
+					title: 'Error',
+					content: err.message,
+					altText: err.message,
+					style: 'Danger',
+				});
+				dashStates?.setToastOpen(true);
+				setItemQuantity(listItem.quantity);
+			});
+	}, [dashStates, itemQuantity, listItem, queryClient]);
 
 	// TODO: add logic to update checked
 	const handleListItemClick = () => {
@@ -39,16 +83,16 @@ export default function CartListItem({ listItem }: { listItem: IListItem }) {
 		}
 	};
 
-	// TODO: add quantity logic here
+	// TODO: do check/uncheck request
 	useEffect(() => {
-		const updateQuantityReq = setTimeout(() => {
-			console.log('quantity updated');
-		}, 3000);
-	}, [itemQuantity]);
+		console.log('check/uncheck wip')
+	}, [debouncedChecked])
 
 	useEffect(() => {
-		setItemQuantity(listItem.quantity);
-	}, [listItem.quantity]);
+		if (!isEditingListItem && itemQuantity != listItem.quantity) {
+			requestChangeQuantity();
+		}
+	}, [isEditingListItem, itemQuantity, listItem.quantity, requestChangeQuantity])
 
 	useEffect(() => {
 		if (!cartStates?.isCartEditingState && isEditingListItem) {
