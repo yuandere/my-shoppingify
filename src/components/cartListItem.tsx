@@ -1,6 +1,6 @@
 import { useContext, useState, useRef, useEffect, useCallback } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
-import { useDebounce } from '@uidotdev/usehooks';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+// import { useDebounce } from '@uidotdev/usehooks';
 import {
 	CartStatesContext,
 	DashboardStatesContext,
@@ -15,9 +15,79 @@ export default function CartListItem({ listItem }: { listItem: IListItem }) {
 	const checkboxRef = useRef<HTMLInputElement>(null);
 	const dashStates = useContext(DashboardStatesContext);
 	const cartStates = useContext(CartStatesContext);
-	const debouncedChecked = useDebounce(isChecked, 700);
+	// const debouncedChecked = useDebounce(isChecked, 700);
 	const queryClient = useQueryClient();
 
+	const mutateQuantity = useMutation({
+		mutationFn: () => {
+			const data = {
+				action: 'quantity',
+				quantity: itemQuantity,
+				listId: listItem.listId,
+				listItemId: listItem.id,
+			};
+			return fetch('/api/listItem', { method: 'POST', body: JSON.stringify(data)})
+		}, 
+		onSuccess: () => {
+			// TODO: update ui state
+			queryClient.setQueryData(['listItems', listItem.listId],   (oldData: Array<IListItem>) => {
+				if (!oldData) {
+					return oldData;
+				}
+				const changeIndex = oldData.find((item) => item.id === listItem.id);
+				// do something
+				// let clonedData = oldData.map(a => { return { ...a}});
+			});
+			queryClient.invalidateQueries({
+				queryKey: ['listItems', listItem.listId],
+			});
+		},
+		onError: (error) => {
+			const err = error as Error;
+			console.error(error);
+			dashStates?.setToastProps({
+				title: 'Error',
+				content: err.message,
+				altText: err.message,
+				style: 'Danger',
+			});
+			dashStates?.setToastOpen(true);
+			setItemQuantity(listItem.quantity);
+		}
+	})
+
+	const mutateChecked = useMutation({
+		mutationFn: () => {
+			const data = {
+				action: 'quantity',
+				quantity: itemQuantity,
+				listId: listItem.listId,
+				listItemId: listItem.id,
+			};
+			return fetch('/api/listItem', { method: 'POST', body: JSON.stringify(data)})
+		}, 
+		onSuccess: () => {
+			// TODO: replace with setQuery
+			// TODO: update ui state
+			queryClient.invalidateQueries({
+				queryKey: ['listItems', listItem.listId],
+			});
+		},
+		onError: (error) => {
+			const err = error as Error;
+			console.error(error);
+			dashStates?.setToastProps({
+				title: 'Error',
+				content: err.message,
+				altText: err.message,
+				style: 'Danger',
+			});
+			dashStates?.setToastOpen(true);
+			setItemQuantity(listItem.quantity);
+		}
+	})
+
+	// TODO: change this to usemutation
 	const requestChangeQuantity = useCallback(async () => {
 		console.log('req change qty firing');
 		if (itemQuantity === listItem.quantity) {
@@ -55,6 +125,34 @@ export default function CartListItem({ listItem }: { listItem: IListItem }) {
 			});
 	}, [dashStates, itemQuantity, listItem, queryClient]);
 
+	// const requestChangeChecked = async() => {
+	// 	console.log('checked request firing');
+	// 	const data = {
+	// 		action: 'check',
+	// 		checked: isChecked,
+	// 		listId: listItem.listId,
+	// 		listItemId: listItem.id,
+	// 	};
+	// 	fetch('/api/listItem', { method: 'POST', body: JSON.stringify(data)})
+	// 	.then(response => {
+	// 		if (response.ok) {
+	// 			// do something
+	// 		}
+	// 	})
+	// 	.catch(error => {
+	// 		const err = error as Error;
+	// 		console.error(error);
+	// 		dashStates?.setToastProps({
+	// 			title: 'Error',
+	// 			content: err.message,
+	// 			altText: err.message,
+	// 			style: 'Danger',
+	// 		});
+	// 		dashStates?.setToastOpen(true);
+	// 		// do something
+	// 	})
+	// }
+
 	// TODO: add logic to update checked
 	const handleListItemClick = () => {
 		if (cartStates?.isCartEditingState) {
@@ -83,16 +181,11 @@ export default function CartListItem({ listItem }: { listItem: IListItem }) {
 		}
 	};
 
-	// TODO: do check/uncheck request
-	useEffect(() => {
-		console.log('check/uncheck wip')
-	}, [debouncedChecked])
-
 	useEffect(() => {
 		if (!isEditingListItem && itemQuantity != listItem.quantity) {
-			requestChangeQuantity();
+			mutateQuantity.mutate();
 		}
-	}, [isEditingListItem, itemQuantity, listItem.quantity, requestChangeQuantity])
+	}, [isEditingListItem, itemQuantity, listItem.quantity, mutateQuantity])
 
 	useEffect(() => {
 		if (!cartStates?.isCartEditingState && isEditingListItem) {

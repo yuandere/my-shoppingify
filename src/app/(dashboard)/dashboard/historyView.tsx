@@ -41,6 +41,10 @@ export default function HistoryView() {
 		enabled: !!listId,
 	});
 
+	if (listItemsQuery.data) {
+		console.log('query data:', listItemsQuery.data);
+	}
+
 	useEffect(() => {
 		if (!listsQuery.data) {
 			return;
