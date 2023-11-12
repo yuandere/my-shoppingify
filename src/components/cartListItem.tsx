@@ -5,7 +5,7 @@ import {
 	CartStatesContext,
 	DashboardStatesContext,
 } from '@/app/(dashboard)/providers';
-import { IListItem } from '@/@types/dashboard';
+import { IListItem, IListItemsResponse } from '@/@types/dashboard';
 
 export default function CartListItem({ listItem }: { listItem: IListItem }) {
 	const [isEditingListItem, setIsEditingListItem] = useState<boolean>(false);
@@ -30,13 +30,17 @@ export default function CartListItem({ listItem }: { listItem: IListItem }) {
 		}, 
 		onSuccess: () => {
 			// TODO: update ui state
-			queryClient.setQueryData(['listItems', listItem.listId],   (oldData: Array<IListItem>) => {
+			queryClient.setQueryData(['listItems', listItem.listId],   (oldData: IListItemsResponse) => {
 				if (!oldData) {
 					return oldData;
 				}
-				const changeIndex = oldData.find((item) => item.id === listItem.id);
-				// do something
-				// let clonedData = oldData.map(a => { return { ...a}});
+				console.log('oldData', oldData);
+				const changeIndex = oldData.data.findIndex((item) => item.id === listItem.id);
+				let clonedData = oldData.data.map(a => { return { ...a}});
+				clonedData[changeIndex].quantity = itemQuantity;
+				console.log('cloned data', clonedData);
+				// problem: clonedData is only Array<IListItem>, not IListItemsResponse. Change it so it matches
+				return clonedData;
 			});
 			queryClient.invalidateQueries({
 				queryKey: ['listItems', listItem.listId],

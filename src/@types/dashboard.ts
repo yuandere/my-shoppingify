@@ -39,6 +39,15 @@ export interface ICartStatesContext {
 	setIsCartEditingState: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+export interface IApiResponse {
+	message: string;
+	success: boolean;
+}
+
+export interface IListItemsResponse extends IApiResponse {
+	data: Array<IListItem>;
+}
+
 //itemsView
 export interface IItemCard {
 	name: string;
