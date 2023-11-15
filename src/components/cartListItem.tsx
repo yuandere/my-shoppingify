@@ -1,6 +1,5 @@
-import { useContext, useState, useRef, useEffect, useCallback } from 'react';
+import { useContext, useState, useRef, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-// import { useDebounce } from '@uidotdev/usehooks';
 import {
 	CartStatesContext,
 	DashboardStatesContext,
@@ -9,13 +8,12 @@ import { IListItem, IListItemsResponse } from '@/@types/dashboard';
 
 export default function CartListItem({ listItem }: { listItem: IListItem }) {
 	const [isEditingListItem, setIsEditingListItem] = useState<boolean>(false);
-	const [isChecked, setIsChecked] = useState<boolean>(false);
+	const [isChecked, setIsChecked] = useState<boolean>(listItem.checked);
 	const [itemQuantity, setItemQuantity] = useState<number>(listItem.quantity);
 	const listItemRef = useRef<HTMLDivElement>(null);
 	const checkboxRef = useRef<HTMLInputElement>(null);
 	const dashStates = useContext(DashboardStatesContext);
 	const cartStates = useContext(CartStatesContext);
-	// const debouncedChecked = useDebounce(isChecked, 700);
 	const queryClient = useQueryClient();
 
 	const mutateQuantity = useMutation({
@@ -26,25 +24,30 @@ export default function CartListItem({ listItem }: { listItem: IListItem }) {
 				listId: listItem.listId,
 				listItemId: listItem.id,
 			};
-			return fetch('/api/listItem', { method: 'POST', body: JSON.stringify(data)})
-		}, 
+			return fetch('/api/listItem', {
+				method: 'POST',
+				body: JSON.stringify(data),
+			});
+		},
 		onSuccess: () => {
-			// TODO: update ui state
-			queryClient.setQueryData(['listItems', listItem.listId],   (oldData: IListItemsResponse) => {
-				if (!oldData) {
-					return oldData;
+			queryClient.setQueryData(
+				['listItems', listItem.listId],
+				(oldData: IListItemsResponse) => {
+					if (!oldData) {
+						return oldData;
+					}
+					const changeIndex = oldData.data.findIndex(
+						(item) => item.id === listItem.id
+					);
+					let clonedData = { ...oldData };
+					clonedData.data = oldData.data.map((a) => {
+						return { ...a };
+					});
+					clonedData.data[changeIndex].quantity = itemQuantity;
+					return clonedData;
 				}
-				console.log('oldData', oldData);
-				const changeIndex = oldData.data.findIndex((item) => item.id === listItem.id);
-				let clonedData = oldData.data.map(a => { return { ...a}});
-				clonedData[changeIndex].quantity = itemQuantity;
-				console.log('cloned data', clonedData);
-				// problem: clonedData is only Array<IListItem>, not IListItemsResponse. Change it so it matches
-				return clonedData;
-			});
-			queryClient.invalidateQueries({
-				queryKey: ['listItems', listItem.listId],
-			});
+			);
+			// TODO: do something here to cause rerendering in historyview
 		},
 		onError: (error) => {
 			const err = error as Error;
@@ -57,25 +60,44 @@ export default function CartListItem({ listItem }: { listItem: IListItem }) {
 			});
 			dashStates?.setToastOpen(true);
 			setItemQuantity(listItem.quantity);
-		}
-	})
+		},
+	});
 
 	const mutateChecked = useMutation({
-		mutationFn: () => {
+		mutationFn: (check: boolean) => {
 			const data = {
-				action: 'quantity',
-				quantity: itemQuantity,
+				action: 'check',
+				checked: check,
 				listId: listItem.listId,
 				listItemId: listItem.id,
 			};
-			return fetch('/api/listItem', { method: 'POST', body: JSON.stringify(data)})
-		}, 
-		onSuccess: () => {
-			// TODO: replace with setQuery
-			// TODO: update ui state
-			queryClient.invalidateQueries({
-				queryKey: ['listItems', listItem.listId],
+			return fetch('/api/listItem', {
+				method: 'POST',
+				body: JSON.stringify(data),
 			});
+		},
+		onSuccess: () => {
+			queryClient.setQueryData(
+				['listItems', listItem.listId],
+				(oldData: IListItemsResponse) => {
+					if (!oldData || mutateChecked.variables === undefined) {
+						return oldData;
+					}
+					const changeIndex = oldData.data.findIndex(
+						(item) => item.id === listItem.id
+					);
+					let clonedData = { ...oldData };
+					clonedData.data = oldData.data.map((a) => {
+						return { ...a };
+					});
+					clonedData.data[changeIndex].checked = mutateChecked.variables;
+					console.log('cloned:', clonedData.data[changeIndex].checked);
+					return clonedData;
+				}
+			);
+			if (mutateChecked.variables != undefined) {
+				setIsChecked(mutateChecked.variables);
+			}
 		},
 		onError: (error) => {
 			const err = error as Error;
@@ -87,77 +109,9 @@ export default function CartListItem({ listItem }: { listItem: IListItem }) {
 				style: 'Danger',
 			});
 			dashStates?.setToastOpen(true);
-			setItemQuantity(listItem.quantity);
-		}
-	})
+		},
+	});
 
-	// TODO: change this to usemutation
-	const requestChangeQuantity = useCallback(async () => {
-		console.log('req change qty firing');
-		if (itemQuantity === listItem.quantity) {
-			return;
-		}
-		const data = {
-			action: 'quantity',
-			quantity: itemQuantity,
-			listId: listItem.listId,
-			listItemId: listItem.id,
-		};
-		fetch('/api/listItem', {
-			method: 'POST',
-			body: JSON.stringify(data),
-		})
-			.then((response) => {
-				// TODO: explore usemutation to optimistically update list items, setquery to new data
-				if (response.ok) {
-					queryClient.invalidateQueries({
-						queryKey: ['listItems', listItem.listId],
-					});
-				}
-			})
-			.catch((error) => {
-				const err = error as Error;
-				console.error(error);
-				dashStates?.setToastProps({
-					title: 'Error',
-					content: err.message,
-					altText: err.message,
-					style: 'Danger',
-				});
-				dashStates?.setToastOpen(true);
-				setItemQuantity(listItem.quantity);
-			});
-	}, [dashStates, itemQuantity, listItem, queryClient]);
-
-	// const requestChangeChecked = async() => {
-	// 	console.log('checked request firing');
-	// 	const data = {
-	// 		action: 'check',
-	// 		checked: isChecked,
-	// 		listId: listItem.listId,
-	// 		listItemId: listItem.id,
-	// 	};
-	// 	fetch('/api/listItem', { method: 'POST', body: JSON.stringify(data)})
-	// 	.then(response => {
-	// 		if (response.ok) {
-	// 			// do something
-	// 		}
-	// 	})
-	// 	.catch(error => {
-	// 		const err = error as Error;
-	// 		console.error(error);
-	// 		dashStates?.setToastProps({
-	// 			title: 'Error',
-	// 			content: err.message,
-	// 			altText: err.message,
-	// 			style: 'Danger',
-	// 		});
-	// 		dashStates?.setToastOpen(true);
-	// 		// do something
-	// 	})
-	// }
-
-	// TODO: add logic to update checked
 	const handleListItemClick = () => {
 		if (cartStates?.isCartEditingState) {
 			if (!isEditingListItem) {
@@ -189,7 +143,7 @@ export default function CartListItem({ listItem }: { listItem: IListItem }) {
 		if (!isEditingListItem && itemQuantity != listItem.quantity) {
 			mutateQuantity.mutate();
 		}
-	}, [isEditingListItem, itemQuantity, listItem.quantity, mutateQuantity])
+	}, [isEditingListItem, itemQuantity, listItem.quantity, mutateQuantity]);
 
 	useEffect(() => {
 		if (!cartStates?.isCartEditingState && isEditingListItem) {
@@ -229,11 +183,9 @@ export default function CartListItem({ listItem }: { listItem: IListItem }) {
 					checked={isChecked ? true : false}
 					onChange={(e) => {
 						if (e.target.checked === true) {
-							setIsChecked(true);
-							console.log('req to check');
+							mutateChecked.mutate(true);
 						} else {
-							setIsChecked(false);
-							console.log('req to uncheck');
+							mutateChecked.mutate(false);
 						}
 					}}
 					onClick={(e) => {
