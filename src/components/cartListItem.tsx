@@ -91,13 +91,57 @@ export default function CartListItem({ listItem }: { listItem: IListItem }) {
 						return { ...a };
 					});
 					clonedData.data[changeIndex].checked = mutateChecked.variables;
-					console.log('cloned:', clonedData.data[changeIndex].checked);
 					return clonedData;
 				}
 			);
 			if (mutateChecked.variables != undefined) {
 				setIsChecked(mutateChecked.variables);
 			}
+		},
+		onError: (error) => {
+			const err = error as Error;
+			console.error(error);
+			dashStates?.setToastProps({
+				title: 'Error',
+				content: err.message,
+				altText: err.message,
+				style: 'Danger',
+			});
+			dashStates?.setToastOpen(true);
+		},
+	});
+
+	const mutateDeletion = useMutation({
+		mutationFn: () => {
+			const data = {
+				action: 'delete',
+				listId: listItem.listId,
+				listItemId: listItem.id,
+			};
+			return fetch('/api/listItem', {
+				method: 'POST',
+				body: JSON.stringify(data),
+			});
+		},
+		onSuccess: () => {
+			queryClient.setQueryData(
+				['listItems', listItem.listId],
+				(oldData: IListItemsResponse) => {
+					if (!oldData) {
+						return oldData;
+					}
+					const changeIndex = oldData.data.findIndex(
+						(item) => item.id === listItem.id
+					);
+					let clonedData = { ...oldData };
+					clonedData.data = oldData.data.map((a) => {
+						return { ...a };
+					});
+					clonedData.data.splice(changeIndex, 1);
+					return clonedData;
+				}
+			);
+			console.log('listItem deleted, ui wip')
 		},
 		onError: (error) => {
 			const err = error as Error;
@@ -122,13 +166,6 @@ export default function CartListItem({ listItem }: { listItem: IListItem }) {
 		} else if (checkboxRef.current) {
 			checkboxRef.current.click();
 		}
-	};
-
-	// TODO: add logic to delete list item and toast here
-	const handleDeleteListItem = (
-		event: React.MouseEvent<HTMLDivElement, MouseEvent>
-	) => {
-		console.log('handleDeleteListItem', event.currentTarget);
 	};
 
 	const handleQuantityChange = (add: boolean) => {
@@ -206,7 +243,7 @@ export default function CartListItem({ listItem }: { listItem: IListItem }) {
 						className='grid items-center bg-theme-1 rounded-lg text-white cursor-pointer transition select-none hover:bg-orange-600'
 						onClick={(e) => {
 							e.stopPropagation();
-							handleDeleteListItem(e);
+							mutateDeletion.mutate();
 						}}
 					>
 						<span className='material-icons-outlined m-1 text-lg'>delete</span>
