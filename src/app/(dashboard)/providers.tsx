@@ -1,6 +1,10 @@
 'use client';
 import { createContext, useState, useEffect } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+	QueryCache,
+	QueryClient,
+	QueryClientProvider,
+} from '@tanstack/react-query';
 import { Provider as ToastProvider } from '@radix-ui/react-toast';
 import { Provider as TooltipProvider } from '@radix-ui/react-tooltip';
 import { Toast } from '@/components/toast';
@@ -28,10 +32,6 @@ export function Providers({
 	children: React.ReactNode;
 	session: Session | null;
 }) {
-	const [queryClient] = useState(
-		() =>
-			new QueryClient({ defaultOptions: { queries: { staleTime: 5 * 60 * 1000 } } })
-	);
 	const [currentUser, setCurrentUser] = useState<IUserSession>({});
 	const [toastOpen, setToastOpen] = useState<boolean>(false);
 	const [toastProps, setToastProps] = useState<IToastProps>({
@@ -42,10 +42,28 @@ export function Providers({
 	const [isViewingList, setIsViewingList] = useState<boolean>(false);
 	const [selectedItem, setSelectedItem] = useState<IItemCard | null>(null);
 	const [selectedList, setSelectedList] = useState<IList | null>(null);
-	const [selectedListItems, setSelectedListItems] = useState<Array<IItemsArray> | null>(null);
+	const [selectedListItems, setSelectedListItems] =
+		useState<Array<IItemsArray> | null>(null);
 	const [isCartAddingItem, setIsCartAddingItem] = useState<boolean>(false);
 	const [isCartViewingItem, setIsCartViewingItem] = useState<boolean>(false);
 	const [isCartEditingState, setIsCartEditingState] = useState<boolean>(false);
+	const [queryClient] = useState(
+		() =>
+			new QueryClient({
+				defaultOptions: { queries: { staleTime: 5 * 60 * 1000 } },
+				queryCache: new QueryCache({
+					onError: (error) => {
+						setToastOpen(true);
+						setToastProps({
+							title: 'Error',
+							content: error.message,
+							altText: error.message,
+							style: 'Danger',
+						});
+					},
+				}),
+			})
+	);
 
 	useEffect(() => {
 		if (session) {
@@ -75,7 +93,7 @@ export function Providers({
 								selectedList,
 								setSelectedList,
 								selectedListItems,
-								setSelectedListItems
+								setSelectedListItems,
 							}}
 						>
 							<CartStatesContext.Provider

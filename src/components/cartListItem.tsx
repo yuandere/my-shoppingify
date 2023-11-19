@@ -12,7 +12,7 @@ export default function CartListItem({ listItem }: { listItem: IListItem }) {
 	const [itemQuantity, setItemQuantity] = useState<number>(listItem.quantity);
 	const listItemRef = useRef<HTMLDivElement>(null);
 	const checkboxRef = useRef<HTMLInputElement>(null);
-	const dashStates = useContext(DashboardStatesContext);
+	const dashboardStates = useContext(DashboardStatesContext);
 	const cartStates = useContext(CartStatesContext);
 	const queryClient = useQueryClient();
 
@@ -52,13 +52,13 @@ export default function CartListItem({ listItem }: { listItem: IListItem }) {
 		onError: (error) => {
 			const err = error as Error;
 			console.error(error);
-			dashStates?.setToastProps({
+			dashboardStates?.setToastProps({
 				title: 'Error',
 				content: err.message,
 				altText: err.message,
 				style: 'Danger',
 			});
-			dashStates?.setToastOpen(true);
+			dashboardStates?.setToastOpen(true);
 			setItemQuantity(listItem.quantity);
 		},
 	});
@@ -101,13 +101,13 @@ export default function CartListItem({ listItem }: { listItem: IListItem }) {
 		onError: (error) => {
 			const err = error as Error;
 			console.error(error);
-			dashStates?.setToastProps({
+			dashboardStates?.setToastProps({
 				title: 'Error',
 				content: err.message,
 				altText: err.message,
 				style: 'Danger',
 			});
-			dashStates?.setToastOpen(true);
+			dashboardStates?.setToastOpen(true);
 		},
 	});
 
@@ -146,13 +146,13 @@ export default function CartListItem({ listItem }: { listItem: IListItem }) {
 		onError: (error) => {
 			const err = error as Error;
 			console.error(error);
-			dashStates?.setToastProps({
+			dashboardStates?.setToastProps({
 				title: 'Error',
 				content: err.message,
 				altText: err.message,
 				style: 'Danger',
 			});
-			dashStates?.setToastOpen(true);
+			dashboardStates?.setToastOpen(true);
 		},
 	});
 

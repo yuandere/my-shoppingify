@@ -3,17 +3,17 @@ import { DashboardStatesContext } from '@/app/(dashboard)/providers';
 import { IList } from '@/@types/dashboard';
 
 export default function ShoppingList({ listProps }: { listProps: IList }) {
-	const dashStates = useContext(DashboardStatesContext);
-	const selectedList = dashStates?.selectedList;
+	const dashboardStates = useContext(DashboardStatesContext);
+	const selectedList = dashboardStates?.selectedList;
 	const createdAt = new Date(listProps.createdAt).toDateString();
 	return (
 		<div
 			className='flex items-center justify-between select-none border-black cursor-pointer hover:border-2'
 			onClick={() => {
 				if (selectedList?.id != listProps.id) {
-					dashStates?.setSelectedList(listProps);
+					dashboardStates?.setSelectedList(listProps);
 				} else {
-					dashStates?.setIsViewingList(true);
+					dashboardStates?.setIsViewingList(true);
 				}
 			}}
 		>

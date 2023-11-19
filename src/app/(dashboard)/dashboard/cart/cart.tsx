@@ -1,6 +1,5 @@
 import { useContext } from 'react';
 import Image from 'next/image';
-import { useMutation } from '@tanstack/react-query';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import { CartStatesContext, DashboardStatesContext } from '../../providers';
 import CartAddItem from '@/app/(dashboard)/dashboard/cart/cartAddItem';
@@ -10,14 +9,11 @@ import CartListItem from '@/components/cartListItem';
 import addItemGraphic from '@/assets/source.svg';
 import cartGraphic from '@/assets/undraw_shopping_app_flsj 1.svg';
 
-// TODO: useMutation, listItem API interactions
-
 export default function Cart() {
-	const dashStates = useContext(DashboardStatesContext);
+	const dashboardStates = useContext(DashboardStatesContext);
 	const cartStates = useContext(CartStatesContext);
-	const selectedList = dashStates?.selectedList;
-	const listId = selectedList?.id;
-	const selectedListItems = dashStates?.selectedListItems;
+	const selectedList = dashboardStates?.selectedList;
+	const selectedListItems = dashboardStates?.selectedListItems;
 
 	return (
 		<>
