@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect, useMemo } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import * as Tooltip from '@radix-ui/react-tooltip';
@@ -6,30 +6,20 @@ import { CartStatesContext, DashboardStatesContext } from '../../providers';
 import CartAddItem from '@/app/(dashboard)/dashboard/cart/cartAddItem';
 import CartViewItem from '@/app/(dashboard)/dashboard/cart/cartViewItem';
 import CartActionBar from '@/app/(dashboard)/dashboard/cart/cartActionBar';
-import ListItem from '@/components/listItem';
-import { getListItems } from '@/lib/fetchers';
+import CartListItem from '@/components/cartListItem';
 import { dashboardSorter } from '@/lib/utils';
-import {
-	IListItemsArray,
-	IUserShoppingList,
-	IListItem,
-} from '@/@types/dashboard';
+import { IItemsArray, IListItem } from '@/@types/dashboard';
 import addItemGraphic from '@/assets/source.svg';
 import cartGraphic from '@/assets/undraw_shopping_app_flsj 1.svg';
 
-// TODO: useMutation, listItem API interactions
-
 export default function Cart() {
-	const [selectedListItems, setSelectedListItems] =
-		useState<IUserShoppingList | null>(null);
-	const dashStates = useContext(DashboardStatesContext);
+	const [sortedItems, setSortedItems] = useState<IItemsArray[] | null>(null);
+	const dashboardStates = useContext(DashboardStatesContext);
 	const cartStates = useContext(CartStatesContext);
-	const selectedList = dashStates?.selectedList;
+	const selectedList = dashboardStates?.selectedList;
 	const listId = selectedList?.id;
-	const listItemsArray: IListItemsArray[] = useMemo(() => [], []);
-	const uncategorizedListItems: IListItem[] = useMemo(() => [], []);
 
-	const { fetchStatus, isError, data, error } = useQuery({
+	const listItemsQuery = useQuery({
 		queryKey: ['listItems', listId],
 		// @ts-ignore
 		queryFn: () => getListItems(listId),
@@ -37,14 +27,14 @@ export default function Cart() {
 	});
 
 	useEffect(() => {
-		if (!data) {
+		if (!listItemsQuery.data) {
 			return;
 		}
-		listItemsArray.length = 0;
-		uncategorizedListItems.length = 0;
-		setSelectedListItems(data.data);
-		dashboardSorter(data.data, listItemsArray, uncategorizedListItems);
-	}, [data, listItemsArray, selectedListItems, uncategorizedListItems]);
+		const listItemsArray: IItemsArray[] = [];
+		const uncategorizedListItems: IListItem[] = [];
+		dashboardSorter(listItemsQuery.data.data, listItemsArray, uncategorizedListItems);
+		setSortedItems(listItemsArray);
+	}, [listItemsQuery.data])
 
 	return (
 		<>
@@ -73,8 +63,7 @@ export default function Cart() {
 							</button>
 						</div>
 					</div>
-					{isError ? <span>Error{error.message}</span> : null}
-					{data ? (
+					{sortedItems ? (
 						<div className='flex flex-col w-full px-8 py-6 overflow-y-auto'>
 							<div className='flex items-center justify-between mb-4'>
 								<p className='text-xl font-medium'>{selectedList?.name}</p>
@@ -101,19 +90,20 @@ export default function Cart() {
 									</Tooltip.Portal>
 								</Tooltip.Root>
 							</div>
-							{listItemsArray.map((item, i) => {
+							{sortedItems.map((category, i) => {
 								return (
 									<div className='mb-4' key={`items-category-${i}`}>
 										<p className='text-xs text-[#888888] my-2'>
-											{item.categoryName}
+											{category.categoryName}
 										</p>
 										<div className='flex flex-col items-center space-y-4'>
-											{item.items.map((item, i) => {
+											{category.items.map((item, i) => {
 												return (
-													<ListItem
+													<CartListItem
+														// @ts-ignore
 														listItem={item}
 														key={`${item.categoryName}-${i}`}
-													></ListItem>
+													></CartListItem>
 												);
 											})}
 										</div>
@@ -121,8 +111,6 @@ export default function Cart() {
 								);
 							})}
 						</div>
-					) : fetchStatus === 'fetching' ? (
-						<div>Loading...</div>
 					) : (
 						<div className='flex flex-col items-center justify-between h-full mb-0'>
 							<p className='invisible'>formatting text</p>

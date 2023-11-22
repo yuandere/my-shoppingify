@@ -1,6 +1,10 @@
 'use client';
-import { createContext, useState, useRef, useEffect } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createContext, useState, useEffect } from 'react';
+import {
+	QueryCache,
+	QueryClient,
+	QueryClientProvider,
+} from '@tanstack/react-query';
 import { Provider as ToastProvider } from '@radix-ui/react-toast';
 import { Provider as TooltipProvider } from '@radix-ui/react-tooltip';
 import { Toast } from '@/components/toast';
@@ -10,8 +14,9 @@ import {
 	IDashboardStatesContext,
 	ICartStatesContext,
 	IToastProps,
-	IItemsData,
+	IItemCard,
 	IList,
+	IItemsArray,
 } from '@/@types/dashboard';
 import { Session } from 'next-auth';
 
@@ -27,10 +32,6 @@ export function Providers({
 	children: React.ReactNode;
 	session: Session | null;
 }) {
-	const [queryClient] = useState(
-		() =>
-			new QueryClient({ defaultOptions: { queries: { staleTime: 60 * 1000 } } })
-	);
 	const [currentUser, setCurrentUser] = useState<IUserSession>({});
 	const [toastOpen, setToastOpen] = useState<boolean>(false);
 	const [toastProps, setToastProps] = useState<IToastProps>({
@@ -38,11 +39,29 @@ export function Providers({
 		content: 'Content',
 		altText: 'generic text',
 	});
-	const [selectedItem, setSelectedItem] = useState<IItemsData | null>(null);
+	const [isViewingList, setIsViewingList] = useState<boolean>(false);
+	const [selectedItem, setSelectedItem] = useState<IItemCard | null>(null);
 	const [selectedList, setSelectedList] = useState<IList | null>(null);
 	const [isCartAddingItem, setIsCartAddingItem] = useState<boolean>(false);
 	const [isCartViewingItem, setIsCartViewingItem] = useState<boolean>(false);
 	const [isCartEditingState, setIsCartEditingState] = useState<boolean>(false);
+	const [queryClient] = useState(
+		() =>
+			new QueryClient({
+				defaultOptions: { queries: { staleTime: 5 * 60 * 1000 } },
+				queryCache: new QueryCache({
+					onError: (error) => {
+						setToastOpen(true);
+						setToastProps({
+							title: 'Error',
+							content: error.message,
+							altText: error.message,
+							style: 'Danger',
+						});
+					},
+				}),
+			})
+	);
 
 	useEffect(() => {
 		if (session) {
@@ -65,10 +84,12 @@ export function Providers({
 							value={{
 								setToastOpen,
 								setToastProps,
+								isViewingList,
+								setIsViewingList,
 								selectedItem,
 								setSelectedItem,
 								selectedList,
-								setSelectedList
+								setSelectedList,
 							}}
 						>
 							<CartStatesContext.Provider

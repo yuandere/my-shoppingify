@@ -1,10 +1,11 @@
 import { useContext } from 'react';
 import Image from 'next/image';
-import { useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	CartStatesContext,
 	DashboardStatesContext,
 } from '@/app/(dashboard)/providers';
+import { IItemCard } from '@/@types/dashboard';
 
 export default function CartViewItem() {
 	const dashboardStates = useContext(DashboardStatesContext);
@@ -12,7 +13,67 @@ export default function CartViewItem() {
 	const setToastOpen = dashboardStates?.setToastOpen;
 	const setToastProps = dashboardStates?.setToastProps;
 	const itemData = dashboardStates?.selectedItem;
+	const selectedListId = dashboardStates?.selectedList?.id;
 	const queryClient = useQueryClient();
+
+	const mutateListAddItem = useMutation({
+		mutationFn: ({
+			itemData,
+			selectedListId,
+		}: {
+			itemData: IItemCard;
+			selectedListId: string;
+		}) => {
+			const data = {
+				name: itemData.name,
+				listId: selectedListId,
+				action: 'add',
+				itemId: itemData.id,
+				...(itemData.categoryName
+					? { categoryName: itemData.categoryName }
+					: null),
+			};
+			return fetch('/api/listItem', {
+				method: 'POST',
+				body: JSON.stringify(data),
+			});
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ['listItems', mutateListAddItem.variables?.selectedListId],
+			});
+			// TODO: ui confirmation - turn + green or add animation?
+			console.log('item added to list (ui wip)');
+		},
+		onError: (error) => {
+			const err = error as Error;
+			console.error(error);
+			dashboardStates?.setToastProps({
+				title: 'Error',
+				content: err.message,
+				altText: err.message,
+				style: 'Danger',
+			});
+			dashboardStates?.setToastOpen(true);
+		},
+	});
+
+	const handleAddToList = () => {
+		if (selectedListId != undefined && itemData != undefined) {
+			mutateListAddItem.mutate({
+				itemData: itemData,
+				selectedListId: selectedListId,
+			});
+		} else {
+			dashboardStates?.setToastProps({
+				title: 'Error',
+				content: 'No selected list to add to',
+				altText: 'No selected list to add to',
+				style: 'Danger',
+			});
+			dashboardStates?.setToastOpen(true);
+		}
+	};
 
 	const handleDelete = async () => {
 		if (!itemData || !setToastOpen || !setToastProps) {
@@ -40,6 +101,18 @@ export default function CartViewItem() {
 					setToastOpen(true);
 					cartStates?.setIsCartViewingItem(false);
 					queryClient.invalidateQueries({ queryKey: ['itemCards'] });
+				} else {
+					let content = 'Item not deleted';
+					if (value.code === 'P2014') {
+						content = 'Items present on a list cannot be deleted';
+					}
+					setToastProps({
+						title: 'Error',
+						content: content,
+						altText: content,
+						style: 'Danger',
+					});
+					setToastOpen(true);
 				}
 			})
 			.catch((err) => {
@@ -48,14 +121,10 @@ export default function CartViewItem() {
 					title: 'Error',
 					content: 'Item not deleted',
 					altText: 'your item was not deleted',
-					style: 'Error',
+					style: 'Danger',
 				});
 				setToastOpen(true);
 			});
-	};
-
-	const handleAddToList = async () => {
-		console.log('under construction');
 	};
 
 	return (

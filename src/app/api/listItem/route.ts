@@ -86,6 +86,7 @@ async function addListItem(
 		const result = await prisma.listItem.findFirst({
 			where: {
 				itemId: body.itemId,
+				listId: body.listId
 			},
 		});
 		if (!result?.id) {
