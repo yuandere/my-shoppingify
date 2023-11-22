@@ -26,8 +26,6 @@ export interface IDashboardStatesContext {
 	setSelectedItem: React.Dispatch<React.SetStateAction<IItemCard | null>>;
 	selectedList: IList | null;
 	setSelectedList: React.Dispatch<React.SetStateAction<IList | null>>;
-	selectedListItems: Array<IItemsArray> | null;
-	setSelectedListItems: React.Dispatch<React.SetStateAction<Array<IItemsArray> | null>>;
 }
 
 export interface ICartStatesContext {

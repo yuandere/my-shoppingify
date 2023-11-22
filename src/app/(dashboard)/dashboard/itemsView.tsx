@@ -28,7 +28,7 @@ export default function ItemsView() {
 	});
 
 	useEffect(() => {
-		if (!data) {
+		if (!data || data.success === false) {
 			return;
 		}
 		itemsArray.length = 0;
