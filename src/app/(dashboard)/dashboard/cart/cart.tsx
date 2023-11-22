@@ -1,19 +1,40 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Image from 'next/image';
+import { useQuery } from '@tanstack/react-query';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import { CartStatesContext, DashboardStatesContext } from '../../providers';
 import CartAddItem from '@/app/(dashboard)/dashboard/cart/cartAddItem';
 import CartViewItem from '@/app/(dashboard)/dashboard/cart/cartViewItem';
 import CartActionBar from '@/app/(dashboard)/dashboard/cart/cartActionBar';
 import CartListItem from '@/components/cartListItem';
+import { dashboardSorter } from '@/lib/utils';
+import { IItemsArray, IListItem } from '@/@types/dashboard';
 import addItemGraphic from '@/assets/source.svg';
 import cartGraphic from '@/assets/undraw_shopping_app_flsj 1.svg';
 
 export default function Cart() {
+	const [sortedItems, setSortedItems] = useState<IItemsArray[] | null>(null);
 	const dashboardStates = useContext(DashboardStatesContext);
 	const cartStates = useContext(CartStatesContext);
 	const selectedList = dashboardStates?.selectedList;
-	const selectedListItems = dashboardStates?.selectedListItems;
+	const listId = selectedList?.id;
+
+	const listItemsQuery = useQuery({
+		queryKey: ['listItems', listId],
+		// @ts-ignore
+		queryFn: () => getListItems(listId),
+		enabled: !!listId,
+	});
+
+	useEffect(() => {
+		if (!listItemsQuery.data) {
+			return;
+		}
+		const listItemsArray: IItemsArray[] = [];
+		const uncategorizedListItems: IListItem[] = [];
+		dashboardSorter(listItemsQuery.data.data, listItemsArray, uncategorizedListItems);
+		setSortedItems(listItemsArray);
+	}, [listItemsQuery.data])
 
 	return (
 		<>
@@ -42,7 +63,7 @@ export default function Cart() {
 							</button>
 						</div>
 					</div>
-					{selectedListItems ? (
+					{sortedItems ? (
 						<div className='flex flex-col w-full px-8 py-6 overflow-y-auto'>
 							<div className='flex items-center justify-between mb-4'>
 								<p className='text-xl font-medium'>{selectedList?.name}</p>
@@ -69,7 +90,7 @@ export default function Cart() {
 									</Tooltip.Portal>
 								</Tooltip.Root>
 							</div>
-							{selectedListItems.map((category, i) => {
+							{sortedItems.map((category, i) => {
 								return (
 									<div className='mb-4' key={`items-category-${i}`}>
 										<p className='text-xs text-[#888888] my-2'>

@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect, useMemo } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { CurrentUserContext, DashboardStatesContext } from '../providers';
 import ShoppingList from '@/components/shoppingList';
@@ -16,16 +16,15 @@ export default function HistoryView() {
 	const [sortedLists, setSortedLists] = useState<Array<IListObject> | null>(
 		null
 	);
-	const dashStates = useContext(DashboardStatesContext);
+	const [sortedListItems, setSortedListItems] =
+		useState<Array<IItemsArray> | null>(null);
+	const dashboardStates = useContext(DashboardStatesContext);
 	const currentUser = useContext(CurrentUserContext)?.currentUser;
 	const id = currentUser?.id;
-	const listId = dashStates?.selectedList?.id;
-	const isViewingList = dashStates?.isViewingList;
-	const setIsViewingList = dashStates?.setIsViewingList;
-	const selectedList = dashStates?.selectedList;
-	const setSelectedListItems = dashStates?.setSelectedListItems;
-	const listItemsArray: IItemsArray[] = useMemo(() => [], []);
-	const uncategorizedListItems: IListItem[] = useMemo(() => [], []);
+	const listId = dashboardStates?.selectedList?.id;
+	const isViewingList = dashboardStates?.isViewingList;
+	const setIsViewingList = dashboardStates?.setIsViewingList;
+	const selectedList = dashboardStates?.selectedList;
 
 	const listsQuery = useQuery({
 		queryKey: ['lists'],
@@ -42,32 +41,26 @@ export default function HistoryView() {
 	});
 
 	useEffect(() => {
-		if (!listsQuery.data) {
+		if (!listsQuery.data || listsQuery.data.success === false) {
 			return;
 		}
 		setSortedLists(listsSorter(listsQuery.data.data));
 	}, [listsQuery.data]);
 
 	useEffect(() => {
-		if (!listItemsQuery.data || !setSelectedListItems || !setIsViewingList) {
+		if (!listItemsQuery.data || !setIsViewingList) {
 			return;
 		}
-		listItemsArray.length = 0;
-		uncategorizedListItems.length = 0;
+		const listItemsArray: IItemsArray[] = [];
+		const uncategorizedListItems: IListItem[] = [];
 		dashboardSorter(
 			listItemsQuery.data.data,
 			listItemsArray,
 			uncategorizedListItems
 		);
-		setSelectedListItems(listItemsArray);
+		setSortedListItems(listItemsArray);
 		setIsViewingList(true);
-	}, [
-		listItemsArray,
-		listItemsQuery.data,
-		setIsViewingList,
-		setSelectedListItems,
-		uncategorizedListItems,
-	]);
+	}, [listItemsQuery.data, setIsViewingList]);
 
 	return (
 		<div className='flex flex-col md:min-w-[640px]'>
@@ -76,7 +69,7 @@ export default function HistoryView() {
 					<p
 						className='self-start text-xs font-medium cursor-pointer text-orange-400 transition hover:text-orange-600'
 						onClick={() => {
-							dashStates?.setIsViewingList(false);
+							dashboardStates?.setIsViewingList(false);
 						}}
 					>
 						🡐 back
@@ -88,11 +81,13 @@ export default function HistoryView() {
 					{listItemsQuery.isError ? (
 						<span>Error: {listItemsQuery.error.message}</span>
 					) : null}
-					{selectedList ? <h2 className='text-xl font-semibold mb-4'>{selectedList.name}</h2> : null}
-					{listItemsArray.length === 0 ? (
+					{selectedList ? (
+						<h2 className='text-xl font-semibold mb-4'>{selectedList.name}</h2>
+					) : null}
+					{!sortedListItems || sortedListItems.length === 0 ? (
 						<span>No items found</span>
 					) : (
-						listItemsArray.map((category, i) => {
+						sortedListItems.map((category, i) => {
 							return (
 								<div className='' key={`items-category-${i}`}>
 									<h1 className='text-lg max-w-xs'>{category.categoryName}</h1>
@@ -139,7 +134,7 @@ export default function HistoryView() {
 							);
 						})
 					) : (
-						<span>Something went wrong</span>
+						<span>Something went wrong (or no lists found, wip)</span>
 					)}
 				</>
 			)}

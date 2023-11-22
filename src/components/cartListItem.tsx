@@ -39,15 +39,11 @@ export default function CartListItem({ listItem }: { listItem: IListItem }) {
 					const changeIndex = oldData.data.findIndex(
 						(item) => item.id === listItem.id
 					);
-					let clonedData = { ...oldData };
-					clonedData.data = oldData.data.map((a) => {
-						return { ...a };
-					});
+					const clonedData = structuredClone(oldData);
 					clonedData.data[changeIndex].quantity = itemQuantity;
 					return clonedData;
 				}
 			);
-			// TODO: do something here to cause rerendering in historyview
 		},
 		onError: (error) => {
 			const err = error as Error;
@@ -86,10 +82,7 @@ export default function CartListItem({ listItem }: { listItem: IListItem }) {
 					const changeIndex = oldData.data.findIndex(
 						(item) => item.id === listItem.id
 					);
-					let clonedData = { ...oldData };
-					clonedData.data = oldData.data.map((a) => {
-						return { ...a };
-					});
+					const clonedData = structuredClone(oldData);
 					clonedData.data[changeIndex].checked = mutateChecked.variables;
 					return clonedData;
 				}
@@ -133,11 +126,9 @@ export default function CartListItem({ listItem }: { listItem: IListItem }) {
 					const changeIndex = oldData.data.findIndex(
 						(item) => item.id === listItem.id
 					);
-					let clonedData = { ...oldData };
-					clonedData.data = oldData.data.map((a) => {
-						return { ...a };
-					});
-					clonedData.data.splice(changeIndex, 1);
+					const clonedData = structuredClone(oldData);
+					let newItems = oldData.data.toSpliced(changeIndex, 1);
+					clonedData.data = newItems;
 					return clonedData;
 				}
 			);
