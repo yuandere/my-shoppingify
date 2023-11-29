@@ -11,12 +11,10 @@ export const itemCardAdd = z.object({
 export const itemCardDelete = z.string().cuid();
 
 // list api schemas
-export const listAdd = z.object({
-	name: z.string().min(1),
-	userId: z.string().cuid(),
-});
-
-export const listDelete = z.string().cuid();
+export const listEdit = z.object({
+	name: z.string().min(1).optional(),
+	listId: z.string().cuid(),
+})
 
 //listItem api schemas
 export const listItemsGet = z.string().cuid();
