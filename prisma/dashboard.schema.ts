@@ -10,12 +10,6 @@ export const itemCardAdd = z.object({
 
 export const itemCardDelete = z.string().cuid();
 
-// list api schemas
-export const listEdit = z.object({
-	name: z.string().min(1).optional(),
-	listId: z.string().cuid(),
-})
-
 //listItem api schemas
 export const listItemsGet = z.string().cuid();
 
@@ -40,6 +34,13 @@ export const listItemChangeQuantity = listItemRequest.extend({
 export const listItemChangeChecked = listItemRequest.extend({
 	checked: z.boolean(),
 });
+
+// list api schemas
+export const listEdit = z.object({
+	name: z.string().min(1).optional(),
+	firstItemData: listItemAdd,
+	listId: z.string().cuid(),
+})
 
 //util schemas
 export const categoryAdd = z.string();
