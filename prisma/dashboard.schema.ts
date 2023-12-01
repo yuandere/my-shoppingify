@@ -37,9 +37,14 @@ export const listItemChangeChecked = listItemRequest.extend({
 
 // list api schemas
 export const listEdit = z.object({
+	listId: z.string().cuid(),
+	name: z.string().min(1).optional(),
+})
+
+
+export const listAdd = z.object({
 	name: z.string().min(1).optional(),
 	firstItemData: listItemAdd,
-	listId: z.string().cuid(),
 })
 
 //util schemas

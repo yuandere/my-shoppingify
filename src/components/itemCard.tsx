@@ -18,6 +18,36 @@ export default function ItemCard({ itemData }: { itemData: IItemCard }) {
 	const setIsCartViewingItem = cartStates?.setIsCartViewingItem;
 	const selectedListId = dashboardStates?.selectedList?.id;
 
+	const mutateAddToNewList = useMutation({
+		mutationFn: (itemData: IItemCard) => {
+			return fetch('/api/list', {
+				method: 'POST',
+				body: JSON.stringify({ action: 'add', firstItemData: itemData }),
+			});
+		},
+		onSuccess: (data) => {
+			console.log('response received WIP', data);
+			dashboardStates?.setToastProps({
+				title: 'Success',
+				content: 'New list created',
+				altText: 'New list created',
+				style: 'Success',
+			});
+			dashboardStates?.setToastOpen(true);
+		},
+		onError: (error) => {
+			const err = error as Error;
+			console.error(error);
+			dashboardStates?.setToastProps({
+				title: 'Error',
+				content: err.message,
+				altText: err.message,
+				style: 'Danger',
+			});
+			dashboardStates?.setToastOpen(true);
+		},
+	});
+
 	const mutateListAddItem = useMutation({
 		mutationFn: ({
 			itemData,
@@ -61,19 +91,13 @@ export default function ItemCard({ itemData }: { itemData: IItemCard }) {
 	});
 
 	const handleAddToList = () => {
-		if (selectedListId != undefined && itemData != undefined) {
+		if (selectedListId && itemData) {
 			mutateListAddItem.mutate({
 				itemData: itemData,
 				selectedListId: selectedListId,
 			});
-		} else {
-			dashboardStates?.setToastProps({
-				title: 'Error',
-				content: 'No selected list to add to',
-				altText: 'No selected list to add to',
-				style: 'Danger',
-			});
-			dashboardStates?.setToastOpen(true);
+		} else if (itemData) {
+			mutateAddToNewList.mutate(itemData);
 		}
 	};
 

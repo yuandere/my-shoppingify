@@ -1,13 +1,17 @@
 import prisma from '@/lib/prisma';
 import { NextResponse, NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
-import { listEdit } from '../../../../prisma/dashboard.schema';
+import { listEdit, listAdd } from '../../../../prisma/dashboard.schema';
 import { IItemCard } from '@/@types/dashboard';
 
 interface IListEdit {
 	listId: string;
 	name?: string;
-	firstItemData?: IItemCard;
+}
+
+interface IListAdd {
+	name: string;
+	firstItemData: IItemCard;
 }
 
 // TODO: make listEdit and listAdd separate
@@ -31,7 +35,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
 			case 'fetchList':
 				return await fetchLists(body);
 			case 'add':
-				const resultAdd = listEdit.safeParse(body);
+				const resultAdd = listAdd.safeParse(body);
 				if (!resultAdd.success) {
 					console.log(resultAdd.error.format());
 					const zodIssues = resultAdd.error.issues;
@@ -127,7 +131,10 @@ async function addList(body: { userId: string; firstItemData: IItemCard }) {
 		return NextResponse.json({
 			message: 'List successfully created with first item',
 			success: true,
-			data: newList,
+			data: {
+				newList: newList,
+				newListItem: newListItem,
+			},
 		});
 	} catch (error) {
 		console.error('Request error', error);
