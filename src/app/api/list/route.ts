@@ -14,8 +14,6 @@ interface IListAdd {
 	firstItemData: IItemCard;
 }
 
-// TODO: make listEdit and listAdd separate
-
 export async function POST(req: NextRequest, res: NextResponse) {
 	let userId = null;
 	try {
@@ -23,7 +21,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
 		userId = token?.sub;
 	} catch (error) {
 		const err = error as Error;
-		return NextResponse.json({ error: err.message, success: false });
+		return NextResponse.json(
+			{ message: err.message, success: false },
+			{ status: 500 }
+		);
 	}
 	try {
 		const body = await req.json();
@@ -71,7 +72,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
 		}
 	} catch (error) {
 		const err = error as Error;
-		return NextResponse.json({ message: err.message, success: false });
+		return NextResponse.json(
+			{ message: err.message, success: false },
+			{ status: 500 }
+		);
 	}
 }
 
@@ -87,7 +91,10 @@ async function fetchLists(body: { userId: string }) {
 		});
 	} catch (error) {
 		const err = error as Error;
-		return NextResponse.json({ message: err.message, success: false });
+		return NextResponse.json(
+			{ message: err.message, success: false },
+			{ status: 500 }
+		);
 	}
 }
 
@@ -103,7 +110,7 @@ async function addList(body: { userId: string; firstItemData: IItemCard }) {
 		const newList = await prisma.list.create({
 			data: {
 				name: `New List${
-					newListSearch.length === 0 ? null : `(${newListSearch.length})`
+					newListSearch.length === 0 ? '' : `(${newListSearch.length})`
 				}`,
 				ownerId: body.userId,
 			},
@@ -113,12 +120,12 @@ async function addList(body: { userId: string; firstItemData: IItemCard }) {
 				name: body.firstItemData.name,
 				item: {
 					connect: {
-						id: body.firstItemData.itemId,
+						id: body.firstItemData.id,
 					},
 				},
 				list: {
 					connect: {
-						id: body.firstItemData.listId,
+						id: newList.id,
 					},
 				},
 				quantity: 1,
@@ -137,11 +144,11 @@ async function addList(body: { userId: string; firstItemData: IItemCard }) {
 			},
 		});
 	} catch (error) {
-		console.error('Request error', error);
-		return NextResponse.json({
-			error: 'Error adding list',
-			success: false,
-		});
+		const err = error as Error;
+		return NextResponse.json(
+			{ message: err.message, success: false },
+			{ status: 500 }
+		);
 	}
 }
 
@@ -157,11 +164,11 @@ async function deleteList(body: IListEdit) {
 			success: true,
 		});
 	} catch (error) {
-		console.error('Request error', error);
-		return NextResponse.json({
-			error: 'Error deleting list',
-			success: false,
-		});
+		const err = error as Error;
+		return NextResponse.json(
+			{ message: err.message, success: false },
+			{ status: 500 }
+		);
 	}
 }
 
@@ -180,11 +187,11 @@ async function renameList(body: IListEdit) {
 			success: true,
 		});
 	} catch (error) {
-		console.error('Request error', error);
-		return NextResponse.json({
-			error: 'Error renaming list',
-			success: false,
-		});
+		const err = error as Error;
+		return NextResponse.json(
+			{ message: err.message, success: false },
+			{ status: 500 }
+		);
 	}
 }
 
@@ -203,10 +210,10 @@ async function completeList(body: IListEdit) {
 			success: true,
 		});
 	} catch (error) {
-		console.error('Request error', error);
-		return NextResponse.json({
-			error: 'Error completing list',
-			success: false,
-		});
+		const err = error as Error;
+		return NextResponse.json(
+			{ message: err.message, success: false },
+			{ status: 500 }
+		);
 	}
 }

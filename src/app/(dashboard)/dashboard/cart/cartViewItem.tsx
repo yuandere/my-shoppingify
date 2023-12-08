@@ -17,13 +17,18 @@ export default function CartViewItem() {
 	const queryClient = useQueryClient();
 
 	const mutateAddToNewList = useMutation({
-		mutationFn: (itemData: IItemCard) => {
-			return fetch('/api/list', {
+		mutationFn: async (itemData: IItemCard) => {
+			const res = await fetch('/api/list', {
 				method: 'POST',
 				body: JSON.stringify({ action: 'add', firstItemData: itemData }),
 			});
+			if (!res.ok) {
+				throw new Error('Something went wrong');
+			}
+			return res.json();
 		},
 		onSuccess: (data) => {
+			// TODO: set selected list on client
 			console.log('response received WIP', data);
 			dashboardStates?.setToastProps({
 				title: 'Success',
