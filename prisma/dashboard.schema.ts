@@ -2,9 +2,9 @@ import { z } from 'zod';
 // itemCard api schemas
 export const itemCardAdd = z.object({
 	name: z.string().min(1),
-	description: z.string().min(1).nullable(),
-	imageUrl: z.string().url().nullable(),
-	categoryId: z.string().min(1).nullable(),
+	description: z.string().min(1).nullable().optional(),
+	imageUrl: z.string().url().nullable().optional(),
+	categoryId: z.string().min(1).nullable().optional(),
 });
 export const itemCardDelete = z.string().cuid();
 
@@ -20,7 +20,7 @@ export const listItemAdd = z.object({
 	action: z.enum(['add', 'delete', 'quantity', 'check']),
 	itemId: z.string().cuid(),
 	name: z.string().min(1),
-	categoryName: z.string().min(1).nullable(),
+	categoryName: z.string().min(1).nullable().optional(),
 });
 export const listItemChangeQuantity = listItemRequest.extend({
 	quantity: z.number().int().lte(99),
@@ -39,7 +39,7 @@ export const listAdd = z.object({
 	firstItemData: itemCardAdd
 		.extend({
 			id: z.string().cuid(),
-			categoryName: z.string().min(1).nullable(),
+			categoryName: z.string().min(1).nullable().optional(),
 			ownerId: z.string().cuid(),
 		})
 		.optional(),

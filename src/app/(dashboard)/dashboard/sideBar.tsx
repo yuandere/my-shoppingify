@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import * as Avatar from '@radix-ui/react-avatar';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import '@/styles/radix-avatar.css';
@@ -17,18 +18,18 @@ interface ISidebar {
 export default function SideBar({ activeTab, setActiveTab }: ISidebar) {
 	return (
 		<div className='flex flex-col justify-between items-center py-4 w-12 h-screen bg-white select-none sm:w-16'>
-			{/* TODO: add context menu on pfp click with settings, signout links */}
-
-			<div className=''>
-				<Avatar.Root className='AvatarRoot'>
-					<Avatar.Image
-						className='AvatarImage'
-						src='https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80'
-						alt='Derek Lee'
-					></Avatar.Image>
-					<Avatar.Fallback className='AvatarFallback'>DL</Avatar.Fallback>
-				</Avatar.Root>
-			</div>
+			<Link href='/settings'>
+				<div className=''>
+					<Avatar.Root className='AvatarRoot'>
+						<Avatar.Image
+							className='AvatarImage'
+							src='https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80'
+							alt='Derek Lee'
+						></Avatar.Image>
+						<Avatar.Fallback className='AvatarFallback'>DL</Avatar.Fallback>
+					</Avatar.Root>
+				</div>
+			</Link>
 			<div className='flex flex-col justify-between h-56'>
 				{navButtons.map((x, i) => {
 					return (
