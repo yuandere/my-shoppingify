@@ -4,13 +4,15 @@ import '@/styles/radix-toast.css';
 interface IToast {
 	style?: string;
 	title: string;
-	content: string;
-	altText: string;
-	open: boolean;
-	onOpenChange: React.Dispatch<React.SetStateAction<boolean>>;
+	content?: string;
+	altText?: string;
+	open?: boolean;
+	onOpenChange?: React.Dispatch<React.SetStateAction<boolean>>;
 	duration?: number;
 	children?: React.ReactNode;
 }
+
+// TODO: remove alttext from here and types
 
 export const Toast = ({
 	style,
@@ -44,13 +46,15 @@ export const Toast = ({
 					<ToastPrimitive.Action
 						asChild
 						className='ToastAction'
-						altText={altText}
+						altText={altText ? altText : content ? content : title}
 					>
 						{children}
 					</ToastPrimitive.Action>
 				)}
 				<ToastPrimitive.Close aria-label='Close'>
-					<span aria-hidden className='cursor-pointer'>×</span>
+					<span aria-hidden className='cursor-pointer'>
+						×
+					</span>
 				</ToastPrimitive.Close>
 			</ToastPrimitive.Root>
 			<ToastPrimitive.ToastViewport className='ToastViewport' />
