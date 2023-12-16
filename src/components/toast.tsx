@@ -3,8 +3,8 @@ import '@/styles/radix-toast.css';
 
 interface IToast {
 	style?: string;
-	title: string;
-	content?: string;
+	title?: string;
+	content: string;
 	altText?: string;
 	open?: boolean;
 	onOpenChange?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -46,7 +46,7 @@ export const Toast = ({
 					<ToastPrimitive.Action
 						asChild
 						className='ToastAction'
-						altText={altText ? altText : content ? content : title}
+						altText={altText ? altText : content ? content : title ? title : ''}
 					>
 						{children}
 					</ToastPrimitive.Action>

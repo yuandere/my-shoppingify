@@ -35,6 +35,7 @@ export const useToast = ({ preset, title, content, style }: IUseToast) => {
 		dashboardStates?.setToastProps({
 			title: title ? title : '',
 			content: content,
+      style: style ? style : undefined,
 		});
 	}
 

@@ -1,7 +1,7 @@
 export interface IToastProps {
-	title: string;
+	title?: string;
 	content: string;
-	altText: string;
+	altText?: string;
 	style?: string;
 }
 
