@@ -2,6 +2,7 @@ import * as ToastPrimitive from '@radix-ui/react-toast';
 import '@/styles/radix-toast.css';
 
 interface IToast {
+	preset?: ToastPresets;
 	style?: string;
 	title?: string;
 	content: string;
@@ -12,9 +13,13 @@ interface IToast {
 	children?: React.ReactNode;
 }
 
-// TODO: remove alttext from here and types
+enum ToastPresets {
+	success = 'Success',
+	error = 'Error',
+}
 
 export const Toast = ({
+	preset,
 	style,
 	title,
 	content,
@@ -29,14 +34,14 @@ export const Toast = ({
 		<>
 			<ToastPrimitive.Root
 				{...props}
-				className={style ? `ToastRoot Toast${style}` : 'ToastRoot'}
+				className={preset ? `ToastRoot Toast${preset}` : style ? `ToastRoot Toast${style}` : 'ToastRoot'}
 				open={open}
 				onOpenChange={onOpenChange}
 				duration={duration ? duration : undefined}
 			>
-				{title && (
+				{(title || preset) && (
 					<ToastPrimitive.Title className='ToastTitle'>
-						{title}
+						{title ? title : preset ? preset : ''}
 					</ToastPrimitive.Title>
 				)}
 				<ToastPrimitive.Description className='ToastDescription text-gray-500'>
@@ -46,7 +51,7 @@ export const Toast = ({
 					<ToastPrimitive.Action
 						asChild
 						className='ToastAction'
-						altText={altText ? altText : content ? content : title ? title : ''}
+						altText={altText ? altText : content }
 					>
 						{children}
 					</ToastPrimitive.Action>

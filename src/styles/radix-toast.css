@@ -83,7 +83,8 @@
   font-size: 15px;
 }
 
-.ToastDanger .ToastTitle {
+.ToastDanger .ToastTitle,
+.ToastError .ToastTitle {
   color: red;
 }
 

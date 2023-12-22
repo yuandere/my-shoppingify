@@ -1,4 +1,5 @@
 export interface IToastProps {
+	preset?: string;
 	title?: string;
 	content: string;
 	altText?: string;
