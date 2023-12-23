@@ -2,7 +2,7 @@ import * as ToastPrimitive from '@radix-ui/react-toast';
 import '@/styles/radix-toast.css';
 
 interface IToast {
-	preset?: ToastPresets;
+	preset?: ToastPresets | string;
 	style?: string;
 	title?: string;
 	content: string;
@@ -13,7 +13,7 @@ interface IToast {
 	children?: React.ReactNode;
 }
 
-enum ToastPresets {
+export enum ToastPresets {
 	success = 'Success',
 	error = 'Error',
 }
@@ -34,7 +34,7 @@ export const Toast = ({
 		<>
 			<ToastPrimitive.Root
 				{...props}
-				className={preset ? `ToastRoot Toast${preset}` : style ? `ToastRoot Toast${style}` : 'ToastRoot'}
+				className={`ToastRoot${preset ? ` Toast${preset}` : style ? ` Toast${style}` : ''}`}
 				open={open}
 				onOpenChange={onOpenChange}
 				duration={duration ? duration : undefined}

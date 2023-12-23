@@ -101,6 +101,7 @@ export function Providers({
 								<Toast
 									open={toastOpen}
 									onOpenChange={setToastOpen}
+									preset={toastProps.preset}
 									title={toastProps.title}
 									content={toastProps.content}
 									altText={toastProps.altText}
