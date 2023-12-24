@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { DashboardStatesContext } from "@/app/(dashboard)/providers";
+import { ToastPresets } from "@/components/toast";
 import { IItemCard } from "@/@types/dashboard";
 
 export default function useMutateAddToNewList(itemData: IItemCard | null | undefined) { 
@@ -18,11 +19,10 @@ export default function useMutateAddToNewList(itemData: IItemCard | null | undef
     },
     onSuccess: (data) => {
       // TODO: set selected list in context
-      console.log('response received WIP', data);
+      console.log('new list added, ui response wip', data);
       dashboardStates?.setToastProps({
-        title: 'Success',
+        preset: ToastPresets.success,
         content: 'New list created',
-        style: 'Success',
       });
       dashboardStates?.setToastOpen(true);
     },
@@ -30,9 +30,8 @@ export default function useMutateAddToNewList(itemData: IItemCard | null | undef
       const err = error as Error;
       console.error(error);
       dashboardStates?.setToastProps({
-        title: 'Error',
+        preset: ToastPresets.error,
         content: err.message,
-        style: 'Danger',
       });
       dashboardStates?.setToastOpen(true);
     },
