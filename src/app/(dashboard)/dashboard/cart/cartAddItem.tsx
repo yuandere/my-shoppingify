@@ -8,6 +8,7 @@ import {
 import CategoryDialog from './cartCategoryDialog';
 import { getCategories } from '@/lib/fetchers';
 import { ICategoriesData } from '@/@types/dashboard';
+import { ToastPresets } from '@/components/toast';
 import '@/styles/radix-form.css';
 
 export default function CartAddItem() {
@@ -64,10 +65,8 @@ export default function CartAddItem() {
 			.then((value) => {
 				if (value.success === true) {
 					setToastProps({
-						title: 'Success',
+						preset: ToastPresets.success,
 						content: 'Your item has been added',
-						altText: 'your item has been added',
-						style: 'Success',
 					});
 					setToastOpen(true);
 					cartStates?.setIsCartAddingItem(false);
@@ -77,10 +76,8 @@ export default function CartAddItem() {
 			.catch((err) => {
 				console.log(err);
 				setToastProps({
-					title: 'Error',
+					preset: ToastPresets.error,
 					content: 'Item not added',
-					altText: 'your item was not added',
-					style: 'Danger',
 				});
 				setToastOpen(true);
 				if (submitBtnRef && submitBtnRef.current != null) {
