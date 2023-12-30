@@ -1,151 +1,30 @@
 import { useContext, useState, useRef, useEffect } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-	CartStatesContext,
-	DashboardStatesContext,
-} from '@/app/(dashboard)/providers';
-import { IListItem, IListItemsResponse } from '@/@types/dashboard';
+import { CartStatesContext } from '@/app/(dashboard)/providers';
+import useMutateQuantity from '@/lib/mutations/useMutateListItemQuantity';
+import useMutateListItemCheck from '@/lib/mutations/useMutateListItemCheck';
+import { IListItem } from '@/@types/dashboard';
+import useMutateListItemDelete from '@/lib/mutations/useMutateListItemDelete';
 
 export default function CartListItem({ listItem }: { listItem: IListItem }) {
 	const [isEditingListItem, setIsEditingListItem] = useState<boolean>(false);
 	const [isChecked, setIsChecked] = useState<boolean>(listItem.checked);
+	const [isChecking, setIsChecking] = useState<boolean>(false);
 	const [itemQuantity, setItemQuantity] = useState<number>(listItem.quantity);
 	const listItemRef = useRef<HTMLDivElement>(null);
 	const checkboxRef = useRef<HTMLInputElement>(null);
-	const dashboardStates = useContext(DashboardStatesContext);
 	const cartStates = useContext(CartStatesContext);
-	const queryClient = useQueryClient();
 
-	const mutateQuantity = useMutation({
-		mutationFn: () => {
-			const data = {
-				action: 'quantity',
-				quantity: itemQuantity,
-				listId: listItem.listId,
-				listItemId: listItem.id,
-			};
-			return fetch('/api/listItem', {
-				method: 'POST',
-				body: JSON.stringify(data),
-			});
-		},
-		onSuccess: () => {
-			queryClient.setQueryData(
-				['listItems', listItem.listId],
-				(oldData: IListItemsResponse) => {
-					if (!oldData) {
-						return oldData;
-					}
-					const changeIndex = oldData.data.findIndex(
-						(item) => item.id === listItem.id
-					);
-					const clonedData = structuredClone(oldData);
-					clonedData.data[changeIndex].quantity = itemQuantity;
-					return clonedData;
-				}
-			);
-		},
-		onError: (error) => {
-			const err = error as Error;
-			console.error(error);
-			dashboardStates?.setToastProps({
-				title: 'Error',
-				content: err.message,
-				altText: err.message,
-				style: 'Danger',
-			});
-			dashboardStates?.setToastOpen(true);
-			setItemQuantity(listItem.quantity);
-		},
+	const mutateQuantity = useMutateQuantity({
+		itemQuantity,
+		setItemQuantity,
+		listItem,
 	});
-
-	const mutateChecked = useMutation({
-		mutationFn: (check: boolean) => {
-			const data = {
-				action: 'check',
-				checked: check,
-				listId: listItem.listId,
-				listItemId: listItem.id,
-			};
-			return fetch('/api/listItem', {
-				method: 'POST',
-				body: JSON.stringify(data),
-			});
-		},
-		onSuccess: () => {
-			queryClient.setQueryData(
-				['listItems', listItem.listId],
-				(oldData: IListItemsResponse) => {
-					if (!oldData || mutateChecked.variables === undefined) {
-						return oldData;
-					}
-					const changeIndex = oldData.data.findIndex(
-						(item) => item.id === listItem.id
-					);
-					const clonedData = structuredClone(oldData);
-					clonedData.data[changeIndex].checked = mutateChecked.variables;
-					return clonedData;
-				}
-			);
-			if (mutateChecked.variables != undefined) {
-				setIsChecked(mutateChecked.variables);
-			}
-		},
-		onError: (error) => {
-			const err = error as Error;
-			console.error(error);
-			dashboardStates?.setToastProps({
-				title: 'Error',
-				content: err.message,
-				altText: err.message,
-				style: 'Danger',
-			});
-			dashboardStates?.setToastOpen(true);
-		},
+	const mutateChecked = useMutateListItemCheck({
+		listItem,
+		isChecking,
+		setIsChecked,
 	});
-
-	const mutateDeletion = useMutation({
-		mutationFn: () => {
-			const data = {
-				action: 'delete',
-				listId: listItem.listId,
-				listItemId: listItem.id,
-			};
-			return fetch('/api/listItem', {
-				method: 'POST',
-				body: JSON.stringify(data),
-			});
-		},
-		onSuccess: () => {
-			queryClient.setQueryData(
-				['listItems', listItem.listId],
-				(oldData: IListItemsResponse) => {
-					if (!oldData) {
-						return oldData;
-					}
-					const changeIndex = oldData.data.findIndex(
-						(item) => item.id === listItem.id
-					);
-					const clonedData = structuredClone(oldData);
-					let newItems = oldData.data.toSpliced(changeIndex, 1);
-					clonedData.data = newItems;
-					return clonedData;
-				}
-			);
-			console.log('listItem deleted, ui wip')
-		},
-		onError: (error) => {
-			const err = error as Error;
-			console.error(error);
-			dashboardStates?.setToastProps({
-				title: 'Error',
-				content: err.message,
-				altText: err.message,
-				style: 'Danger',
-			});
-			dashboardStates?.setToastOpen(true);
-		},
-	});
+	const mutateDeletion = useMutateListItemDelete(listItem);
 
 	const handleListItemClick = () => {
 		if (cartStates?.isCartEditingState) {
@@ -211,10 +90,11 @@ export default function CartListItem({ listItem }: { listItem: IListItem }) {
 					checked={isChecked ? true : false}
 					onChange={(e) => {
 						if (e.target.checked === true) {
-							mutateChecked.mutate(true);
+							setIsChecking(true);
 						} else {
-							mutateChecked.mutate(false);
+							setIsChecking(false);
 						}
+						mutateChecked.mutate();
 					}}
 					onClick={(e) => {
 						e.stopPropagation();
