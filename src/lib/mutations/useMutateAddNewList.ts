@@ -2,15 +2,14 @@ import { useContext } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { DashboardStatesContext } from "@/app/(dashboard)/providers";
 import { ToastPresets } from "@/components/toast";
-import { IItemCard } from "@/@types/dashboard";
 
-export default function useMutateAddToNewList(itemData: IItemCard | null | undefined) { 
+export default function useMutateAddNewList() { 
   const dashboardStates = useContext(DashboardStatesContext);
   return useMutation({
-    mutationFn: async (itemData: IItemCard) => {
+    mutationFn: async () => {
       const res = await fetch('/api/list', {
         method: 'POST',
-        body: JSON.stringify({ action: 'addWithItem', firstItemData: itemData }),
+        body: JSON.stringify({ action: 'add' }),
       });
       if (!res.ok) {
         throw new Error('Something went wrong');

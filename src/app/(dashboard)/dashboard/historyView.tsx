@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { CurrentUserContext, DashboardStatesContext } from '../providers';
 import ShoppingList from '@/components/shoppingList';
 import ItemCard from '@/components/itemCard';
+import useMutateAddNewList from '@/lib/mutations/useMutateAddNewList';
 import { getLists, getListItems } from '@/lib/fetchers';
 import { listsSorter, dashboardSorter } from '@/lib/utils';
 import { IList, IItemsArray, IListItem } from '@/@types/dashboard';
@@ -25,6 +26,7 @@ export default function HistoryView() {
 	const isViewingList = dashboardStates?.isViewingList;
 	const setIsViewingList = dashboardStates?.setIsViewingList;
 	const selectedList = dashboardStates?.selectedList;
+	const mutateAddNewList = useMutateAddNewList();
 
 	const listsQuery = useQuery({
 		queryKey: ['lists'],
@@ -111,6 +113,13 @@ export default function HistoryView() {
 					<div className='pt-4 pb-4 px-4 md:pt-12 md:px-10'>
 						<h2 className='text-xl font-medium'>Shopping history</h2>
 					</div>
+					<button
+						className='flex items-center justify-center grid-flow-col w-44 h-10 mb-6 rounded-lg bg-theme-2 cursor-pointer text-white transition drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)] hover:drop-shadow-[0_2px_9px_rgba(0,0,0,0.14)] hover:bg-rose-900'
+						onClick={() => mutateAddNewList.mutate()}
+					>
+						<span className='material-icons'>add</span>
+						<p className=''>Add new list</p>
+					</button>
 					{listsQuery.isPending ? <span>Loading...</span> : null}
 					{listsQuery.isError ? (
 						<span>Error: {listsQuery.error.message}</span>

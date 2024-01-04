@@ -36,13 +36,15 @@ export async function POST(req: NextRequest, res: NextResponse) {
 			case 'fetchList':
 				return await fetchLists(body);
 			case 'add':
-				const resultAdd = listAdd.safeParse(body);
-				if (!resultAdd.success) {
-					console.log(resultAdd.error.format());
-					const zodIssues = resultAdd.error.issues;
+				return await addList(body);
+			case 'addWithItem':
+				const resultAddWithItem = listAdd.safeParse(body);
+				if (!resultAddWithItem.success) {
+					console.log(resultAddWithItem.error.format());
+					const zodIssues = resultAddWithItem.error.issues;
 					throw new Error(`zod found ${zodIssues.length} issue(s)`);
 				}
-				return await addList(body);
+				return await addListWithItem(body);
 			case 'delete':
 				const resultDelete = listEdit.safeParse(body);
 				if (!resultDelete.success) {
@@ -98,7 +100,43 @@ async function fetchLists(body: { userId: string }) {
 	}
 }
 
-async function addList(body: { userId: string; firstItemData: IItemCard }) {
+async function addList(body: { userId: string }) {
+	try {
+		const newListSearch = await prisma.list.findMany({
+			where: {
+				name: {
+					startsWith: 'New List',
+				},
+			},
+		});
+		const newList = await prisma.list.create({
+			data: {
+				name: `New List${
+					newListSearch.length === 0 ? '' : `(${newListSearch.length})`
+				}`,
+				ownerId: body.userId,
+			},
+		});
+		return NextResponse.json({
+			message: 'List successfully created',
+			success: true,
+			data: {
+				newList: newList,
+			},
+		});
+	} catch (error) {
+		const err = error as Error;
+		return NextResponse.json(
+			{ message: err.message, success: false },
+			{ status: 500 }
+		);
+	}
+}
+
+async function addListWithItem(body: {
+	userId: string;
+	firstItemData: IItemCard;
+}) {
 	try {
 		const newListSearch = await prisma.list.findMany({
 			where: {
