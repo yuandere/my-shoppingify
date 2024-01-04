@@ -7,7 +7,10 @@ export async function POST(req: NextRequest) {
 		return await fetchItemCards(body);
 	} catch (error) {
 		const err = error as Error;
-		return NextResponse.json({ message: err.message, success: false });
+		return NextResponse.json(
+			{ message: err.message, success: false },
+			{ status: 500 }
+		);
 	}
 }
 
@@ -23,7 +26,10 @@ async function fetchItemCards(body: { userId: string }) {
 		});
 	} catch (error) {
 		const err = error as Error;
-		return NextResponse.json({ message: err.message, success: false });
+		return NextResponse.json(
+			{ message: err.message, success: false },
+			{ status: 500 }
+		);
 	}
 }
 

@@ -10,7 +10,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
 		userId = token?.sub;
 	} catch (error) {
 		const err = error as Error;
-		return NextResponse.json({ error: err.message, success: false });
+		return NextResponse.json(
+			{ message: err.message, success: false },
+			{ status: 500 }
+		);
 	}
 	try {
 		const body = await req.json();
@@ -34,7 +37,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
 		}
 	} catch (error) {
 		const err = error as Error;
-		return NextResponse.json({ message: err, success: false });
+		return NextResponse.json(
+			{ message: err.message, success: false },
+			{ status: 500 }
+		);
 	}
 }
 
@@ -51,10 +57,10 @@ async function fetchCategory(body: { userId: string }) {
 		});
 	} catch (error) {
 		const err = error as Error;
-		return NextResponse.json({
-			error: err.message,
-			success: false,
-		});
+		return NextResponse.json(
+			{ message: err.message, success: false },
+			{ status: 500 }
+		);
 	}
 }
 
@@ -71,9 +77,9 @@ async function addCategory(body: { userId: string; name: string }) {
 		});
 	} catch (error) {
 		const err = error as Error;
-		return NextResponse.json({
-			error: err.message,
-			success: false,
-		});
+		return NextResponse.json(
+			{ message: err.message, success: false },
+			{ status: 500 }
+		);
 	}
 }

@@ -25,7 +25,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
 		userId = token?.sub;
 	} catch (error) {
 		const err = error as Error;
-		return NextResponse.json({ error: err.message, success: false });
+		return NextResponse.json(
+			{ message: err.message, success: false },
+			{ status: 500 }
+		);
 	}
 	try {
 		const body = await req.json();
@@ -57,7 +60,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
 		}
 	} catch (error) {
 		const err = error as Error;
-		return NextResponse.json({ message: err.message, success: false });
+		return NextResponse.json(
+			{ message: err.message, success: false },
+			{ status: 500 }
+		);
 	}
 }
 
@@ -73,7 +79,10 @@ async function fetchItemCards(body: { userId: string }) {
 		});
 	} catch (error) {
 		const err = error as Error;
-		return NextResponse.json({ message: err.message, success: false });
+		return NextResponse.json(
+			{ message: err.message, success: false },
+			{ status: 500 }
+		);
 	}
 }
 
@@ -107,10 +116,10 @@ async function addItemCard(body: IItemCardAdd) {
 		});
 	} catch (error) {
 		console.error('Request error', error);
-		return NextResponse.json({
-			error: 'Error adding item card',
-			success: false,
-		});
+		return NextResponse.json(
+			{ message: 'error adding item card', success: false },
+			{ status: 500 }
+		);
 	}
 }
 
@@ -128,10 +137,13 @@ async function deleteItemCard(body: IItemCardDelete) {
 	} catch (error) {
 		const err = error as PrismaClientKnownRequestError;
 		console.error('Request error', error);
-		return NextResponse.json({
-			error: 'Error deleting item card',
-			success: false,
-			code: err.code,
-		});
+		return NextResponse.json(
+			{
+				error: 'Error deleting item card',
+				success: false,
+				code: err.code,
+			},
+			{ status: 500 }
+		);
 	}
 }
