@@ -18,8 +18,9 @@ export default function useMutateAddToNewList(itemData: IItemCard | null | undef
       return res.json();
     },
     onSuccess: (data) => {
-      // TODO: set selected list in context
       console.log('new list added, ui response wip', data);
+      dashboardStates?.setIsViewingList(true);
+      dashboardStates?.setSelectedList(data.data.newList);
       dashboardStates?.setToastProps({
         preset: ToastPresets.success,
         content: 'New list created',

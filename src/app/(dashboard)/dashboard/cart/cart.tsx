@@ -63,7 +63,7 @@ export default function Cart() {
 							</button>
 						</div>
 					</div>
-					{sortedItems ? (
+					{sortedItems && selectedList ? (
 						<div className='flex flex-col w-full px-8 py-6 overflow-y-auto'>
 							<div className='flex items-center justify-between mb-4'>
 								<p className='text-xl font-medium'>{selectedList?.name}</p>

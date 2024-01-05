@@ -28,12 +28,12 @@ export const getCategories = async () => {
 	return response.json();
 };
 
-export const getLists = async (id: string) => {
+export const getLists = async () => {
 	const listsRequest = new Request(
 		`${process.env.NEXT_PUBLIC_URL}/api/list`,
 		{
 			method: 'POST',
-			body: JSON.stringify({ action: 'fetchList', userId: id }),
+			body: JSON.stringify({ action: 'fetchList' }),
 		}
 	);
 	const response = await fetch(listsRequest);

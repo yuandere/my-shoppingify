@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { CurrentUserContext, DashboardStatesContext } from '../providers';
 import ShoppingList from '@/components/shoppingList';
 import ItemCard from '@/components/itemCard';
@@ -20,19 +20,17 @@ export default function HistoryView() {
 	const [sortedListItems, setSortedListItems] =
 		useState<Array<IItemsArray> | null>(null);
 	const dashboardStates = useContext(DashboardStatesContext);
-	const currentUser = useContext(CurrentUserContext)?.currentUser;
-	const id = currentUser?.id;
 	const listId = dashboardStates?.selectedList?.id;
 	const isViewingList = dashboardStates?.isViewingList;
 	const setIsViewingList = dashboardStates?.setIsViewingList;
 	const selectedList = dashboardStates?.selectedList;
 	const mutateAddNewList = useMutateAddNewList();
+	const queryClient = useQueryClient();
 
 	const listsQuery = useQuery({
 		queryKey: ['lists'],
 		// @ts-ignore
-		queryFn: () => getLists(id),
-		enabled: !!id,
+		queryFn: () => getLists(),
 	});
 
 	const listItemsQuery = useQuery({
@@ -41,6 +39,12 @@ export default function HistoryView() {
 		queryFn: () => getListItems(listId),
 		enabled: !!listId,
 	});
+
+	const handleExitList = () => {
+		dashboardStates?.setIsViewingList(false);
+		dashboardStates?.setSelectedList(null);
+		queryClient.invalidateQueries({ queryKey: ['lists'] });
+	};
 
 	useEffect(() => {
 		if (!listsQuery.data || listsQuery.data.success === false) {
@@ -70,14 +74,12 @@ export default function HistoryView() {
 				<>
 					<p
 						className='self-start text-xs font-medium cursor-pointer text-orange-400 transition hover:text-orange-600'
-						onClick={() => {
-							dashboardStates?.setIsViewingList(false);
-						}}
+						onClick={() => handleExitList()}
 					>
 						🡐 back
 					</p>
 					<div className='pt-4 pb-4 px-4 md:pt-12 md:px-10'>
-						<h2 className='text-xl font-medium'>{listItemsQuery.data.name}</h2>
+						<h2 className='text-xl font-medium'>{listItemsQuery?.data?.name}</h2>
 					</div>
 					{listItemsQuery.isPending ? <span>Loading...</span> : null}
 					{listItemsQuery.isError ? (
