@@ -4,13 +4,13 @@ import { DashboardStatesContext } from "@/app/(dashboard)/providers";
 import { ToastPresets } from "@/components/toast";
 import { IListItem, IListItemsResponse } from "@/@types/dashboard";
 
-interface IMutateQuantity {
+interface IMutateListItemQuantity {
   itemQuantity: number;
   setItemQuantity: React.Dispatch<SetStateAction<number>>;
   listItem: IListItem;
 }
 
-export default function useMutateQuantity({itemQuantity, setItemQuantity, listItem}: IMutateQuantity) {
+export default function useMutateListItemQuantity({itemQuantity, setItemQuantity, listItem}: IMutateListItemQuantity) {
 const dashboardStates = useContext(DashboardStatesContext);
 const queryClient = useQueryClient();
 return useMutation({

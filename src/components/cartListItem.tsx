@@ -1,6 +1,6 @@
 import { useContext, useState, useRef, useEffect } from 'react';
 import { CartStatesContext } from '@/app/(dashboard)/providers';
-import useMutateQuantity from '@/lib/mutations/useMutateListItemQuantity';
+import useMutateListItemQuantity from '@/lib/mutations/useMutateListItemQuantity';
 import useMutateListItemCheck from '@/lib/mutations/useMutateListItemCheck';
 import { IListItem } from '@/@types/dashboard';
 import useMutateListItemDelete from '@/lib/mutations/useMutateListItemDelete';
@@ -14,7 +14,7 @@ export default function CartListItem({ listItem }: { listItem: IListItem }) {
 	const checkboxRef = useRef<HTMLInputElement>(null);
 	const cartStates = useContext(CartStatesContext);
 
-	const mutateQuantity = useMutateQuantity({
+	const mutateQuantity = useMutateListItemQuantity({
 		itemQuantity,
 		setItemQuantity,
 		listItem,
