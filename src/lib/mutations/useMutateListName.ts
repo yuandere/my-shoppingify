@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { DashboardStatesContext } from "@/app/(dashboard)/providers";
 import { ToastPresets } from "@/components/toast";
-import { IListItemsResponse } from "@/@types/dashboard";
+import { IListsResponse } from "@/@types/dashboard";
 
 export default function useMutateListName(listId: string | undefined, newListName: string) {
   const dashboardStates = useContext(DashboardStatesContext);
@@ -20,20 +20,15 @@ export default function useMutateListName(listId: string | undefined, newListNam
       });
     },
     onSuccess: () => {
-      // TODO: fix this section
       queryClient.setQueryData(
-        ['list', listId],
-        (oldData: IListItemsResponse) => {
-          if (!oldData) {
-            return oldData;
+        ['lists'],
+          (oldData: IListsResponse) => {
+            if (!oldData) return oldData;
+            const changeIndex = oldData.data.findIndex(list => list.id === listId);
+            const clonedData = structuredClone(oldData);
+            clonedData.data[changeIndex].name = newListName;
+            return clonedData;
           }
-          const changeIndex = oldData.data.findIndex(
-            (item) => item.id === listId
-          );
-          const clonedData = structuredClone(oldData);
-          clonedData.data[changeIndex].name = newListName;
-          return clonedData;
-        }
       );
     },
     onError: (error) => {

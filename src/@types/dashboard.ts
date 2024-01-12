@@ -47,6 +47,10 @@ export interface IListItemsResponse extends IApiResponse {
 	data: Array<IListItem>;
 }
 
+export interface IListsResponse extends IApiResponse {
+	data: Array<IList>;
+}
+
 //itemsView
 export interface IItemCard {
 	name: string;

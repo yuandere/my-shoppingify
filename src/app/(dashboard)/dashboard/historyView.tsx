@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { CurrentUserContext, DashboardStatesContext } from '../providers';
+import { DashboardStatesContext } from '../providers';
 import ShoppingList from '@/components/shoppingList';
 import ItemCard from '@/components/itemCard';
 import useMutateAddNewList from '@/lib/mutations/useMutateAddNewList';
@@ -19,6 +19,7 @@ export default function HistoryView() {
 	);
 	const [sortedListItems, setSortedListItems] =
 		useState<Array<IItemsArray> | null>(null);
+	const [listName, setListName] = useState<string>('');
 	const dashboardStates = useContext(DashboardStatesContext);
 	const listId = dashboardStates?.selectedList?.id;
 	const isViewingList = dashboardStates?.isViewingList;
@@ -29,7 +30,6 @@ export default function HistoryView() {
 
 	const listsQuery = useQuery({
 		queryKey: ['lists'],
-		// @ts-ignore
 		queryFn: () => getLists(),
 	});
 
@@ -47,11 +47,16 @@ export default function HistoryView() {
 	};
 
 	useEffect(() => {
-		if (!listsQuery.data || listsQuery.data.success === false) {
-			return;
+		if (!listsQuery.data || listsQuery.data.success === false) return;
+		//TODO: improve api instead of this cringe
+		for (const list of listsQuery.data.data) {
+			if (list.id === listId) {
+				setListName(list.name);
+				return
+			}
 		}
 		setSortedLists(listsSorter(listsQuery.data.data));
-	}, [listsQuery.data]);
+	}, [listId, listsQuery.data]);
 
 	useEffect(() => {
 		if (!listItemsQuery.data || !setIsViewingList) {
@@ -86,7 +91,7 @@ export default function HistoryView() {
 						<span>Error: {listItemsQuery.error.message}</span>
 					) : null}
 					{selectedList ? (
-						<h2 className='text-xl font-semibold mb-4'>{selectedList.name}</h2>
+						<h2 className='text-xl font-semibold mb-4'>{listName}</h2>
 					) : null}
 					{!sortedListItems || sortedListItems.length === 0 ? (
 						<span>No items found</span>
