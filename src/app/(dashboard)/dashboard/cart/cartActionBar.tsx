@@ -1,19 +1,25 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useRef } from 'react';
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import {
 	CartStatesContext,
-	CurrentUserContext,
+	DashboardStatesContext,
 } from '@/app/(dashboard)/providers';
+import useMutateListName from '@/lib/mutations/useMutateListName';
 import '@/styles/radix-alert-dialog.css';
 
 export default function CartActionBar() {
 	const [newListName, setNewListName] = useState<string>('');
-	const [isListSaved, setIsListSaved] = useState<boolean>(false);
 	const cartStates = useContext(CartStatesContext);
-	const currentUser = useContext(CurrentUserContext)?.currentUser;
-	// const isListCompleted = currentUser?.userShoppingLists[0].completed;
-	const handleSaveList = () => {
-		console.log('handle save list');
+	const dashboardStates = useContext(DashboardStatesContext);
+	const selectedList = dashboardStates?.selectedList;
+	const nameInputRef = useRef<HTMLInputElement>(null);
+
+	const mutateName = useMutateListName(selectedList?.id, newListName);
+
+	const handleSaveListName = () => {
+		if (!selectedList?.id || !nameInputRef.current) return;
+		mutateName.mutate();
+		nameInputRef.current.value = '';
 	};
 	const handleCompleteList = () => {
 		console.log('handle complete list');
@@ -23,7 +29,6 @@ export default function CartActionBar() {
 	};
 	return (
 		<>
-			{/* ACTION BAR states: 1. cart editing 2. cart completing*/}
 			{cartStates?.isCartEditingState ? (
 				<div className='flex items-center justify-center w-full mt-auto h-28 bg-white space-x-1'>
 					<div className='relative flex flex-col items-center justify-center mx-8'>
@@ -35,12 +40,11 @@ export default function CartActionBar() {
 							onChange={(e) => {
 								setNewListName(e.target.value);
 							}}
+							ref={nameInputRef}
 						></input>
 						<button
 							className='absolute -right-[81px] grid place-items-center w-20 h-12 rounded-xl bg-theme-1 text-white text-sm cursor-pointer transition -translate-x-full hover:bg-orange-500'
-							onClick={() => {
-								handleSaveList();
-							}}
+							onClick={() => handleSaveListName()}
 						>
 							Save
 						</button>
@@ -49,11 +53,17 @@ export default function CartActionBar() {
 			) : (
 				<div className='flex items-center justify-center w-full mt-auto h-28 bg-white space-x-1'>
 					<AlertDialog.Root>
-						<AlertDialog.Trigger asChild>
-							<p className='w-28 text-center text-sm cursor-pointer hover:underline'>
+						{selectedList ? (
+							<AlertDialog.Trigger asChild>
+								<p className='w-28 text-center text-sm cursor-pointer hover:underline'>
+									cancel
+								</p>
+							</AlertDialog.Trigger>
+						) : (
+							<p className='w-28 text-center text-sm cursor-not-allowed text-gray-400 hover:underline'>
 								cancel
 							</p>
-						</AlertDialog.Trigger>
+						)}
 						<AlertDialog.Portal>
 							<AlertDialog.Overlay className='AlertDialogOverlay' />
 							<AlertDialog.Content className='AlertDialogContent'>
@@ -82,9 +92,15 @@ export default function CartActionBar() {
 						</AlertDialog.Portal>
 					</AlertDialog.Root>
 					<button
-						className='grid place-items-center w-28 h-12 rounded-lg bg-complete text-white text-sm cursor-pointer transition hover:bg-sky-500'
+						className={`grid place-items-center w-28 h-12 rounded-lg text-white text-sm transition ${
+							selectedList
+								? 'cursor-pointer bg-complete hover:bg-sky-500'
+								: 'cursor-not-allowed bg-gray-300'
+						}`}
 						onClick={() => {
-							handleCompleteList();
+							if (selectedList) {
+								handleCompleteList();
+							}
 						}}
 					>
 						Complete
