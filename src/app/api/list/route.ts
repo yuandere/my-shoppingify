@@ -7,11 +7,7 @@ import { IItemCard } from '@/@types/dashboard';
 interface IListEdit {
 	listId: string;
 	name?: string;
-}
-
-interface IListAdd {
-	name: string;
-	firstItemData: IItemCard;
+	completing?: boolean;
 }
 
 export async function POST(req: NextRequest, res: NextResponse) {
@@ -240,7 +236,7 @@ async function completeList(body: IListEdit) {
 				id: body.listId,
 			},
 			data: {
-				completed: true,
+				completed: body.completing,
 			},
 		});
 		return NextResponse.json({

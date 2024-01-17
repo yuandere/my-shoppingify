@@ -34,6 +34,9 @@ export const listEdit = z.object({
 	listId: z.string().cuid(),
 	name: z.string().min(1).optional(),
 });
+export const listComplete = listEdit.extend({
+	completing: z.boolean(),
+})
 export const listAdd = z.object({
 	name: z.string().min(1).optional(),
 	firstItemData: itemCardAdd

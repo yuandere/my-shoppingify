@@ -81,7 +81,6 @@ export default function Cart() {
 					{sortedItems && selectedList ? (
 						<div className='flex flex-col w-full px-8 py-6 overflow-y-auto'>
 							<div className='flex items-center justify-between mb-4'>
-								{/* <p className='text-xl font-medium'>{selectedList?.name}</p> */}
 								<p className='text-xl font-medium'>{listName}</p>
 								<Tooltip.Root>
 									<Tooltip.Trigger asChild>

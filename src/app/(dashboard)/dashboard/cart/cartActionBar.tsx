@@ -1,32 +1,54 @@
-import { useState, useContext, useRef } from 'react';
+import { useState, useContext, useRef, useEffect } from 'react';
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
+import { useQuery } from '@tanstack/react-query';
 import {
 	CartStatesContext,
 	DashboardStatesContext,
 } from '@/app/(dashboard)/providers';
+import { getLists } from '@/lib/fetchers';
 import useMutateListName from '@/lib/mutations/useMutateListName';
+import useMutateListComplete from '@/lib/mutations/useMutateListComplete';
 import '@/styles/radix-alert-dialog.css';
+import useMutateListDelete from '@/lib/mutations/useMutateListDelete';
 
 export default function CartActionBar() {
 	const [newListName, setNewListName] = useState<string>('');
+	const [isCompleted, setCompleted] = useState<boolean>(false);
 	const cartStates = useContext(CartStatesContext);
 	const dashboardStates = useContext(DashboardStatesContext);
 	const selectedList = dashboardStates?.selectedList;
+	const listId = selectedList?.id;
 	const nameInputRef = useRef<HTMLInputElement>(null);
 
 	const mutateName = useMutateListName(selectedList?.id, newListName);
+	const mutateComplete = useMutateListComplete(selectedList?.id, !isCompleted);
+	//TODO: fix this
+	const mutateDelete = useMutateListDelete(selectedList?.id);
+
+	const { data } = useQuery({
+		queryKey: ['lists'],
+		queryFn: () => getLists(),
+		enabled: !!listId,
+	});
 
 	const handleSaveListName = () => {
 		if (!selectedList?.id || !nameInputRef.current) return;
 		mutateName.mutate();
 		nameInputRef.current.value = '';
 	};
-	const handleCompleteList = () => {
-		console.log('handle complete list');
-	};
-	const handleDeleteList = () => {
-		console.log('handle delete list');
-	};
+
+	useEffect(() => {
+		if (!data) return;
+		//TODO: improve api instead of using this cringe
+		for (const list of data.data) {
+			if (list.id === listId) {
+				setCompleted(list.completed);
+				return
+			}
+		};
+		console.log(data.data);
+	}, [data, listId]);
+
 	return (
 		<>
 			{cartStates?.isCartEditingState ? (
@@ -80,9 +102,7 @@ export default function CartActionBar() {
 									<AlertDialog.Action asChild>
 										<button
 											className='grid place-items-center w-20 h-12 rounded-lg bg-red-500 text-white text-sm cursor-pointer transition hover:bg-red-600'
-											onClick={() => {
-												handleDeleteList();
-											}}
+											onClick={() => mutateDelete.mutate()}
 										>
 											Yes
 										</button>
@@ -98,12 +118,10 @@ export default function CartActionBar() {
 								: 'cursor-not-allowed bg-gray-300'
 						}`}
 						onClick={() => {
-							if (selectedList) {
-								handleCompleteList();
-							}
+							if (selectedList) mutateComplete.mutate();
 						}}
 					>
-						Complete
+						{isCompleted ? 'Undo complete' : 'Complete'}
 					</button>
 				</div>
 			)}

@@ -48,14 +48,14 @@ export default function HistoryView() {
 
 	useEffect(() => {
 		if (!listsQuery.data || listsQuery.data.success === false) return;
+		setSortedLists(listsSorter(listsQuery.data.data));
 		//TODO: improve api instead of this cringe
 		for (const list of listsQuery.data.data) {
 			if (list.id === listId) {
 				setListName(list.name);
-				return
+				return;
 			}
 		}
-		setSortedLists(listsSorter(listsQuery.data.data));
 	}, [listId, listsQuery.data]);
 
 	useEffect(() => {
@@ -84,7 +84,9 @@ export default function HistoryView() {
 						🡐 back
 					</p>
 					<div className='pt-4 pb-4 px-4 md:pt-12 md:px-10'>
-						<h2 className='text-xl font-medium'>{listItemsQuery?.data?.name}</h2>
+						<h2 className='text-xl font-medium'>
+							{listItemsQuery?.data?.name}
+						</h2>
 					</div>
 					{listItemsQuery.isPending ? <span>Loading...</span> : null}
 					{listItemsQuery.isError ? (
