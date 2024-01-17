@@ -5,8 +5,7 @@ import {
 	CartStatesContext,
 	DashboardStatesContext,
 } from '@/app/(dashboard)/providers';
-import useMutateAddToNewList from '@/lib/mutations/useMutateAddToNewList';
-import useMutateListAddItem from '@/lib/mutations/useMutateListAddItem';
+import { useMutateAddToNewList, useMutateListAddItem } from '@/lib/mutations/list-mutations';
 import { ToastPresets } from '@/components/toast';
 
 export default function CartViewItem() {

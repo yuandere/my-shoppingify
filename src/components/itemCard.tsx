@@ -5,8 +5,7 @@ import {
 	DashboardStatesContext,
 	CartStatesContext,
 } from '@/app/(dashboard)/providers';
-import useMutateAddToNewList from '@/lib/mutations/useMutateAddToNewList';
-import useMutateListAddItem from '@/lib/mutations/useMutateListAddItem';
+import { useMutateAddToNewList, useMutateListAddItem } from '@/lib/mutations/list-mutations';
 
 export default function ItemCard({ itemData }: { itemData: IItemCard }) {
 	// TODO: remove name truncate code after setting limit on chars when adding new items

@@ -6,10 +6,12 @@ import {
 	DashboardStatesContext,
 } from '@/app/(dashboard)/providers';
 import { getLists } from '@/lib/fetchers';
-import useMutateListName from '@/lib/mutations/useMutateListName';
-import useMutateListComplete from '@/lib/mutations/useMutateListComplete';
+import {
+	useMutateListComplete,
+	useMutateListDelete,
+	useMutateListName,
+} from '@/lib/mutations/list-mutations';
 import '@/styles/radix-alert-dialog.css';
-import useMutateListDelete from '@/lib/mutations/useMutateListDelete';
 
 export default function CartActionBar() {
 	const [newListName, setNewListName] = useState<string>('');
@@ -20,10 +22,9 @@ export default function CartActionBar() {
 	const listId = selectedList?.id;
 	const nameInputRef = useRef<HTMLInputElement>(null);
 
-	const mutateName = useMutateListName(selectedList?.id, newListName);
-	const mutateComplete = useMutateListComplete(selectedList?.id, !isCompleted);
-	//TODO: fix this
-	const mutateDelete = useMutateListDelete(selectedList?.id);
+	const mutateName = useMutateListName(listId, newListName);
+	const mutateComplete = useMutateListComplete(listId, !isCompleted);
+	const mutateDelete = useMutateListDelete(listId);
 
 	const { data } = useQuery({
 		queryKey: ['lists'],
@@ -39,14 +40,14 @@ export default function CartActionBar() {
 
 	useEffect(() => {
 		if (!data) return;
-		//TODO: improve api instead of using this cringe
+		//TODO: improve api instead of using this workaround
 		for (const list of data.data) {
+			if (!list) return;
 			if (list.id === listId) {
 				setCompleted(list.completed);
-				return
+				return;
 			}
-		};
-		console.log(data.data);
+		}
 	}, [data, listId]);
 
 	return (
@@ -59,9 +60,7 @@ export default function CartActionBar() {
 							type='text'
 							placeholder='Enter a name'
 							maxLength={22}
-							onChange={(e) => {
-								setNewListName(e.target.value);
-							}}
+							onChange={(e) => setNewListName(e.target.value)}
 							ref={nameInputRef}
 						></input>
 						<button

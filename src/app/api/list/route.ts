@@ -188,7 +188,12 @@ async function addListWithItem(body: {
 
 async function deleteList(body: IListEdit) {
 	try {
-		const result = await prisma.list.delete({
+		const result = await prisma.listItem.deleteMany({
+			where: {
+				listId: body.listId
+			 },
+		});
+		const result2 = await prisma.list.delete({
 			where: {
 				id: body.listId,
 			},

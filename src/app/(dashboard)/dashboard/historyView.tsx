@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { DashboardStatesContext } from '../providers';
 import ShoppingList from '@/components/shoppingList';
 import ItemCard from '@/components/itemCard';
-import useMutateAddNewList from '@/lib/mutations/useMutateAddNewList';
+import { useMutateAddNewList } from '@/lib/mutations/list-mutations';
 import { getLists, getListItems } from '@/lib/fetchers';
 import { listsSorter, dashboardSorter } from '@/lib/utils';
 import { IList, IItemsArray, IListItem } from '@/@types/dashboard';
@@ -47,10 +47,11 @@ export default function HistoryView() {
 	};
 
 	useEffect(() => {
-		if (!listsQuery.data || listsQuery.data.success === false) return;
+		if (!listsQuery.data.data || listsQuery.data.success === false) return;
 		setSortedLists(listsSorter(listsQuery.data.data));
-		//TODO: improve api instead of this cringe
+		//TODO: improve api instead of using this workaround
 		for (const list of listsQuery.data.data) {
+			if (!list) return;
 			if (list.id === listId) {
 				setListName(list.name);
 				return;

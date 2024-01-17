@@ -32,10 +32,11 @@ export default function Cart() {
 		enabled: !!listId,
 	});
 
-	//TODO: improve api instead of this cringe
+	//TODO: improve api instead of using this workaround
 	useEffect(() => {
 		if (!listsQuery.data || !listId) return;
 			for (const list of listsQuery.data.data) {
+				if (!list) return;
 				if (list.id === listId) {
 					setListName(list.name);
 					return
