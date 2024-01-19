@@ -6,7 +6,10 @@ export async function GET(req: NextRequest, res: NextResponse) {
 	const searchParams = req.nextUrl.searchParams;
 	const listId = searchParams.get('id');
   if (!listId) {
-    return NextResponse.json({ message: 'No listId provided', success: false });
+  		return NextResponse.json(
+			{ message: 'no listId provided', success: false },
+			{ status: 500 }
+		);
   }
 	try {
 		const resultZod = listItemsGet.safeParse(listId);
@@ -27,6 +30,9 @@ export async function GET(req: NextRequest, res: NextResponse) {
 		});
 	} catch (error) {
 		const err = error as Error;
-		return NextResponse.json({ message: err.message, success: false });
+		return NextResponse.json(
+			{ message: err.message, success: false },
+			{ status: 500 }
+		);
 	}
 }

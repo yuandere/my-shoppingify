@@ -66,7 +66,7 @@ model List {
   name      String     @db.VarChar(255)
   createdAt DateTime   @default(now()) @map(name: "created_at")
   updatedAt DateTime   @default(now()) @map(name: "updated_at")
-  completed Boolean
+  completed Boolean    @default(false)
   ownerId   String
   owner     User       @relation(fields: [ownerId], references: [id])
   items     ListItem[]

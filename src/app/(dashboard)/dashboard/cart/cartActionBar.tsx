@@ -1,29 +1,57 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useRef, useEffect } from 'react';
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
+import { useQuery } from '@tanstack/react-query';
 import {
 	CartStatesContext,
-	CurrentUserContext,
+	DashboardStatesContext,
 } from '@/app/(dashboard)/providers';
+import { getLists } from '@/lib/fetchers';
+import {
+	useMutateListComplete,
+	useMutateListDelete,
+	useMutateListName,
+} from '@/lib/mutations/list-mutations';
 import '@/styles/radix-alert-dialog.css';
 
 export default function CartActionBar() {
 	const [newListName, setNewListName] = useState<string>('');
-	const [isListSaved, setIsListSaved] = useState<boolean>(false);
+	const [isCompleted, setCompleted] = useState<boolean>(false);
 	const cartStates = useContext(CartStatesContext);
-	const currentUser = useContext(CurrentUserContext)?.currentUser;
-	// const isListCompleted = currentUser?.userShoppingLists[0].completed;
-	const handleSaveList = () => {
-		console.log('handle save list');
+	const dashboardStates = useContext(DashboardStatesContext);
+	const selectedList = dashboardStates?.selectedList;
+	const listId = selectedList?.id;
+	const nameInputRef = useRef<HTMLInputElement>(null);
+
+	const mutateName = useMutateListName(listId, newListName);
+	const mutateComplete = useMutateListComplete(listId, !isCompleted);
+	const mutateDelete = useMutateListDelete(listId);
+
+	const { data } = useQuery({
+		queryKey: ['lists'],
+		queryFn: () => getLists(),
+		enabled: !!listId,
+	});
+
+	const handleSaveListName = () => {
+		if (!selectedList?.id || !nameInputRef.current) return;
+		mutateName.mutate();
+		nameInputRef.current.value = '';
 	};
-	const handleCompleteList = () => {
-		console.log('handle complete list');
-	};
-	const handleDeleteList = () => {
-		console.log('handle delete list');
-	};
+
+	useEffect(() => {
+		if (!data) return;
+		//TODO: improve api instead of using this workaround
+		for (const list of data.data) {
+			if (!list) return;
+			if (list.id === listId) {
+				setCompleted(list.completed);
+				return;
+			}
+		}
+	}, [data, listId]);
+
 	return (
 		<>
-			{/* ACTION BAR states: 1. cart editing 2. cart completing*/}
 			{cartStates?.isCartEditingState ? (
 				<div className='flex items-center justify-center w-full mt-auto h-28 bg-white space-x-1'>
 					<div className='relative flex flex-col items-center justify-center mx-8'>
@@ -32,15 +60,12 @@ export default function CartActionBar() {
 							type='text'
 							placeholder='Enter a name'
 							maxLength={22}
-							onChange={(e) => {
-								setNewListName(e.target.value);
-							}}
+							onChange={(e) => setNewListName(e.target.value)}
+							ref={nameInputRef}
 						></input>
 						<button
 							className='absolute -right-[81px] grid place-items-center w-20 h-12 rounded-xl bg-theme-1 text-white text-sm cursor-pointer transition -translate-x-full hover:bg-orange-500'
-							onClick={() => {
-								handleSaveList();
-							}}
+							onClick={() => handleSaveListName()}
 						>
 							Save
 						</button>
@@ -49,11 +74,17 @@ export default function CartActionBar() {
 			) : (
 				<div className='flex items-center justify-center w-full mt-auto h-28 bg-white space-x-1'>
 					<AlertDialog.Root>
-						<AlertDialog.Trigger asChild>
-							<p className='w-28 text-center text-sm cursor-pointer hover:underline'>
+						{selectedList ? (
+							<AlertDialog.Trigger asChild>
+								<p className='w-28 text-center text-sm cursor-pointer hover:underline'>
+									cancel
+								</p>
+							</AlertDialog.Trigger>
+						) : (
+							<p className='w-28 text-center text-sm cursor-not-allowed text-gray-400 hover:underline'>
 								cancel
 							</p>
-						</AlertDialog.Trigger>
+						)}
 						<AlertDialog.Portal>
 							<AlertDialog.Overlay className='AlertDialogOverlay' />
 							<AlertDialog.Content className='AlertDialogContent'>
@@ -70,9 +101,7 @@ export default function CartActionBar() {
 									<AlertDialog.Action asChild>
 										<button
 											className='grid place-items-center w-20 h-12 rounded-lg bg-red-500 text-white text-sm cursor-pointer transition hover:bg-red-600'
-											onClick={() => {
-												handleDeleteList();
-											}}
+											onClick={() => mutateDelete.mutate()}
 										>
 											Yes
 										</button>
@@ -82,12 +111,16 @@ export default function CartActionBar() {
 						</AlertDialog.Portal>
 					</AlertDialog.Root>
 					<button
-						className='grid place-items-center w-28 h-12 rounded-lg bg-complete text-white text-sm cursor-pointer transition hover:bg-sky-500'
+						className={`grid place-items-center w-28 h-12 rounded-lg text-white text-sm transition ${
+							selectedList
+								? 'cursor-pointer bg-complete hover:bg-sky-500'
+								: 'cursor-not-allowed bg-gray-300'
+						}`}
 						onClick={() => {
-							handleCompleteList();
+							if (selectedList) mutateComplete.mutate();
 						}}
 					>
-						Complete
+						{isCompleted ? 'Undo complete' : 'Complete'}
 					</button>
 				</div>
 			)}

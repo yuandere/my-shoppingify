@@ -70,10 +70,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
 		}
 	} catch (error) {
 		const err = error as Error;
-		return NextResponse.json({
-			message: err.message,
-			success: false,
-		});
+		return NextResponse.json(
+			{ message: err.message, success: false },
+			{ status: 500 }
+		);
 	}
 }
 
@@ -124,10 +124,10 @@ async function addListItem(
 		});
 	} catch (error) {
 		console.error('Request error', error);
-		return NextResponse.json({
-			error: 'Error adding list item',
-			success: false,
-		});
+		return NextResponse.json(
+			{ message: 'error adding list item', success: false },
+			{ status: 500 }
+		);
 	}
 }
 
@@ -154,10 +154,10 @@ async function deleteListItem(
 		return NextResponse.json({ message: 'List item deleted', success: true });
 	} catch (error) {
 		console.error('Request error', error);
-		return NextResponse.json({
-			error: 'Error deleting list item',
-			success: false,
-		});
+		return NextResponse.json(
+			{ message: 'error deleting list item', success: false },
+			{ status: 500 }
+		);
 	}
 }
 
@@ -186,10 +186,10 @@ async function changeQuantityListItem(
 		});
 	} catch (error) {
 		console.error('Request error', error);
-		return NextResponse.json({
-			error: 'Error changing list item quantity',
-			success: false,
-		});
+		return NextResponse.json(
+			{ message: 'error changing list item quantity', success: false },
+			{ status: 500 }
+		);
 	}
 }
 
@@ -218,9 +218,9 @@ async function changeCheckedListItem(
 		});
 	} catch (error) {
 		console.error('Request error', error);
-		return NextResponse.json({
-			error: 'Error changing list item quantity',
-			success: false,
-		});
+		return NextResponse.json(
+			{ message: 'error changing list item quantity', success: false },
+			{ status: 500 }
+		);
 	}
 }

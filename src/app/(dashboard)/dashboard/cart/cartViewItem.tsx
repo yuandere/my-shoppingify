@@ -1,11 +1,12 @@
 import { useContext } from 'react';
 import Image from 'next/image';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import {
 	CartStatesContext,
 	DashboardStatesContext,
 } from '@/app/(dashboard)/providers';
-import { IItemCard } from '@/@types/dashboard';
+import { useMutateAddToNewList, useMutateListAddItem } from '@/lib/mutations/list-mutations';
+import { ToastPresets } from '@/components/toast';
 
 export default function CartViewItem() {
 	const dashboardStates = useContext(DashboardStatesContext);
@@ -16,62 +17,17 @@ export default function CartViewItem() {
 	const selectedListId = dashboardStates?.selectedList?.id;
 	const queryClient = useQueryClient();
 
-	const mutateListAddItem = useMutation({
-		mutationFn: ({
-			itemData,
-			selectedListId,
-		}: {
-			itemData: IItemCard;
-			selectedListId: string;
-		}) => {
-			const data = {
-				name: itemData.name,
-				listId: selectedListId,
-				action: 'add',
-				itemId: itemData.id,
-				...(itemData.categoryName
-					? { categoryName: itemData.categoryName }
-					: null),
-			};
-			return fetch('/api/listItem', {
-				method: 'POST',
-				body: JSON.stringify(data),
-			});
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: ['listItems', mutateListAddItem.variables?.selectedListId],
-			});
-			// TODO: ui confirmation - turn + green or add animation?
-			console.log('item added to list (ui wip)');
-		},
-		onError: (error) => {
-			const err = error as Error;
-			console.error(error);
-			dashboardStates?.setToastProps({
-				title: 'Error',
-				content: err.message,
-				altText: err.message,
-				style: 'Danger',
-			});
-			dashboardStates?.setToastOpen(true);
-		},
-	});
+	const mutateAddToNewList = useMutateAddToNewList(itemData);
+	const mutateListAddItem = useMutateListAddItem({ itemData, selectedListId});
 
 	const handleAddToList = () => {
-		if (selectedListId != undefined && itemData != undefined) {
+		if (selectedListId && itemData) {
 			mutateListAddItem.mutate({
 				itemData: itemData,
 				selectedListId: selectedListId,
 			});
-		} else {
-			dashboardStates?.setToastProps({
-				title: 'Error',
-				content: 'No selected list to add to',
-				altText: 'No selected list to add to',
-				style: 'Danger',
-			});
-			dashboardStates?.setToastOpen(true);
+		} else if (itemData) {
+			mutateAddToNewList.mutate(itemData);
 		}
 	};
 
@@ -93,10 +49,8 @@ export default function CartViewItem() {
 			.then((value) => {
 				if (value.success === true) {
 					setToastProps({
-						title: 'Success',
+						preset: ToastPresets.success,
 						content: 'Your item has been deleted',
-						altText: 'your item has been deleted',
-						style: 'Success',
 					});
 					setToastOpen(true);
 					cartStates?.setIsCartViewingItem(false);
@@ -104,13 +58,11 @@ export default function CartViewItem() {
 				} else {
 					let content = 'Item not deleted';
 					if (value.code === 'P2014') {
-						content = 'Items present on a list cannot be deleted';
+						content = 'Items present on a list cannot be deleted (currently)';
 					}
 					setToastProps({
-						title: 'Error',
+						preset: ToastPresets.error,
 						content: content,
-						altText: content,
-						style: 'Danger',
 					});
 					setToastOpen(true);
 				}
@@ -118,10 +70,8 @@ export default function CartViewItem() {
 			.catch((err) => {
 				console.log(err);
 				setToastProps({
-					title: 'Error',
+					preset: ToastPresets.error,
 					content: 'Item not deleted',
-					altText: 'your item was not deleted',
-					style: 'Danger',
 				});
 				setToastOpen(true);
 			});

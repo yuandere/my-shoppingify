@@ -8,33 +8,53 @@ import CartViewItem from '@/app/(dashboard)/dashboard/cart/cartViewItem';
 import CartActionBar from '@/app/(dashboard)/dashboard/cart/cartActionBar';
 import CartListItem from '@/components/cartListItem';
 import { dashboardSorter } from '@/lib/utils';
+import { getListItems, getLists } from '@/lib/fetchers';
 import { IItemsArray, IListItem } from '@/@types/dashboard';
 import addItemGraphic from '@/assets/source.svg';
 import cartGraphic from '@/assets/undraw_shopping_app_flsj 1.svg';
 
 export default function Cart() {
 	const [sortedItems, setSortedItems] = useState<IItemsArray[] | null>(null);
+	const [listName, setListName] = useState<string>('');
 	const dashboardStates = useContext(DashboardStatesContext);
 	const cartStates = useContext(CartStatesContext);
 	const selectedList = dashboardStates?.selectedList;
 	const listId = selectedList?.id;
 
+	const listsQuery = useQuery({
+		queryKey: ['lists'],
+		queryFn: () => getLists(),
+	});
 	const listItemsQuery = useQuery({
 		queryKey: ['listItems', listId],
-		// @ts-ignore
+		//@ts-ignore
 		queryFn: () => getListItems(listId),
 		enabled: !!listId,
 	});
 
+	//TODO: improve api instead of using this workaround
 	useEffect(() => {
-		if (!listItemsQuery.data) {
-			return;
+		if (!listsQuery.data || !listId) return;
+		for (const list of listsQuery.data.data) {
+			if (!list) return;
+			if (list.id === listId) {
+				setListName(list.name);
+				return;
+			}
 		}
+	}, [listId, listsQuery.data]);
+
+	useEffect(() => {
+		if (!listItemsQuery.data) return;
 		const listItemsArray: IItemsArray[] = [];
 		const uncategorizedListItems: IListItem[] = [];
-		dashboardSorter(listItemsQuery.data.data, listItemsArray, uncategorizedListItems);
+		dashboardSorter(
+			listItemsQuery.data.data,
+			listItemsArray,
+			uncategorizedListItems
+		);
 		setSortedItems(listItemsArray);
-	}, [listItemsQuery.data])
+	}, [listItemsQuery.data]);
 
 	return (
 		<>
@@ -63,10 +83,10 @@ export default function Cart() {
 							</button>
 						</div>
 					</div>
-					{sortedItems ? (
+					{sortedItems && selectedList ? (
 						<div className='flex flex-col w-full px-8 py-6 overflow-y-auto'>
 							<div className='flex items-center justify-between mb-4'>
-								<p className='text-xl font-medium'>{selectedList?.name}</p>
+								<p className='text-xl font-medium'>{listName}</p>
 								<Tooltip.Root>
 									<Tooltip.Trigger asChild>
 										<span

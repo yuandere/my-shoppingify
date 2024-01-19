@@ -16,7 +16,6 @@ import {
 	IToastProps,
 	IItemCard,
 	IList,
-	IItemsArray,
 } from '@/@types/dashboard';
 import { Session } from 'next-auth';
 
@@ -35,9 +34,7 @@ export function Providers({
 	const [currentUser, setCurrentUser] = useState<IUserSession>({});
 	const [toastOpen, setToastOpen] = useState<boolean>(false);
 	const [toastProps, setToastProps] = useState<IToastProps>({
-		title: 'Title',
-		content: 'Content',
-		altText: 'generic text',
+		content: 'toast content',
 	});
 	const [isViewingList, setIsViewingList] = useState<boolean>(false);
 	const [selectedItem, setSelectedItem] = useState<IItemCard | null>(null);
@@ -55,7 +52,6 @@ export function Providers({
 						setToastProps({
 							title: 'Error',
 							content: error.message,
-							altText: error.message,
 							style: 'Danger',
 						});
 					},
@@ -105,6 +101,7 @@ export function Providers({
 								<Toast
 									open={toastOpen}
 									onOpenChange={setToastOpen}
+									preset={toastProps.preset}
 									title={toastProps.title}
 									content={toastProps.content}
 									altText={toastProps.altText}

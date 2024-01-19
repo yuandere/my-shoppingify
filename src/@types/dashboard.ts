@@ -1,7 +1,8 @@
 export interface IToastProps {
-	title: string;
+	preset?: string;
+	title?: string;
 	content: string;
-	altText: string;
+	altText?: string;
 	style?: string;
 }
 
@@ -44,6 +45,10 @@ export interface IApiResponse {
 
 export interface IListItemsResponse extends IApiResponse {
 	data: Array<IListItem>;
+}
+
+export interface IListsResponse extends IApiResponse {
+	data: Array<IList>;
 }
 
 //itemsView

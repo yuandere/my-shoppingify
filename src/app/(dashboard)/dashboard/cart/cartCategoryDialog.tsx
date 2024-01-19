@@ -1,8 +1,9 @@
 import { useState, useContext } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import * as Dialog from '@radix-ui/react-dialog';
-import '@/styles/radix-dialog.css';
 import { DashboardStatesContext } from '@/app/(dashboard)/providers';
+import { ToastPresets } from '@/components/toast';
+import '@/styles/radix-dialog.css';
 
 export default function CategoryDialog() {
 	const [newCategoryName, setNewCategoryName] = useState<string>('');
@@ -26,10 +27,8 @@ export default function CategoryDialog() {
 			})
 			.then(() => {
 				setToastProps({
-					title: 'Success',
+					preset: ToastPresets.success,
 					content: 'Category added',
-					altText: 'your category has been added',
-					style: 'Success',
 				});
 				setToastOpen(true);
 				queryClient.invalidateQueries({ queryKey: ['itemCategories'] });
@@ -37,10 +36,8 @@ export default function CategoryDialog() {
 			.catch((error) => {
 				console.log(error);
 				setToastProps({
-					title: 'Error',
+					preset: ToastPresets.error,
 					content: 'Category not added',
-					altText: 'your category was not added',
-					style: 'Danger',
 				});
 				setToastOpen(true);
 			});

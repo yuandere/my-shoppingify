@@ -2,17 +2,24 @@ import * as ToastPrimitive from '@radix-ui/react-toast';
 import '@/styles/radix-toast.css';
 
 interface IToast {
+	preset?: ToastPresets | string;
 	style?: string;
-	title: string;
+	title?: string;
 	content: string;
-	altText: string;
-	open: boolean;
-	onOpenChange: React.Dispatch<React.SetStateAction<boolean>>;
+	altText?: string;
+	open?: boolean;
+	onOpenChange?: React.Dispatch<React.SetStateAction<boolean>>;
 	duration?: number;
 	children?: React.ReactNode;
 }
 
+export enum ToastPresets {
+	success = 'Success',
+	error = 'Error',
+}
+
 export const Toast = ({
+	preset,
 	style,
 	title,
 	content,
@@ -27,14 +34,14 @@ export const Toast = ({
 		<>
 			<ToastPrimitive.Root
 				{...props}
-				className={style ? `ToastRoot Toast${style}` : 'ToastRoot'}
+				className={`ToastRoot${preset ? ` Toast${preset}` : style ? ` Toast${style}` : ''}`}
 				open={open}
 				onOpenChange={onOpenChange}
 				duration={duration ? duration : undefined}
 			>
-				{title && (
+				{(title || preset) && (
 					<ToastPrimitive.Title className='ToastTitle'>
-						{title}
+						{title ? title : preset ? preset : ''}
 					</ToastPrimitive.Title>
 				)}
 				<ToastPrimitive.Description className='ToastDescription text-gray-500'>
@@ -44,13 +51,15 @@ export const Toast = ({
 					<ToastPrimitive.Action
 						asChild
 						className='ToastAction'
-						altText={altText}
+						altText={altText ? altText : content }
 					>
 						{children}
 					</ToastPrimitive.Action>
 				)}
 				<ToastPrimitive.Close aria-label='Close'>
-					<span aria-hidden className='cursor-pointer'>×</span>
+					<span aria-hidden className='cursor-pointer'>
+						×
+					</span>
 				</ToastPrimitive.Close>
 			</ToastPrimitive.Root>
 			<ToastPrimitive.ToastViewport className='ToastViewport' />

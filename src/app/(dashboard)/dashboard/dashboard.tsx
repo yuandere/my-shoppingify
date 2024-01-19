@@ -1,14 +1,12 @@
 'use client';
 import { useState } from 'react';
-import type { Session } from 'next-auth';
 import ItemsView from '@/app/(dashboard)/dashboard/itemsView';
 import HistoryView from '@/app/(dashboard)/dashboard/historyView';
 import StatisticsView from '@/app/(dashboard)/dashboard/statisticsView';
 import SideBar from './sideBar';
 import Cart from './cart/cart';
 
-export default function Dashboard({ session }: { session?: Session }) {
-	// console.log(session)
+export default function Dashboard() {
 	const [activeTab, setActiveTab] = useState<string>('items');
 
 	return (

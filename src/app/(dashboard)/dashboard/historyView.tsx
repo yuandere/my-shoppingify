@@ -1,8 +1,9 @@
 import { useContext, useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { CurrentUserContext, DashboardStatesContext } from '../providers';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { DashboardStatesContext } from '../providers';
 import ShoppingList from '@/components/shoppingList';
 import ItemCard from '@/components/itemCard';
+import { useMutateAddNewList } from '@/lib/mutations/list-mutations';
 import { getLists, getListItems } from '@/lib/fetchers';
 import { listsSorter, dashboardSorter } from '@/lib/utils';
 import { IList, IItemsArray, IListItem } from '@/@types/dashboard';
@@ -18,19 +19,18 @@ export default function HistoryView() {
 	);
 	const [sortedListItems, setSortedListItems] =
 		useState<Array<IItemsArray> | null>(null);
+	const [listName, setListName] = useState<string>('');
 	const dashboardStates = useContext(DashboardStatesContext);
-	const currentUser = useContext(CurrentUserContext)?.currentUser;
-	const id = currentUser?.id;
 	const listId = dashboardStates?.selectedList?.id;
 	const isViewingList = dashboardStates?.isViewingList;
 	const setIsViewingList = dashboardStates?.setIsViewingList;
 	const selectedList = dashboardStates?.selectedList;
+	const mutateAddNewList = useMutateAddNewList();
+	const queryClient = useQueryClient();
 
 	const listsQuery = useQuery({
 		queryKey: ['lists'],
-		// @ts-ignore
-		queryFn: () => getLists(id),
-		enabled: !!id,
+		queryFn: () => getLists(),
 	});
 
 	const listItemsQuery = useQuery({
@@ -40,12 +40,24 @@ export default function HistoryView() {
 		enabled: !!listId,
 	});
 
+	const handleExitList = () => {
+		dashboardStates?.setIsViewingList(false);
+		dashboardStates?.setSelectedList(null);
+		queryClient.invalidateQueries({ queryKey: ['lists'] });
+	};
+
 	useEffect(() => {
-		if (!listsQuery.data || listsQuery.data.success === false) {
-			return;
-		}
+		if (!listsQuery.data.data || listsQuery.data.success === false) return;
 		setSortedLists(listsSorter(listsQuery.data.data));
-	}, [listsQuery.data]);
+		//TODO: improve api instead of using this workaround
+		for (const list of listsQuery.data.data) {
+			if (!list) return;
+			if (list.id === listId) {
+				setListName(list.name);
+				return;
+			}
+		}
+	}, [listId, listsQuery.data]);
 
 	useEffect(() => {
 		if (!listItemsQuery.data || !setIsViewingList) {
@@ -68,21 +80,21 @@ export default function HistoryView() {
 				<>
 					<p
 						className='self-start text-xs font-medium cursor-pointer text-orange-400 transition hover:text-orange-600'
-						onClick={() => {
-							dashboardStates?.setIsViewingList(false);
-						}}
+						onClick={() => handleExitList()}
 					>
 						🡐 back
 					</p>
 					<div className='pt-4 pb-4 px-4 md:pt-12 md:px-10'>
-						<h2 className='text-xl font-medium'>{listItemsQuery.data.name}</h2>
+						<h2 className='text-xl font-medium'>
+							{listItemsQuery?.data?.name}
+						</h2>
 					</div>
 					{listItemsQuery.isPending ? <span>Loading...</span> : null}
 					{listItemsQuery.isError ? (
 						<span>Error: {listItemsQuery.error.message}</span>
 					) : null}
 					{selectedList ? (
-						<h2 className='text-xl font-semibold mb-4'>{selectedList.name}</h2>
+						<h2 className='text-xl font-semibold mb-4'>{listName}</h2>
 					) : null}
 					{!sortedListItems || sortedListItems.length === 0 ? (
 						<span>No items found</span>
@@ -111,6 +123,13 @@ export default function HistoryView() {
 					<div className='pt-4 pb-4 px-4 md:pt-12 md:px-10'>
 						<h2 className='text-xl font-medium'>Shopping history</h2>
 					</div>
+					<button
+						className='flex items-center justify-center grid-flow-col w-44 h-10 mb-6 rounded-lg bg-theme-2 cursor-pointer text-white transition drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)] hover:drop-shadow-[0_2px_9px_rgba(0,0,0,0.14)] hover:bg-rose-900'
+						onClick={() => mutateAddNewList.mutate()}
+					>
+						<span className='material-icons'>add</span>
+						<p className=''>Add new list</p>
+					</button>
 					{listsQuery.isPending ? <span>Loading...</span> : null}
 					{listsQuery.isError ? (
 						<span>Error: {listsQuery.error.message}</span>

@@ -1,79 +1,33 @@
 import { useState, useEffect, useRef, useContext } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import { IItemCard } from '@/@types/dashboard';
 import {
 	DashboardStatesContext,
 	CartStatesContext,
 } from '@/app/(dashboard)/providers';
+import { useMutateAddToNewList, useMutateListAddItem } from '@/lib/mutations/list-mutations';
 
 export default function ItemCard({ itemData }: { itemData: IItemCard }) {
 	// TODO: remove name truncate code after setting limit on chars when adding new items
 	const dashboardStates = useContext(DashboardStatesContext);
 	const cartStates = useContext(CartStatesContext);
-	const queryClient = useQueryClient();
 	const [shouldTruncate, setShouldTruncate] = useState<boolean>(false);
 	const ref = useRef<HTMLDivElement>(null);
 	const setSelectedItem = dashboardStates?.setSelectedItem;
 	const setIsCartViewingItem = cartStates?.setIsCartViewingItem;
 	const selectedListId = dashboardStates?.selectedList?.id;
 
-	const mutateListAddItem = useMutation({
-		mutationFn: ({
-			itemData,
-			selectedListId,
-		}: {
-			itemData: IItemCard;
-			selectedListId: string;
-		}) => {
-			const data = {
-				name: itemData.name,
-				listId: selectedListId,
-				action: 'add',
-				itemId: itemData.id,
-				...(itemData.categoryName
-					? { categoryName: itemData.categoryName }
-					: null),
-			};
-			return fetch('/api/listItem', {
-				method: 'POST',
-				body: JSON.stringify(data),
-			});
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: ['listItems', mutateListAddItem.variables?.selectedListId],
-			});
-			// TODO: ui confirmation - turn + green or add animation?
-			console.log('item added to list (ui wip)');
-		},
-		onError: (error) => {
-			const err = error as Error;
-			console.error(error);
-			dashboardStates?.setToastProps({
-				title: 'Error',
-				content: err.message,
-				altText: err.message,
-				style: 'Danger',
-			});
-			dashboardStates?.setToastOpen(true);
-		},
-	});
+	const mutateAddToNewList = useMutateAddToNewList(itemData);
+	const mutateListAddItem = useMutateListAddItem({ itemData, selectedListId });
 
 	const handleAddToList = () => {
-		if (selectedListId != undefined && itemData != undefined) {
+		if (selectedListId && itemData) {
 			mutateListAddItem.mutate({
 				itemData: itemData,
 				selectedListId: selectedListId,
 			});
-		} else {
-			dashboardStates?.setToastProps({
-				title: 'Error',
-				content: 'No selected list to add to',
-				altText: 'No selected list to add to',
-				style: 'Danger',
-			});
-			dashboardStates?.setToastOpen(true);
+		} else if (itemData) {
+			mutateAddToNewList.mutate(itemData);
 		}
 	};
 
