@@ -1,9 +1,11 @@
 import { useContext, useState, useRef, useEffect } from 'react';
 import { CartStatesContext } from '@/app/(dashboard)/providers';
-import useMutateListItemQuantity from '@/lib/mutations/useMutateListItemQuantity';
-import useMutateListItemCheck from '@/lib/mutations/useMutateListItemCheck';
+import {
+	useMutateListItemCheck,
+	useMutateListItemDelete,
+	useMutateListItemQuantity,
+} from '@/lib/mutations/listItem-mutations';
 import { IListItem } from '@/@types/dashboard';
-import useMutateListItemDelete from '@/lib/mutations/useMutateListItemDelete';
 
 export default function CartListItem({ listItem }: { listItem: IListItem }) {
 	const [isEditingListItem, setIsEditingListItem] = useState<boolean>(false);

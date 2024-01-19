@@ -23,8 +23,8 @@ export default function Cart() {
 
 	const listsQuery = useQuery({
 		queryKey: ['lists'],
-		queryFn: () => getLists()
-	})
+		queryFn: () => getLists(),
+	});
 	const listItemsQuery = useQuery({
 		queryKey: ['listItems', listId],
 		//@ts-ignore
@@ -35,22 +35,26 @@ export default function Cart() {
 	//TODO: improve api instead of using this workaround
 	useEffect(() => {
 		if (!listsQuery.data || !listId) return;
-			for (const list of listsQuery.data.data) {
-				if (!list) return;
-				if (list.id === listId) {
-					setListName(list.name);
-					return
-				}
+		for (const list of listsQuery.data.data) {
+			if (!list) return;
+			if (list.id === listId) {
+				setListName(list.name);
+				return;
+			}
 		}
-	}, [listId, listsQuery.data])
+	}, [listId, listsQuery.data]);
 
 	useEffect(() => {
 		if (!listItemsQuery.data) return;
 		const listItemsArray: IItemsArray[] = [];
 		const uncategorizedListItems: IListItem[] = [];
-		dashboardSorter(listItemsQuery.data.data, listItemsArray, uncategorizedListItems);
+		dashboardSorter(
+			listItemsQuery.data.data,
+			listItemsArray,
+			uncategorizedListItems
+		);
 		setSortedItems(listItemsArray);
-	}, [listItemsQuery.data])
+	}, [listItemsQuery.data]);
 
 	return (
 		<>
