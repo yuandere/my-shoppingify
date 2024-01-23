@@ -39,6 +39,7 @@ export function Providers({
 	const [isViewingList, setIsViewingList] = useState<boolean>(false);
 	const [selectedItem, setSelectedItem] = useState<IItemCard | null>(null);
 	const [selectedList, setSelectedList] = useState<IList | null>(null);
+	const [showSidebarCartCount, setShowSidebarCartCount] = useState<boolean>(false);
 	const [isCartAddingItem, setIsCartAddingItem] = useState<boolean>(false);
 	const [isCartViewingItem, setIsCartViewingItem] = useState<boolean>(false);
 	const [isCartEditingState, setIsCartEditingState] = useState<boolean>(false);
@@ -86,6 +87,8 @@ export function Providers({
 								setSelectedItem,
 								selectedList,
 								setSelectedList,
+								showSidebarCartCount,
+								setShowSidebarCartCount
 							}}
 						>
 							<CartStatesContext.Provider

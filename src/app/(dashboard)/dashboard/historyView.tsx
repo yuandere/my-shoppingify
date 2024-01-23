@@ -35,7 +35,6 @@ export default function HistoryView() {
 
 	const listItemsQuery = useQuery({
 		queryKey: ['listItems', listId],
-		// @ts-ignore
 		queryFn: () => getListItems(listId),
 		enabled: !!listId,
 	});
@@ -43,6 +42,7 @@ export default function HistoryView() {
 	const handleExitList = () => {
 		dashboardStates?.setIsViewingList(false);
 		dashboardStates?.setSelectedList(null);
+		dashboardStates?.setShowSidebarCartCount(false);
 		queryClient.invalidateQueries({ queryKey: ['lists'] });
 	};
 

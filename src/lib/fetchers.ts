@@ -1,4 +1,5 @@
-export const getItems = async (id: string) => {
+export const getItems = async (id: string | null | undefined) => {
+	if (id === undefined || id === null) return;
 	const itemsRequest = new Request(
 		`${process.env.NEXT_PUBLIC_URL}/api/itemCard/getItems`,
 		{
@@ -43,7 +44,8 @@ export const getLists = async () => {
 	return response.json();
 };
 
-export const getListItems = async (id: string) => {
+export const getListItems = async (id: string | undefined) => {
+	if (id === undefined) return;
 	const listItemsRequest = new Request(
 		`${process.env.NEXT_PUBLIC_URL}/api/listItem/get?id=${id}`
 	);

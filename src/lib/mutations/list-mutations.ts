@@ -181,6 +181,7 @@ export function useMutateListDelete(listId: string | undefined) {
 			});
 			dashboardStates?.setIsViewingList(false);
 			dashboardStates?.setSelectedList(null);
+			dashboardStates?.setShowSidebarCartCount(false);
 		},
 		onError: (error) => errorHandler(error, dashboardStates),
 	});

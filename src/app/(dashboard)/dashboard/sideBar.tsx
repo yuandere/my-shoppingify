@@ -1,6 +1,10 @@
+import { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useQuery } from '@tanstack/react-query';
 import * as Avatar from '@radix-ui/react-avatar';
 import * as Tooltip from '@radix-ui/react-tooltip';
+import { DashboardStatesContext } from '../providers';
+import { getListItems } from '@/lib/fetchers';
 import '@/styles/radix-avatar.css';
 import '@/styles/radix-tooltip.css';
 
@@ -16,6 +20,25 @@ interface ISidebar {
 }
 
 export default function SideBar({ activeTab, setActiveTab }: ISidebar) {
+	const [cartItems, setCartItems] = useState<number>(0);
+	const [avatarFallback, setAvatarFallback] = useState<string>('MS');
+	const selectedList = useContext(DashboardStatesContext)?.selectedList;
+	const showSidebarCartCount = useContext(
+		DashboardStatesContext
+	)?.showSidebarCartCount;
+	const listId = selectedList?.id;
+
+	const { data } = useQuery({
+		queryKey: ['listItems', listId],
+		queryFn: () => getListItems(listId),
+		enabled: !!listId,
+	});
+
+	useEffect(() => {
+		if (!data?.data) return;
+		setCartItems(data.data.length);
+	}, [listId, data]);
+
 	return (
 		<div className='flex flex-col justify-between items-center py-4 w-12 h-screen bg-white select-none sm:w-16'>
 			<Link href='/settings'>
@@ -24,9 +47,11 @@ export default function SideBar({ activeTab, setActiveTab }: ISidebar) {
 						<Avatar.Image
 							className='AvatarImage'
 							src='https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80'
-							alt='Derek Lee'
+							alt={avatarFallback}
 						></Avatar.Image>
-						<Avatar.Fallback className='AvatarFallback'>DL</Avatar.Fallback>
+						<Avatar.Fallback className='AvatarFallback'>
+							{avatarFallback}
+						</Avatar.Fallback>
 					</Avatar.Root>
 				</div>
 			</Link>
@@ -59,8 +84,13 @@ export default function SideBar({ activeTab, setActiveTab }: ISidebar) {
 					);
 				})}
 			</div>
-			<div className='rounded-full bg-orange-400'>
-				<span className='material-icons-outlined text-white'>
+			<div className='w-8 h-8 grid place-items-center rounded-full relative bg-orange-400'>
+				{showSidebarCartCount ? (
+					<div className='w-4 h-4 rounded-md bg-red-500 text-white text-xs absolute -top-1 -right-1 grid place-items-center'>
+						<p>{cartItems}</p>
+					</div>
+				) : null}
+				<span className='material-icons-outlined text-white text-lg'>
 					shopping_cart
 				</span>
 			</div>

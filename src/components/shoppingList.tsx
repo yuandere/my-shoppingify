@@ -15,6 +15,7 @@ export default function ShoppingList({ listProps }: { listProps: IList }) {
 				} else {
 					dashboardStates?.setIsViewingList(true);
 				}
+				dashboardStates?.setShowSidebarCartCount(true);
 			}}
 		>
 			<p>{listProps.name}</p>

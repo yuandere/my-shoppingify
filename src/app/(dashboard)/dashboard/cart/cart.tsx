@@ -27,7 +27,6 @@ export default function Cart() {
 	});
 	const listItemsQuery = useQuery({
 		queryKey: ['listItems', listId],
-		//@ts-ignore
 		queryFn: () => getListItems(listId),
 		enabled: !!listId,
 	});

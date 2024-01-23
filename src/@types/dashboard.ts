@@ -27,6 +27,8 @@ export interface IDashboardStatesContext {
 	setSelectedItem: React.Dispatch<React.SetStateAction<IItemCard | null>>;
 	selectedList: IList | null;
 	setSelectedList: React.Dispatch<React.SetStateAction<IList | null>>;
+	showSidebarCartCount: boolean;
+	setShowSidebarCartCount: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface ICartStatesContext {
