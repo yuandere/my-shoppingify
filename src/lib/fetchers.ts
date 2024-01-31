@@ -9,7 +9,7 @@ export const getItems = async (id: string | null | undefined) => {
 	);
 	const response = await fetch(itemsRequest);
 	if (!response.ok) {
-		throw new Error('fetch went wrong');
+		throw new Error('Could not fetch items');
 	}
 	return response.json();
 };
@@ -24,22 +24,19 @@ export const getCategories = async () => {
 	);
 	const response = await fetch(categoriesRequest);
 	if (!response.ok) {
-		throw new Error('fetch went wrong');
+		throw new Error('Could not fetch categories');
 	}
 	return response.json();
 };
 
 export const getLists = async () => {
-	const listsRequest = new Request(
-		`${process.env.NEXT_PUBLIC_URL}/api/list`,
-		{
-			method: 'POST',
-			body: JSON.stringify({ action: 'fetchList' }),
-		}
-	);
+	const listsRequest = new Request(`${process.env.NEXT_PUBLIC_URL}/api/list`, {
+		method: 'POST',
+		body: JSON.stringify({ action: 'fetchList' }),
+	});
 	const response = await fetch(listsRequest);
 	if (!response.ok) {
-		throw new Error('fetch went wrong');
+		throw new Error('Could not fetch lists');
 	}
 	return response.json();
 };
@@ -51,7 +48,16 @@ export const getListItems = async (id: string | undefined) => {
 	);
 	const response = await fetch(listItemsRequest);
 	if (!response.ok) {
-		throw new Error('fetch went wrong');
+		throw new Error('Could not fetch list items');
+	}
+	return response.json();
+};
+
+export const getStatsData = async () => {
+	const statsRequest = new Request(`${process.env.NEXT_PUBLIC_URL}/api/stats`);
+	const response = await fetch(statsRequest);
+	if (!response.ok) {
+		throw new Error('Could not fetch stats');
 	}
 	return response.json();
 };
