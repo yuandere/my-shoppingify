@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-// import { LineChart, Line } from 'recharts';
+import {
+	LineChart,
+	Line,
+	CartesianGrid,
+	XAxis,
+	YAxis,
+	Tooltip,
+	ResponsiveContainer,
+} from 'recharts';
 import { getStatsData } from '@/lib/fetchers';
 
 interface IStatsResponse {
@@ -15,6 +23,13 @@ export default function StatsView() {
 	);
 	const [statsCategories, setStatsCategories] =
 		useState<Array<IStatsResponse> | null>(null);
+	const [statsLists, setStatsLists] = useState<
+		| Array<{
+				month: string;
+				count: number;
+		  }>
+		| undefined
+	>(undefined);
 	const { isPending, isError, data, error } = useQuery({
 		queryKey: ['stats'],
 		queryFn: () => getStatsData(),
@@ -24,6 +39,7 @@ export default function StatsView() {
 		console.log(data);
 		setStatsItems(data.data.items);
 		setStatsCategories(data.data.categories);
+		setStatsLists(data.data.lists);
 	}, [data]);
 	return (
 		<div className='flex flex-col items-center w-full p-2'>
@@ -89,8 +105,17 @@ export default function StatsView() {
 							)}
 						</div>
 					</div>
-					<div className='border border-red-500 m-4'>
+					<div className='border border-red-500 m-4 w-96 max-w-screen-xl h-64 max-h-80'>
 						<h2 className='text-lg'>Monthly Summary</h2>
+						<ResponsiveContainer width='100%' height='100%'>
+							<LineChart width={1200} height={800} data={statsLists}>
+								<Line type='monotone' dataKey='count' stroke='#f9a109' />
+								<CartesianGrid stroke='#ccc' />
+								<XAxis dataKey='month' />
+								<YAxis />
+								<Tooltip />
+							</LineChart>
+						</ResponsiveContainer>
 					</div>
 				</>
 			)}
