@@ -28,13 +28,22 @@ const statsConverter = (input: Array<IPrismaStatsResponse>) => {
 const listsConverter = (input: Array<IListsStatsResponse>) => {
 	const output = [];
 	for (let i = 0; i < input.length; i++) {
-		output.push({
-			month: input[i].updatedAt.toLocaleString('default', { month: 'long' }),
-			count: Object.values(input[i]._count)[0],
+		const currentMonth = input[i].updatedAt.toLocaleString('default', {
+			month: 'long',
 		});
+		const currentCount = input[i]._count.items;
+		let existingMonthIndex = output.findIndex(
+			(item) => item.month === currentMonth
+		);
+		if (existingMonthIndex !== -1) {
+			output[existingMonthIndex].count += currentCount;
+		} else {
+			output.push({ month: currentMonth, count: currentCount });
+		}
 	}
-	// TODO: consolidate same number months, only include past 7 months
-	return output;
+	if (output.length > 7) {
+		return output.slice(output.length - 7, output.length);
+	} else return output;
 };
 
 export async function GET(req: NextRequest, res: NextResponse) {

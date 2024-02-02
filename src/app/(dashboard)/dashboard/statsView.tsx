@@ -16,6 +16,10 @@ interface IStatsResponse {
 	count: number;
 	ratio: number;
 }
+interface IStatsList {
+	month: string;
+	count: number;
+}
 
 export default function StatsView() {
 	const [statsItems, setStatsItems] = useState<Array<IStatsResponse> | null>(
@@ -23,20 +27,15 @@ export default function StatsView() {
 	);
 	const [statsCategories, setStatsCategories] =
 		useState<Array<IStatsResponse> | null>(null);
-	const [statsLists, setStatsLists] = useState<
-		| Array<{
-				month: string;
-				count: number;
-		  }>
-		| undefined
-	>(undefined);
+	const [statsLists, setStatsLists] = useState<Array<IStatsList> | undefined>(
+		undefined
+	);
 	const { isPending, isError, data, error } = useQuery({
 		queryKey: ['stats'],
 		queryFn: () => getStatsData(),
 	});
 	useEffect(() => {
 		if (!data) return;
-		console.log(data);
 		setStatsItems(data.data.items);
 		setStatsCategories(data.data.categories);
 		setStatsLists(data.data.lists);
