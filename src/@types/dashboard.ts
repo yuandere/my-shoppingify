@@ -31,8 +31,6 @@ export interface IDashboardStatesContext {
 	setSelectedList: Dispatch<SetStateAction<IList | null>>;
 	showSidebarCartCount: boolean;
 	setShowSidebarCartCount: Dispatch<SetStateAction<boolean>>;
-	isMobileCartOpen: boolean;
-	setIsMobileCartOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 export interface ICartStatesContext {
@@ -42,11 +40,14 @@ export interface ICartStatesContext {
 	setIsCartViewingItem: Dispatch<SetStateAction<boolean>>;
 	isCartEditingState: boolean;
 	setIsCartEditingState: Dispatch<SetStateAction<boolean>>;
+	isMobileCartOpen: boolean;
+	setIsMobileCartOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 export interface IViewportContext {
 	width: number;
 	height: number;
+	isMobileLayout: boolean;
 }
 
 export interface IApiResponse {

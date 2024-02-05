@@ -3,8 +3,9 @@ import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import * as Avatar from '@radix-ui/react-avatar';
 import * as Tooltip from '@radix-ui/react-tooltip';
-import { DashboardStatesContext } from '../providers';
+import { DashboardStatesContext, CartStatesContext } from '../providers';
 import { getListItems } from '@/lib/fetchers';
+import useViewport from '@/lib/useViewport';
 import '@/styles/radix-avatar.css';
 import '@/styles/radix-tooltip.css';
 
@@ -26,7 +27,17 @@ export default function SideBar({ activeTab, setActiveTab }: ISidebar) {
 	const showSidebarCartCount = useContext(
 		DashboardStatesContext
 	)?.showSidebarCartCount;
+	const isMobileCartOpen = useContext(CartStatesContext)?.isMobileCartOpen;
+	const setIsMobileCartOpen =
+		useContext(CartStatesContext)?.setIsMobileCartOpen;
 	const listId = selectedList?.id;
+	const { width, height, isMobileLayout } = useViewport();
+
+	const handleCartButtonClick = () => {
+		if (setIsMobileCartOpen === undefined) return;
+		if (isMobileCartOpen) setIsMobileCartOpen(false);
+		else setIsMobileCartOpen(true);
+	};
 
 	const { data } = useQuery({
 		queryKey: ['listItems', listId],
@@ -40,10 +51,20 @@ export default function SideBar({ activeTab, setActiveTab }: ISidebar) {
 	}, [listId, data]);
 
 	return (
-		<div className='flex flex-col justify-between items-center py-4 w-12 h-screen bg-white select-none sm:w-16'>
+		<div
+			className={`flex items-center bg-white select-none ${
+				isMobileLayout
+					? 'fixed z-50 bottom-1 inset-x-[16.67%] w-2/3 h-12 justify-evenly border-2 border-ui rounded-xl px-2 py-1 shadow-md'
+					: 'flex-col justify-between items-center px-3 py-4 w-12 h-screen sm:w-16'
+			}`}
+		>
 			<Link href='/settings'>
 				<div className=''>
-					<Avatar.Root className='AvatarRoot'>
+					<Avatar.Root
+						className={`AvatarRoot ${
+							isMobileLayout ? 'w-[35px] h-[35px]' : 'w-[45px] h-[45px]'
+						}`}
+					>
 						<Avatar.Image
 							className='AvatarImage'
 							src='https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80'
@@ -55,28 +76,37 @@ export default function SideBar({ activeTab, setActiveTab }: ISidebar) {
 					</Avatar.Root>
 				</div>
 			</Link>
-			<div className='flex flex-col justify-between h-56'>
-				{navButtons.map((x, i) => {
+
+			<div
+				className={`flex justify-between ${
+					isMobileLayout ? 'w-24' : 'flex-col h-56'
+				}`}
+			>
+				{navButtons.map((navButton, idx) => {
 					return (
-						<Tooltip.Root key={`sidebar-btn-${i}`}>
+						<Tooltip.Root key={`sidebar-btn-${idx}`}>
 							<Tooltip.Trigger asChild>
 								<div className='relative grid place-items-center'>
-									{activeTab === x.tooltip ? (
-										<span className='block absolute -left-[1.25rem] w-1.5 h-12 rounded-r-md bg-theme-1 animate-fadeInFromLeft'></span>
+									{activeTab === navButton.tooltip ? (
+										<span
+											className={`block absolute bg-theme-1 ${
+												isMobileLayout
+													? '-bottom-2 w-6 h-1 rounded-t-xl animate-fadeInFromBottom'
+													: '-left-[1.25rem] w-1.5 h-12 rounded-r-md animate-fadeInFromLeft'
+											}`}
+										></span>
 									) : null}
 									<span
 										className='material-icons text-ui-dark cursor-pointer hover:text-theme-1'
-										onClick={() => {
-											setActiveTab(x.tooltip);
-										}}
+										onClick={() => 	setActiveTab(navButton.tooltip)}
 									>
-										{x.icon}
+										{navButton.icon}
 									</span>
 								</div>
 							</Tooltip.Trigger>
 							<Tooltip.Portal>
 								<Tooltip.Content className='TooltipContent' sideOffset={5}>
-									{x.tooltip}
+									{navButton.tooltip}
 									<Tooltip.Arrow className='TooltipArrow' />
 								</Tooltip.Content>
 							</Tooltip.Portal>
@@ -84,7 +114,11 @@ export default function SideBar({ activeTab, setActiveTab }: ISidebar) {
 					);
 				})}
 			</div>
-			<div className='w-8 h-8 grid place-items-center rounded-full relative bg-orange-400'>
+
+			<div
+				className='w-8 h-8 grid place-items-center rounded-full relative bg-orange-400 cursor-pointer'
+				onClick={() => handleCartButtonClick}
+			>
 				{showSidebarCartCount ? (
 					<div className='w-4 h-4 rounded-md bg-red-500 text-white text-xs absolute -top-1 -right-1 grid place-items-center'>
 						<p>{cartItems}</p>
