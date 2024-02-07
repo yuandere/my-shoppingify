@@ -91,12 +91,11 @@ export default function Cart() {
 			{/* mobile cart clickoff button */}
 			{isMobileLayout && isMobileCartOpen && showCartClickoffButton ? (
 				<div
-					className='fixed z-50 bottom-2 left-2 w-8 h-8 grid place-items-center rounded-full bg-orange-400 cursor-pointer'
+					className='fixed z-50 bottom-1/2 left-2 w-8 h-8 pr-[2px] grid place-items-center rounded-full bg-white shadow-md cursor-pointer'
 					onClick={toggleMobileCartOpen}
 				>
-					<div className='animate-ping absolute z-0 inline-flex h-3/4 w-3/4 rounded-full bg-orange-300 opacity-75'></div>
-					<span className='material-icons-outlined text-white text-lg'>
-						shopping_cart
+					<span className='material-icons-outlined text-ui-dark text-lg'>
+						arrow_back_ios_new
 					</span>
 				</div>
 			) : null}

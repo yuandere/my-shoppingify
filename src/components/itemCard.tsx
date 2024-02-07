@@ -5,10 +5,18 @@ import {
 	DashboardStatesContext,
 	CartStatesContext,
 } from '@/app/(dashboard)/providers';
-import { useMutateAddToNewList, useMutateListAddItem } from '@/lib/mutations/list-mutations';
+import {
+	useMutateAddToNewList,
+	useMutateListAddItem,
+} from '@/lib/mutations/list-mutations';
 
-export default function ItemCard({ itemData }: { itemData: IItemCard }) {
-	// TODO: remove name truncate code after setting limit on chars when adding new items
+export default function ItemCard({
+	itemData,
+	small,
+}: {
+	itemData: IItemCard;
+	small?: boolean;
+}) {
 	const dashboardStates = useContext(DashboardStatesContext);
 	const cartStates = useContext(CartStatesContext);
 	const [shouldTruncate, setShouldTruncate] = useState<boolean>(false);
@@ -44,11 +52,13 @@ export default function ItemCard({ itemData }: { itemData: IItemCard }) {
 		}
 	}, [itemData.name]);
 
+	console.log(small)
+
 	return (
 		<div
-			className={`flex items-center justify-between rounded-xl drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)] w-48 min-h-min max-h-20 bg-white mx-2 my-4 p-4 select-none transition hover:bg-theme-3 hover:scale-[1.03] hover:drop-shadow-[0_2px_9px_rgba(0,0,0,0.14)] ${
-				!itemData.listId ? 'cursor-pointer' : null
-			}`}
+			className={`flex items-center justify-between rounded-xl drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)] min-h-min max-h-20 bg-white select-none transition hover:bg-theme-3 hover:scale-[1.03] hover:drop-shadow-[0_2px_9px_rgba(0,0,0,0.14)] ${
+				!itemData.listId ? 'cursor-pointer' : ''
+			} ${small ? 'w-40 m-1 p-2' : 'w-48 mx-2 my-4 p-4'}`}
 			onClick={() => {
 				if (setSelectedItem && setIsCartViewingItem && !itemData.listId) {
 					setSelectedItem(itemData);

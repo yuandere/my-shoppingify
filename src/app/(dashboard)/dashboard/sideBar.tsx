@@ -124,8 +124,12 @@ export default function SideBar({ activeTab, setActiveTab }: ISidebar) {
 						<p>{cartItems}</p>
 					</div>
 				) : null}
-				<span className='material-icons-outlined text-white text-lg'>
-					shopping_cart
+				<span
+					className={`material-icons-outlined text-white text-lg ${
+						isMobileLayout ? 'pl-[0.45rem]' : ''
+					}`}
+				>
+					{isMobileLayout ? 'arrow_forward_ios_new' : 'shopping_cart'}
 				</span>
 			</div>
 		</div>
