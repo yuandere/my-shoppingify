@@ -33,10 +33,10 @@ export default function SideBar({ activeTab, setActiveTab }: ISidebar) {
 	const listId = selectedList?.id;
 	const { width, height, isMobileLayout } = useViewport();
 
-	const handleCartButtonClick = () => {
-		if (setIsMobileCartOpen === undefined) return;
-		if (isMobileCartOpen) setIsMobileCartOpen(false);
-		else setIsMobileCartOpen(true);
+	const toggleMobileCartOpen = () => {
+		if (isMobileCartOpen === undefined || setIsMobileCartOpen === undefined)
+			return;
+		setIsMobileCartOpen((current) => !current);
 	};
 
 	const { data } = useQuery({
@@ -54,7 +54,7 @@ export default function SideBar({ activeTab, setActiveTab }: ISidebar) {
 		<div
 			className={`flex items-center bg-white select-none ${
 				isMobileLayout
-					? 'fixed z-50 bottom-1 inset-x-[16.67%] w-2/3 h-12 justify-evenly border-2 border-ui rounded-xl px-2 py-1 shadow-md'
+					? 'fixed z-30 bottom-1 inset-x-[16.67%] w-2/3 h-12 justify-evenly border-2 border-ui rounded-xl px-2 py-1 shadow-md'
 					: 'flex-col justify-between items-center px-3 py-4 w-12 h-screen sm:w-16'
 			}`}
 		>
@@ -98,7 +98,7 @@ export default function SideBar({ activeTab, setActiveTab }: ISidebar) {
 									) : null}
 									<span
 										className='material-icons text-ui-dark cursor-pointer hover:text-theme-1'
-										onClick={() => 	setActiveTab(navButton.tooltip)}
+										onClick={() => setActiveTab(navButton.tooltip)}
 									>
 										{navButton.icon}
 									</span>
@@ -117,7 +117,7 @@ export default function SideBar({ activeTab, setActiveTab }: ISidebar) {
 
 			<div
 				className='w-8 h-8 grid place-items-center rounded-full relative bg-orange-400 cursor-pointer'
-				onClick={() => handleCartButtonClick}
+				onClick={toggleMobileCartOpen}
 			>
 				{showSidebarCartCount ? (
 					<div className='w-4 h-4 rounded-md bg-red-500 text-white text-xs absolute -top-1 -right-1 grid place-items-center'>

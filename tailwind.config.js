@@ -9,7 +9,8 @@ module.exports = {
     extend: {
       animation: {
         fadeInFromLeft: 'fadeInFromLeft 0.3s ease-in-out forwards',
-        fadeInFromBottom: 'fadeInFromBottom 0.3s ease-in-out forwards'
+        fadeInFromBottom: 'fadeInFromBottom 0.3s ease-in-out forwards',
+        opacityIn: 'opacityIn 0.2s ease-in-out forwards',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
@@ -35,6 +36,10 @@ module.exports = {
         fadeInFromBottom: {
           '0%': { opacity: 0, transform: 'translateY(50%)' },
           '100%': { opacity: 1, transform: 'translateY(0%)' }
+        },
+        opacityIn: {
+          '0%': { opacity: 0 },
+          '100%': { opacity: 0.5 }
         }
       },
     },
