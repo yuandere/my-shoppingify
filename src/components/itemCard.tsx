@@ -52,8 +52,6 @@ export default function ItemCard({
 		}
 	}, [itemData.name]);
 
-	console.log(small)
-
 	return (
 		<div
 			className={`flex items-center justify-between rounded-xl drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)] min-h-min max-h-20 bg-white select-none transition hover:bg-theme-3 hover:scale-[1.03] hover:drop-shadow-[0_2px_9px_rgba(0,0,0,0.14)] ${

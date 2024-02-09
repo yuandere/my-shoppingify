@@ -38,6 +38,7 @@ export function Providers({
 	const [width, setWidth] = useState<number>(300);
 	const [height, setHeight] = useState<number>(900);
 	const [isMobileLayout, setIsMobileLayout] = useState<boolean>(true);
+	const [isSmallFormat, setIsSmallFormat] = useState<boolean>(false);
 	// dashboard context
 	const [toastOpen, setToastOpen] = useState<boolean>(false);
 	const [toastProps, setToastProps] = useState<IToastProps>({
@@ -75,6 +76,7 @@ export function Providers({
 		setWidth(window.innerWidth);
 		setHeight(window.innerHeight);
 		setIsMobileLayout(window.innerHeight > window.innerWidth);
+		setIsSmallFormat(window.innerWidth < 465);
 	};
 
 	// TODO: look into window.matchMedia instead of checking width
@@ -103,7 +105,9 @@ export function Providers({
 			<TooltipProvider skipDelayDuration={0}>
 				<ToastProvider>
 					<CurrentUserContext.Provider value={{ currentUser, setCurrentUser }}>
-						<ViewportContext.Provider value={{ width, height, isMobileLayout }}>
+						<ViewportContext.Provider
+							value={{ width, height, isMobileLayout, isSmallFormat }}
+						>
 							<DashboardStatesContext.Provider
 								value={{
 									setToastOpen,

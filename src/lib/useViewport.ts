@@ -7,6 +7,7 @@ const useViewport = () => {
 		width: viewport?.width,
 		height: viewport?.height,
 		isMobileLayout: viewport?.isMobileLayout,
+		isSmallFormat: viewport?.isSmallFormat
 	};
 };
 

@@ -4,6 +4,7 @@ import { DashboardStatesContext } from '../providers';
 import ShoppingList from '@/components/shoppingList';
 import ItemCard from '@/components/itemCard';
 import { useMutateAddNewList } from '@/lib/mutations/list-mutations';
+import useViewport from '@/lib/useViewport';
 import { getLists, getListItems } from '@/lib/fetchers';
 import { listsSorter, dashboardSorter } from '@/lib/utils';
 import { IList, IItemsArray, IListItem } from '@/@types/dashboard';
@@ -27,12 +28,12 @@ export default function HistoryView() {
 	const selectedList = dashboardStates?.selectedList;
 	const mutateAddNewList = useMutateAddNewList();
 	const queryClient = useQueryClient();
+	const { isMobileLayout, isSmallFormat } = useViewport();
 
 	const listsQuery = useQuery({
 		queryKey: ['lists'],
 		queryFn: () => getLists(),
 	});
-
 	const listItemsQuery = useQuery({
 		queryKey: ['listItems', listId],
 		queryFn: () => getListItems(listId),
@@ -75,16 +76,27 @@ export default function HistoryView() {
 	}, [listItemsQuery.data, setIsViewingList]);
 
 	return (
-		<div className='flex flex-col md:min-w-[640px]'>
+		<div
+			className={`flex flex-col ${
+				isMobileLayout
+					? 'w-screen px-2 text-sm'
+					: 'w-full px-4 md:min-w-[640px]'
+			}`}
+		>
 			{isViewingList ? (
+				// view for items on list
 				<>
-					<p
-						className='self-start text-xs font-medium cursor-pointer text-orange-400 transition hover:text-orange-600'
-						onClick={() => handleExitList()}
-					>
-						🡐 back
-					</p>
-					<div className='pt-4 pb-4 px-4 md:pt-12 md:px-10'>
+					{isMobileLayout ? null : (
+						<p
+							className={`mt-4 px-2 self-start text-xs font-medium cursor-pointer text-orange-400 transition hover:text-orange-600 ${
+								isMobileLayout ? '' : 'mt-14'
+							}`}
+							onClick={() => handleExitList()}
+						>
+							🡐 back
+						</p>
+					)}
+					<div className='pt-4 pb-4 px-4 md:px-10'>
 						<h2 className='text-xl font-medium'>
 							{listItemsQuery?.data?.name}
 						</h2>
@@ -94,21 +106,41 @@ export default function HistoryView() {
 						<span>Error: {listItemsQuery.error.message}</span>
 					) : null}
 					{selectedList ? (
-						<h2 className='text-xl font-semibold mb-4'>{listName}</h2>
+						<h2
+							className={`ml-2 font-semibold mb-4 ${
+								isMobileLayout ? 'text-lg' : 'text-xl'
+							}`}
+						>
+							{listName}
+						</h2>
 					) : null}
 					{!sortedListItems || sortedListItems.length === 0 ? (
 						<span>No items found</span>
 					) : (
 						sortedListItems.map((category, i) => {
 							return (
-								<div className='' key={`items-category-${i}`}>
-									<h1 className='text-lg max-w-xs'>{category.categoryName}</h1>
-									<div className='flex'>
+								<div
+									className={`flex flex-col mb-4 w-full ${
+										isSmallFormat ? 'mx-2' : 'mx-6'
+									}`}
+									key={`items-category-${i}`}
+								>
+									<h1
+										className={`max-w-xs ${
+											isSmallFormat
+												? 'text-base underline underline-offset-4 decoration-theme-1 decoration-2'
+												: 'text-lg'
+										}`}
+									>
+										{category.categoryName}
+									</h1>
+									<div className='w-full flex flex-wrap'>
 										{category.items.map((item, i) => {
 											return (
 												<ItemCard
 													itemData={item}
 													key={`${item.categoryName}-${i}`}
+													small={isSmallFormat ? true : undefined}
 												></ItemCard>
 											);
 										})}
@@ -117,14 +149,31 @@ export default function HistoryView() {
 							);
 						})
 					)}
+					{isMobileLayout ? (
+						<p
+							className='ml-6 mt-4 self-start text-xs font-medium cursor-pointer text-orange-400 transition hover:text-orange-600'
+							onClick={() => handleExitList()}
+						>
+							🡐 back
+						</p>
+					) : null}
 				</>
 			) : (
+				// view of lists
 				<>
-					<div className='pt-4 pb-4 px-4 md:pt-12 md:px-10'>
-						<h2 className='text-xl font-medium'>Shopping history</h2>
+					<div className={`md:pt-12 ${isMobileLayout ? 'py-3' : 'py-4'}`}>
+						<h2
+							className={`${
+								isMobileLayout ? 'text-lg' : 'text-xl font-medium'
+							}`}
+						>
+							Shopping history
+						</h2>
 					</div>
 					<button
-						className='flex items-center justify-center grid-flow-col w-44 h-10 mb-6 rounded-lg bg-theme-2 cursor-pointer text-white transition drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)] hover:drop-shadow-[0_2px_9px_rgba(0,0,0,0.14)] hover:bg-rose-900'
+						className={`flex items-center justify-center grid-flow-col mb-6 rounded-lg bg-theme-2 cursor-pointer text-white transition drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)] hover:drop-shadow-[0_2px_9px_rgba(0,0,0,0.14)] hover:bg-rose-900 ${
+							isMobileLayout ? 'w-36 h-8' : 'w-44 h-10'
+						}`}
 						onClick={() => mutateAddNewList.mutate()}
 					>
 						<span className='material-icons'>add</span>
@@ -137,18 +186,23 @@ export default function HistoryView() {
 					{listsQuery.data && sortedLists ? (
 						sortedLists.map((sortedObject, idx) => {
 							return (
-								<div key={`sorted-month-${idx}`}>
-									<h3 className='text-xl font-semibold'>
+								<div className='mb-4' key={`sorted-month-${idx}`}>
+									<h3
+										className={`${isMobileLayout ? '' : 'text-lg font-medium'}`}
+									>
 										{sortedObject.monthYear}
 									</h3>
-									{sortedObject.lists.map((list, innerIdx) => {
-										return (
-											<ShoppingList
-												listProps={list}
-												key={`shopping-list-${idx}-${innerIdx}`}
-											></ShoppingList>
-										);
-									})}
+									<div className='flex flex-col space-y-2'>
+										{sortedObject.lists.map((list, innerIdx) => {
+											return (
+												<ShoppingList
+													listProps={list}
+													small={isSmallFormat ? true : undefined}
+													key={`shopping-list-${idx}-${innerIdx}`}
+												></ShoppingList>
+											);
+										})}
+									</div>
 								</div>
 							);
 						})

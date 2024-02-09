@@ -16,11 +16,10 @@ export default function ItemsView() {
 	const cartStates = useContext(CartStatesContext);
 	const [searchTerm, setSearchTerm] = useState<string>('');
 	const [itemsData, setItemsData] = useState<Array<IItemCard>>([]);
-	const [isSmallFormat, setIsSmallFormat] = useState<boolean>(false);
 	const id = currentUser?.id;
 	const itemsArray: IItemsArray[] = useMemo(() => [], []);
 	const uncategorizedItems: IItemCard[] = useMemo(() => [], []);
-	const { width, height, isMobileLayout } = useViewport();
+	const { isMobileLayout, isSmallFormat } = useViewport();
 
 	const { isPending, isError, data, error } = useQuery({
 		queryKey: ['itemCards'],
@@ -36,17 +35,9 @@ export default function ItemsView() {
 		dashboardSorter(data.data, itemsArray, uncategorizedItems);
 	}, [itemsArray, uncategorizedItems, data]);
 
-	useEffect(() => {
-		if (width === undefined) return;
-		if (width < 465) setIsSmallFormat(true);
-		else {
-			setIsSmallFormat(false);
-		}
-	}, [width]);
-
 	return (
 		<div
-			className={`flex flex-col ${
+			className={`flex flex-col items-center ${
 				isMobileLayout
 					? 'w-screen px-2 text-sm'
 					: 'w-full px-4 md:min-w-[640px]'
@@ -85,15 +76,15 @@ export default function ItemsView() {
 					<>
 						{itemsArray.map((category, i) => {
 							return (
-								<div className='mb-4' key={`items-category-${i}`}>
+								<div className={`flex flex-col items-center mb-4 w-full ${isSmallFormat ? 'mx-3' : 'mx-6'}`} key={`items-category-${i}`}>
 									<h1
-										className={`ml-6 max-w-xs ${
-											isSmallFormat ? 'text-base' : 'text-lg'
+										className={`max-w-xs ${
+											isSmallFormat ? 'text-base underline underline-offset-4 decoration-theme-1 decoration-2' : 'text-lg'
 										}`}
 									>
 										{category.categoryName}
 									</h1>
-									<div className='flex flex-wrap justify-evenly'>
+									<div className='w-full flex flex-wrap justify-center'>
 										{category.items.map((item, i) => {
 											return (
 												<ItemCard
@@ -108,7 +99,7 @@ export default function ItemsView() {
 							);
 						})}
 						<div
-							className='group grid place-items-center self-center mb-16 h-12 w-12 rounded-full bg-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)] cursor-pointer transition hover:scale-[1.03] hover:bg-theme-3 hover:drop-shadow-[0_2px_9px_rgba(0,0,0,0.14)]'
+							className='group grid place-items-center mb-16 h-12 w-12 rounded-full bg-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)] cursor-pointer transition hover:scale-[1.03] hover:bg-theme-3 hover:drop-shadow-[0_2px_9px_rgba(0,0,0,0.14)]'
 							onClick={() => cartStates?.setIsCartAddingItem(true)}
 						>
 							<span className='material-icons transition text-ui cursor-pointer group-hover:text-ui-dark'>

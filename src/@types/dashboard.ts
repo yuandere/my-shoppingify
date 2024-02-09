@@ -48,6 +48,7 @@ export interface IViewportContext {
 	width: number;
 	height: number;
 	isMobileLayout: boolean;
+	isSmallFormat: boolean;
 }
 
 export interface IApiResponse {
