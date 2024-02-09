@@ -9,6 +9,7 @@ import {
 	Tooltip,
 	ResponsiveContainer,
 } from 'recharts';
+import useViewport from '@/lib/useViewport';
 import { getStatsData } from '@/lib/fetchers';
 
 interface IStatsResponse {
@@ -30,10 +31,13 @@ export default function StatsView() {
 	const [statsLists, setStatsLists] = useState<Array<IStatsList> | undefined>(
 		undefined
 	);
+	const { isMobileLayout } = useViewport();
+
 	const { isPending, isError, data, error } = useQuery({
 		queryKey: ['stats'],
 		queryFn: () => getStatsData(),
 	});
+
 	useEffect(() => {
 		if (!data) return;
 		setStatsItems(data.data.items);
@@ -41,16 +45,17 @@ export default function StatsView() {
 		setStatsLists(data.data.lists);
 	}, [data]);
 	return (
-		<div className='flex flex-col items-center w-full p-2'>
+		<div className={`flex flex-col items-center w-full p-2 ${isMobileLayout ? 'mb-12' : ''}`}>
 			{isPending ? (
 				<p>Loading...</p>
 			) : isError ? (
 				<p>{error.message}</p>
 			) : (
 				<>
-					<div className='flex justify-center m-4'>
-						<div className='border border-red-500 m-4'>
-							<h2 className='text-lg'>Top Items</h2>
+				{/* top items and categories */}
+					<div className={`flex items-center justify-center m-4 ${isMobileLayout ? 'flex-col w-full h-1/2' : 'w-4/5 my-12'}`}>
+						<div className='w-4/5 m-4'>
+							<h2 className='text-lg font-medium mb-2'>Top Items</h2>
 							{statsItems ? (
 								statsItems[0] ? (
 									statsItems.map((statsItem, idx) => {
@@ -76,8 +81,8 @@ export default function StatsView() {
 								<p>Loading...</p>
 							)}
 						</div>
-						<div className='border border-red-500 m-4'>
-							<h2 className='text-lg'>Top Categories</h2>
+						<div className='w-4/5 m-4'>
+							<h2 className='text-lg font-medium mb-2'>Top Categories</h2>
 							{statsCategories ? (
 								statsCategories[0] ? (
 									statsCategories.map((statsCategory, idx) => {
@@ -104,8 +109,9 @@ export default function StatsView() {
 							)}
 						</div>
 					</div>
-					<div className='border border-red-500 m-4 w-96 max-w-screen-xl h-64 max-h-80'>
-						<h2 className='text-lg'>Monthly Summary</h2>
+					{/* monthly summary */}
+					<div className={`flex flex-col items-center m-4 max-w-screen-xl max-h-96 -translate-x-5 ${isMobileLayout ? 'w-96 h-64' : 'w-4/5 h-1/2'}`}>
+						<h2 className='text-lg translate-x-5'>Monthly Summary</h2>
 						<ResponsiveContainer width='100%' height='100%'>
 							<LineChart width={1200} height={800} data={statsLists}>
 								<Line type='monotone' dataKey='count' stroke='#f9a109' />

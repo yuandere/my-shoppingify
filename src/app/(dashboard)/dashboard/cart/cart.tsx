@@ -106,14 +106,16 @@ export default function Cart() {
 					onClick={toggleMobileCartOpen}
 				></div>
 			) : null}
+			{/* wide formatting fix */}
+			{!isMobileLayout ? <div className='w-72 shrink-0 sm:w-80'></div> : null}
 			{/*cart container*/}
 			<div
 				className={`${
 					isMobileLayout && isMobileCartOpen
-						? 'OPENEDMOBCART fixed z-40 bottom-0 -right-72 -translate-x-72 duration-200 transition-all ease-out shadow-md'
+						? 'OPENEDMOBCART fixed z-40 bottom-0 -right-[320px] -translate-x-[320px] duration-200 transition-all ease-out shadow-md'
 						: isMobileLayout && !isMobileCartOpen
-						? 'CLOSEDMOBCART fixed bottom-0 -right-72'
-						: 'NOTMOBCART'
+						? 'CLOSEDMOBCART fixed bottom-0 -right-[320px]'
+						: 'NOTMOBCART fixed bottom-0 right-0'
 				}`}
 			>
 				{cartStates?.isCartAddingItem ? (
