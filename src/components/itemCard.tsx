@@ -23,6 +23,7 @@ export default function ItemCard({
 	const ref = useRef<HTMLDivElement>(null);
 	const setSelectedItem = dashboardStates?.setSelectedItem;
 	const setIsCartViewingItem = cartStates?.setIsCartViewingItem;
+	const setIsMobileCartOpen = cartStates?.setIsMobileCartOpen;
 	const selectedListId = dashboardStates?.selectedList?.id;
 
 	const mutateAddToNewList = useMutateAddToNewList(itemData);
@@ -58,9 +59,15 @@ export default function ItemCard({
 				!itemData.listId ? 'cursor-pointer' : ''
 			} ${small ? 'w-40 m-1 p-2' : 'w-48 mx-2 my-4 p-4'}`}
 			onClick={() => {
-				if (setSelectedItem && setIsCartViewingItem && !itemData.listId) {
+				if (
+					setSelectedItem &&
+					setIsCartViewingItem &&
+					setIsMobileCartOpen &&
+					!itemData.listId
+				) {
 					setSelectedItem(itemData);
 					setIsCartViewingItem(true);
+					setIsMobileCartOpen(true);
 				}
 			}}
 		>
