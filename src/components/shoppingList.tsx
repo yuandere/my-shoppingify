@@ -14,12 +14,11 @@ export default function ShoppingList({
 	const createdAt = new Date(listProps.createdAt).toDateString();
 	return (
 		<div
-			//  ${small ? 'w-40 m-1 p-2' : 'w-48 mx-2 my-4 p-4'}
 			className={`flex justify-between items-center rounded-xl select-none border-black cursor-pointer bg-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)] transition hover:bg-theme-3 hover:scale-[1.01] hover:drop-shadow-[0_2px_9px_rgba(0,0,0,0.14) ${
-				small ? 'm-1 p-2' : 'm-4 px-6 py-4'
+				small ? 'mx-1 p-2' : 'mx-4 px-6 py-4'
 			}`}
 			onClick={() => {
-				if (selectedList?.id != listProps.id) {
+				if (selectedList?.id !== listProps.id) {
 					dashboardStates?.setSelectedList(listProps);
 				} else {
 					dashboardStates?.setIsViewingList(true);

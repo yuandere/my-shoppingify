@@ -184,30 +184,34 @@ export default function HistoryView() {
 						<span>Error: {listsQuery.error.message}</span>
 					) : null}
 					{listsQuery.data && sortedLists ? (
-						sortedLists.map((sortedObject, idx) => {
-							return (
-								<div className='mb-4' key={`sorted-month-${idx}`}>
-									<h3
-										className={`${isMobileLayout ? '' : 'text-lg font-medium'}`}
-									>
-										{sortedObject.monthYear}
-									</h3>
-									<div className='flex flex-col space-y-2'>
-										{sortedObject.lists.map((list, innerIdx) => {
-											return (
-												<ShoppingList
-													listProps={list}
-													small={isSmallFormat ? true : undefined}
-													key={`shopping-list-${idx}-${innerIdx}`}
-												></ShoppingList>
-											);
-										})}
+						<div className='mb-12'>
+							{sortedLists.map((sortedObject, idx) => {
+								return (
+									<div className='mb-4' key={`sorted-month-${idx}`}>
+										<h3
+											className={`mb-2 ${
+												isMobileLayout ? '' : 'text-lg font-medium'
+											}`}
+										>
+											{sortedObject.monthYear}
+										</h3>
+										<div className='flex flex-col space-y-2'>
+											{sortedObject.lists.map((list, innerIdx) => {
+												return (
+													<ShoppingList
+														listProps={list}
+														small={isSmallFormat ? true : undefined}
+														key={`shopping-list-${idx}-${innerIdx}`}
+													></ShoppingList>
+												);
+											})}
+										</div>
 									</div>
-								</div>
-							);
-						})
+								);
+							})}
+						</div>
 					) : (
-						<span>Something went wrong (or no lists found, wip)</span>
+						<span>Something went wrong</span>
 					)}
 				</>
 			)}
