@@ -43,6 +43,7 @@ export function useMutateAddNewList() {
 			console.log('new list added, ui response wip', data);
 			dashboardStates?.setIsViewingList(true);
 			dashboardStates?.setSelectedList(data.data.newList);
+			dashboardStates?.setShowSidebarCartCount(true);
 			dashboardStates?.setToastProps({
 				preset: ToastPresets.success,
 				content: 'New list created',
@@ -73,6 +74,7 @@ export function useMutateAddToNewList(itemData: IItemCard | null | undefined) {
 			console.log('new list added, ui response wip', data);
 			dashboardStates?.setIsViewingList(true);
 			dashboardStates?.setSelectedList(data.data.newList);
+			dashboardStates?.setShowSidebarCartCount(true);
 			dashboardStates?.setToastProps({
 				preset: ToastPresets.success,
 				content: 'New list created',
@@ -181,6 +183,7 @@ export function useMutateListDelete(listId: string | undefined) {
 			});
 			dashboardStates?.setIsViewingList(false);
 			dashboardStates?.setSelectedList(null);
+			dashboardStates?.setShowSidebarCartCount(false);
 		},
 		onError: (error) => errorHandler(error, dashboardStates),
 	});

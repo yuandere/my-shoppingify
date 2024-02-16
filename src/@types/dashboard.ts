@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react";
+
 export interface IToastProps {
 	preset?: string;
 	title?: string;
@@ -15,27 +17,38 @@ export interface IUserSession {
 
 export interface IUserContext {
 	currentUser: IUserSession;
-	setCurrentUser: React.Dispatch<React.SetStateAction<IUserSession>>;
+	setCurrentUser: Dispatch<SetStateAction<IUserSession>>;
 }
 
 export interface IDashboardStatesContext {
-	setToastOpen: React.Dispatch<React.SetStateAction<boolean>>;
-	setToastProps: React.Dispatch<React.SetStateAction<IToastProps>>;
+	setToastOpen: Dispatch<SetStateAction<boolean>>;
+	setToastProps: Dispatch<SetStateAction<IToastProps>>;
 	isViewingList: boolean;
-	setIsViewingList: React.Dispatch<React.SetStateAction<boolean>>;
+	setIsViewingList: Dispatch<SetStateAction<boolean>>;
 	selectedItem: IItemCard | null;
-	setSelectedItem: React.Dispatch<React.SetStateAction<IItemCard | null>>;
+	setSelectedItem: Dispatch<SetStateAction<IItemCard | null>>;
 	selectedList: IList | null;
-	setSelectedList: React.Dispatch<React.SetStateAction<IList | null>>;
+	setSelectedList: Dispatch<SetStateAction<IList | null>>;
+	showSidebarCartCount: boolean;
+	setShowSidebarCartCount: Dispatch<SetStateAction<boolean>>;
 }
 
 export interface ICartStatesContext {
 	isCartAddingItem: boolean;
-	setIsCartAddingItem: React.Dispatch<React.SetStateAction<boolean>>;
+	setIsCartAddingItem: Dispatch<SetStateAction<boolean>>;
 	isCartViewingItem: boolean;
-	setIsCartViewingItem: React.Dispatch<React.SetStateAction<boolean>>;
+	setIsCartViewingItem: Dispatch<SetStateAction<boolean>>;
 	isCartEditingState: boolean;
-	setIsCartEditingState: React.Dispatch<React.SetStateAction<boolean>>;
+	setIsCartEditingState: Dispatch<SetStateAction<boolean>>;
+	isMobileCartOpen: boolean;
+	setIsMobileCartOpen: Dispatch<SetStateAction<boolean>>;
+}
+
+export interface IViewportContext {
+	width: number;
+	height: number;
+	isMobileLayout: boolean;
+	isSmallFormat: boolean;
 }
 
 export interface IApiResponse {

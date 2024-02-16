@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import ItemsView from '@/app/(dashboard)/dashboard/itemsView';
 import HistoryView from '@/app/(dashboard)/dashboard/historyView';
-import StatisticsView from '@/app/(dashboard)/dashboard/statisticsView';
+import StatsView from '@/app/(dashboard)/dashboard/statsView';
 import SideBar from './sideBar';
 import Cart from './cart/cart';
 
@@ -17,7 +17,7 @@ export default function Dashboard() {
 			) : activeTab === 'history' ? (
 				<HistoryView></HistoryView>
 			) : activeTab === 'statistics' ? (
-				<StatisticsView></StatisticsView>
+				<StatsView></StatsView>
 			) : (
 				<div className=''>no such tab exists</div>
 			)}

@@ -1,5 +1,6 @@
 'use client';
 import { createContext, useState, useEffect } from 'react';
+import { Session } from 'next-auth';
 import {
 	QueryCache,
 	QueryClient,
@@ -7,8 +8,10 @@ import {
 } from '@tanstack/react-query';
 import { Provider as ToastProvider } from '@radix-ui/react-toast';
 import { Provider as TooltipProvider } from '@radix-ui/react-tooltip';
+import throttle from 'lodash/throttle';
 import { Toast } from '@/components/toast';
 import {
+	IViewportContext,
 	IUserSession,
 	IUserContext,
 	IDashboardStatesContext,
@@ -17,12 +20,12 @@ import {
 	IItemCard,
 	IList,
 } from '@/@types/dashboard';
-import { Session } from 'next-auth';
 
 export const CurrentUserContext = createContext<IUserContext | null>(null);
 export const DashboardStatesContext =
 	createContext<IDashboardStatesContext | null>(null);
 export const CartStatesContext = createContext<ICartStatesContext | null>(null);
+export const ViewportContext = createContext<IViewportContext | null>(null);
 
 export function Providers({
 	children,
@@ -32,6 +35,11 @@ export function Providers({
 	session: Session | null;
 }) {
 	const [currentUser, setCurrentUser] = useState<IUserSession>({});
+	const [width, setWidth] = useState<number>(300);
+	const [height, setHeight] = useState<number>(900);
+	const [isMobileLayout, setIsMobileLayout] = useState<boolean>(true);
+	const [isSmallFormat, setIsSmallFormat] = useState<boolean>(false);
+	// dashboard context
 	const [toastOpen, setToastOpen] = useState<boolean>(false);
 	const [toastProps, setToastProps] = useState<IToastProps>({
 		content: 'toast content',
@@ -39,9 +47,14 @@ export function Providers({
 	const [isViewingList, setIsViewingList] = useState<boolean>(false);
 	const [selectedItem, setSelectedItem] = useState<IItemCard | null>(null);
 	const [selectedList, setSelectedList] = useState<IList | null>(null);
+	const [showSidebarCartCount, setShowSidebarCartCount] =
+		useState<boolean>(false);
+	// cart context
+	const [isMobileCartOpen, setIsMobileCartOpen] = useState<boolean>(false);
 	const [isCartAddingItem, setIsCartAddingItem] = useState<boolean>(false);
 	const [isCartViewingItem, setIsCartViewingItem] = useState<boolean>(false);
 	const [isCartEditingState, setIsCartEditingState] = useState<boolean>(false);
+
 	const [queryClient] = useState(
 		() =>
 			new QueryClient({
@@ -59,6 +72,22 @@ export function Providers({
 			})
 	);
 
+	const handleWindowResize = () => {
+		setWidth(window.innerWidth);
+		setHeight(window.innerHeight);
+		setIsMobileLayout(window.innerHeight > window.innerWidth);
+		setIsSmallFormat(window.innerWidth < 465);
+	};
+
+	// TODO: look into window.matchMedia instead of checking width
+	useEffect(() => {
+		handleWindowResize();
+		window.addEventListener('resize', throttle(handleWindowResize, 250));
+		return () =>
+			window.removeEventListener('resize', throttle(handleWindowResize, 250));
+	}, []);
+
+	// TODO: check if this is actually needed
 	useEffect(() => {
 		if (session) {
 			const user = session.user;
@@ -76,40 +105,48 @@ export function Providers({
 			<TooltipProvider skipDelayDuration={0}>
 				<ToastProvider>
 					<CurrentUserContext.Provider value={{ currentUser, setCurrentUser }}>
-						<DashboardStatesContext.Provider
-							value={{
-								setToastOpen,
-								setToastProps,
-								isViewingList,
-								setIsViewingList,
-								selectedItem,
-								setSelectedItem,
-								selectedList,
-								setSelectedList,
-							}}
+						<ViewportContext.Provider
+							value={{ width, height, isMobileLayout, isSmallFormat }}
 						>
-							<CartStatesContext.Provider
+							<DashboardStatesContext.Provider
 								value={{
-									isCartAddingItem,
-									setIsCartAddingItem,
-									isCartViewingItem,
-									setIsCartViewingItem,
-									isCartEditingState,
-									setIsCartEditingState,
+									setToastOpen,
+									setToastProps,
+									isViewingList,
+									setIsViewingList,
+									selectedItem,
+									setSelectedItem,
+									selectedList,
+									setSelectedList,
+									showSidebarCartCount,
+									setShowSidebarCartCount,
 								}}
 							>
-								<Toast
-									open={toastOpen}
-									onOpenChange={setToastOpen}
-									preset={toastProps.preset}
-									title={toastProps.title}
-									content={toastProps.content}
-									altText={toastProps.altText}
-									style={toastProps.style}
-								></Toast>
-								{children}
-							</CartStatesContext.Provider>
-						</DashboardStatesContext.Provider>
+								<CartStatesContext.Provider
+									value={{
+										isMobileCartOpen,
+										setIsMobileCartOpen,
+										isCartAddingItem,
+										setIsCartAddingItem,
+										isCartViewingItem,
+										setIsCartViewingItem,
+										isCartEditingState,
+										setIsCartEditingState,
+									}}
+								>
+									<Toast
+										open={toastOpen}
+										onOpenChange={setToastOpen}
+										preset={toastProps.preset}
+										title={toastProps.title}
+										content={toastProps.content}
+										altText={toastProps.altText}
+										style={toastProps.style}
+									></Toast>
+									{children}
+								</CartStatesContext.Provider>
+							</DashboardStatesContext.Provider>
+						</ViewportContext.Provider>
 					</CurrentUserContext.Provider>
 				</ToastProvider>
 			</TooltipProvider>
