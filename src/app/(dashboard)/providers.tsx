@@ -21,11 +21,11 @@ import {
 	IList,
 } from '@/@types/dashboard';
 
-export const CurrentUserContext = createContext<IUserContext | null>(null);
+export const CurrentUserContext = createContext<IUserContext | undefined>(undefined);
 export const DashboardStatesContext =
-	createContext<IDashboardStatesContext | null>(null);
-export const CartStatesContext = createContext<ICartStatesContext | null>(null);
-export const ViewportContext = createContext<IViewportContext | null>(null);
+	createContext<IDashboardStatesContext | undefined>(undefined);
+export const CartStatesContext = createContext<ICartStatesContext | undefined>(undefined);
+export const ViewportContext = createContext<IViewportContext | undefined>(undefined);
 
 export function Providers({
 	children,
@@ -79,7 +79,7 @@ export function Providers({
 		setIsSmallFormat(window.innerWidth < 465);
 	};
 
-	// TODO: look into window.matchMedia instead of checking width
+	// TODO: look into window.matchMedia instead of checking window width
 	useEffect(() => {
 		handleWindowResize();
 		window.addEventListener('resize', throttle(handleWindowResize, 250));
@@ -87,7 +87,7 @@ export function Providers({
 			window.removeEventListener('resize', throttle(handleWindowResize, 250));
 	}, []);
 
-	// TODO: check if this is actually needed
+	// TODO: replace useeffect
 	useEffect(() => {
 		if (session) {
 			const user = session.user;

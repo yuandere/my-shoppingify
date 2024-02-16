@@ -110,12 +110,12 @@ export default function Cart() {
 			{!isMobileLayout ? <div className='w-72 shrink-0 sm:w-80'></div> : null}
 			{/*cart container*/}
 			<div
-				className={`${
+				className={`fixed bottom-0 ${
 					isMobileLayout && isMobileCartOpen
-						? 'OPENEDMOBCART fixed z-40 bottom-0 -right-[320px] -translate-x-[320px] duration-200 transition-all ease-out shadow-md'
+						? 'OPENEDMOBCART z-40 -right-[320px] -translate-x-[320px] duration-200 transition-all ease-out shadow-md'
 						: isMobileLayout && !isMobileCartOpen
-						? 'CLOSEDMOBCART fixed bottom-0 -right-[320px]'
-						: 'NOTMOBCART fixed bottom-0 right-0'
+						? 'CLOSEDMOBCART -right-[320px]'
+						: 'NOTMOBCART right-0'
 				}`}
 			>
 				{cartStates?.isCartAddingItem ? (

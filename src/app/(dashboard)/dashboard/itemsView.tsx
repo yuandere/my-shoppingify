@@ -58,7 +58,7 @@ export default function ItemsView() {
 			{isPending ? <span className='w-full'>Loading...</span> : null}
 			{isError ? <span>Error: {error.message}</span> : null}
 			{/* items */}
-			{currentUser !== (null || undefined) ? (
+			{currentUser !== null && currentUser !== undefined ? (
 				searchTerm != '' ? (
 					<div className='flex flex-wrap justify-evenly px-2 w-full'>
 						{itemsData.map((item, i) => {
