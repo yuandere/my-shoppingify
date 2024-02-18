@@ -2,6 +2,7 @@ import { useContext, useEffect, useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { CurrentUserContext, CartStatesContext } from '../providers';
 import ItemCard from '@/components/itemCard';
+import Loading from '@/components/loading';
 import { dashboardSorter } from '@/lib/utils';
 import { getItems } from '@/lib/fetchers';
 import useViewport from '@/lib/useViewport';
@@ -55,8 +56,8 @@ export default function ItemsView() {
 					onChange={(e) => setSearchTerm(e.target.value)}
 				></input>
 			</div>
-			{isPending ? <span className='w-full'>Loading...</span> : null}
-			{isError ? <span>Error: {error.message}</span> : null}
+			{isPending ? <Loading /> : null}
+			{isError ? <span className='mb-4'>Error: {error.message}</span> : null}
 			{/* items */}
 			{currentUser !== null && currentUser !== undefined ? (
 				searchTerm != '' ? (

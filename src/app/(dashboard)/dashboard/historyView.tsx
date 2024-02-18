@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { DashboardStatesContext } from '../providers';
 import ShoppingList from '@/components/shoppingList';
 import ItemCard from '@/components/itemCard';
+import Loading from '@/components/loading';
 import { useMutateAddNewList } from '@/lib/mutations/list-mutations';
 import useViewport from '@/lib/useViewport';
 import { getLists, getListItems } from '@/lib/fetchers';
@@ -48,7 +49,8 @@ export default function HistoryView() {
 	};
 
 	useEffect(() => {
-		if (!listsQuery.data.data || listsQuery.data.success === false) return;
+		if (listsQuery.data === undefined || listsQuery.data.success === false)
+			return;
 		setSortedLists(listsSorter(listsQuery.data.data));
 		//TODO: improve api instead of using this workaround
 		for (const list of listsQuery.data.data) {
@@ -101,9 +103,9 @@ export default function HistoryView() {
 							{listItemsQuery?.data?.name}
 						</h2>
 					</div>
-					{listItemsQuery.isPending ? <span>Loading...</span> : null}
+					{listItemsQuery.isPending ? <Loading /> : null}
 					{listItemsQuery.isError ? (
-						<span>Error: {listItemsQuery.error.message}</span>
+						<span className='mb-4'>Error: {listItemsQuery.error.message}</span>
 					) : null}
 					{selectedList ? (
 						<h2
@@ -179,7 +181,7 @@ export default function HistoryView() {
 						<span className='material-icons'>add</span>
 						<p className=''>Add new list</p>
 					</button>
-					{listsQuery.isPending ? <span>Loading...</span> : null}
+					{listsQuery.isPending ? <Loading /> : null}
 					{listsQuery.isError ? (
 						<span>Error: {listsQuery.error.message}</span>
 					) : null}
@@ -210,9 +212,7 @@ export default function HistoryView() {
 								);
 							})}
 						</div>
-					) : (
-						<span>Something went wrong</span>
-					)}
+					) : null}
 				</>
 			)}
 		</div>

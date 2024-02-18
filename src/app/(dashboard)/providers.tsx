@@ -87,7 +87,6 @@ export function Providers({
 			window.removeEventListener('resize', throttle(handleWindowResize, 250));
 	}, []);
 
-	// TODO: replace useeffect
 	useEffect(() => {
 		if (session) {
 			const user = session.user;
