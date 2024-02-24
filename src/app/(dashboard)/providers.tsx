@@ -21,11 +21,11 @@ import {
 	IList,
 } from '@/@types/dashboard';
 
-export const CurrentUserContext = createContext<IUserContext | undefined>(undefined);
+export const CurrentUserContext = createContext<IUserContext | null>(null);
 export const DashboardStatesContext =
-	createContext<IDashboardStatesContext | undefined>(undefined);
-export const CartStatesContext = createContext<ICartStatesContext | undefined>(undefined);
-export const ViewportContext = createContext<IViewportContext | undefined>(undefined);
+	createContext<IDashboardStatesContext | null>(null);
+export const CartStatesContext = createContext<ICartStatesContext | null>(null);
+export const ViewportContext = createContext<IViewportContext | null>(null);
 
 export function Providers({
 	children,
