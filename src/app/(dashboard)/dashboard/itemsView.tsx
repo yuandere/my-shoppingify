@@ -39,7 +39,7 @@ export default function ItemsView() {
 			className={`flex flex-col items-center ${
 				isMobileLayout
 					? 'w-screen px-2 text-sm'
-					: 'w-full px-4 md:min-w-[640px] overflow-y-scroll overflow-x-hidden'
+					: 'w-full px-4 overflow-y-scroll overflow-x-hidden'
 			}`}
 		>
 			{/* search bar */}
@@ -50,7 +50,7 @@ export default function ItemsView() {
 			>
 				<span className='material-icons select-none'>search</span>
 				<input
-					className='outline-none'
+					className='outline-none w-full'
 					type='search'
 					placeholder='search items'
 					onChange={(e) => setSearchTerm(e.target.value)}

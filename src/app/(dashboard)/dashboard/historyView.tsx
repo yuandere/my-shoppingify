@@ -82,7 +82,7 @@ export default function HistoryView() {
 			className={`flex flex-col ${
 				isMobileLayout
 					? 'w-screen px-2 text-sm'
-					: 'w-full px-4 md:min-w-[640px]'
+					: 'w-full px-4'
 			}`}
 		>
 			{isViewingList ? (

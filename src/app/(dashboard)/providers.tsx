@@ -75,7 +75,7 @@ export function Providers({
 	const handleWindowResize = () => {
 		setWidth(window.innerWidth);
 		setHeight(window.innerHeight);
-		setIsMobileLayout(window.innerHeight > window.innerWidth);
+		setIsMobileLayout(window.innerHeight > window.innerWidth || window.innerWidth < 768);
 		setIsSmallFormat(window.innerWidth < 465);
 	};
 
