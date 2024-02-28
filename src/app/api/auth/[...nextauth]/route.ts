@@ -2,6 +2,7 @@ import NextAuth, { type NextAuthOptions } from 'next-auth';
 import GitHubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google';
 import EmailProvider from 'next-auth/providers/email';
+import CredentialsProvider from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import prisma from '@/lib/prisma';
 
@@ -31,24 +32,52 @@ export const authOptions: NextAuthOptions = {
 			server: process.env.EMAIL_SERVER,
 			from: process.env.EMAIL_FROM,
 		}),
+		CredentialsProvider({
+			name: 'Credentials',
+			credentials: {
+				email: {
+					label: 'Email',
+					type: 'email',
+					placeholder: 'demo@example.com',
+				},
+			},
+			async authorize(credentials, req) {
+				const user = {
+					id: 'clt5hymyw000075m2o2pcu0tp',
+					name: 'John Doe',
+					email: 'demo@example.com',
+				};
+				if (user) {
+					return user;
+				} else {
+					return null;
+				}
+			},
+		}),
 	],
-	// pages: {
-	// 	signIn: '/signIn',
-	// },
+	pages: {
+		signIn: '/signIn',
+	},
 	callbacks: {
-		async jwt({ token, account, profile}) {
+		async jwt({ token, account, profile }) {
 			if (account) {
-				console.log('JWT CALLBACK:', token, account, profile);
+				// console.log('JWT CALLBACK:', token, account, profile);
 				token.accessToken = account.access_token;
 				// token.id = profile.id;
 			}
-			return token
+			return token;
 		},
 		async session({ session, token, user }) {
 			// console.log('SESSION CALLBACK', session, token, user);
 			session.user.id = token.sub;
-			return session
-		}
+			return session;
+		},
+		async signIn({ user, account, profile, email, credentials }) {
+			if (user.email === 'demo@example.com') {
+				return true;
+			}
+			return true;
+		},
 	},
 };
 

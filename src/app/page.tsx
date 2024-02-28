@@ -3,8 +3,8 @@ import Link from 'next/link';
 export default function Home() {
 	return (
 		<main className='flex min-h-screen flex-col items-center p-24'>
-			<div className='rounded-xl border border-zinc-500'>
-				<h1>this is the home page</h1>
+			<div className=''>
+				<h1 className='text-xl'>my-shoppingify</h1>
 			</div>
 			<div className='rounded-xl border border-zinc-500'>
 				<Link href='/dashboard'>
@@ -12,7 +12,7 @@ export default function Home() {
 				</Link>
 			</div>
 			<div className='rounded-xl border border-zinc-500'>
-				<Link href='/api/auth/signin'>
+				<Link href='/signIn'>
 					<button className=''>Sign in page</button>
 				</Link>
 			</div>

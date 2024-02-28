@@ -1,0 +1,23 @@
+.SIpage {
+  display: grid;
+  place-items: center;
+  width: 100vw;
+  height: 100vh;
+}
+
+.SIcontainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 320px;
+  height: fit-content;
+  padding: 2rem 1rem;
+  background-color: gainsboro;
+  border-radius: 12px;
+}
+
+@media (min-width: 768px) {
+  .SIcontainer {
+    width: 520px;
+  }
+}
