@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Poppins } from 'next/font/google';
 import { getProviders, signIn, getCsrfToken } from 'next-auth/react';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/authOptions';
 import '@/styles/globals.css';
 
 const poppins = Poppins({

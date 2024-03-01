@@ -5,7 +5,7 @@ import {
 } from '@tanstack/react-query';
 import { getServerSession } from 'next-auth';
 import Dashboard from './dashboard';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/authOptions';
 import { getItems, getLists } from '@/lib/fetchers';
 
 export default async function DashboardPage() {
