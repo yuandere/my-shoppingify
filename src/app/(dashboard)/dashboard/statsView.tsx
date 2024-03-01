@@ -9,6 +9,7 @@ import {
 	Tooltip,
 	ResponsiveContainer,
 } from 'recharts';
+import Loading from '@/components/loading';
 import useViewport from '@/lib/useViewport';
 import { getStatsData } from '@/lib/fetchers';
 
@@ -45,15 +46,23 @@ export default function StatsView() {
 		setStatsLists(data.data.lists);
 	}, [data]);
 	return (
-		<div className={`flex flex-col items-center w-full p-2 ${isMobileLayout ? 'mb-12' : ''}`}>
+		<div
+			className={`flex flex-col items-center w-full p-2 ${
+				isMobileLayout ? 'mb-12' : ''
+			}`}
+		>
 			{isPending ? (
-				<p>Loading...</p>
+				<Loading />
 			) : isError ? (
 				<p>{error.message}</p>
 			) : (
 				<>
-				{/* top items and categories */}
-					<div className={`flex items-center justify-center m-4 ${isMobileLayout ? 'flex-col w-full h-1/2' : 'w-4/5 my-12'}`}>
+					{/* top items and categories */}
+					<div
+						className={`flex items-center justify-center m-4 ${
+							isMobileLayout ? 'flex-col w-full h-1/2' : 'w-4/5 my-12'
+						}`}
+					>
 						<div className='w-4/5 m-4'>
 							<h2 className='text-lg font-medium mb-2'>Top Items</h2>
 							{statsItems ? (
@@ -110,7 +119,11 @@ export default function StatsView() {
 						</div>
 					</div>
 					{/* monthly summary */}
-					<div className={`flex flex-col items-center m-4 max-w-screen-xl max-h-96 -translate-x-5 ${isMobileLayout ? 'w-96 h-64' : 'w-4/5 h-1/2'}`}>
+					<div
+						className={`flex flex-col items-center m-4 max-w-screen-xl max-h-96 -translate-x-5 ${
+							isMobileLayout ? 'w-96 h-64' : 'w-4/5 h-1/2'
+						}`}
+					>
 						<h2 className='text-lg translate-x-5'>Monthly Summary</h2>
 						<ResponsiveContainer width='100%' height='100%'>
 							<LineChart width={1200} height={800} data={statsLists}>

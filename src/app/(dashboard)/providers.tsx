@@ -75,11 +75,11 @@ export function Providers({
 	const handleWindowResize = () => {
 		setWidth(window.innerWidth);
 		setHeight(window.innerHeight);
-		setIsMobileLayout(window.innerHeight > window.innerWidth);
+		setIsMobileLayout(window.innerHeight > window.innerWidth || window.innerWidth < 768);
 		setIsSmallFormat(window.innerWidth < 465);
 	};
 
-	// TODO: look into window.matchMedia instead of checking width
+	// TODO: look into window.matchMedia instead of checking window width
 	useEffect(() => {
 		handleWindowResize();
 		window.addEventListener('resize', throttle(handleWindowResize, 250));
@@ -87,7 +87,6 @@ export function Providers({
 			window.removeEventListener('resize', throttle(handleWindowResize, 250));
 	}, []);
 
-	// TODO: check if this is actually needed
 	useEffect(() => {
 		if (session) {
 			const user = session.user;

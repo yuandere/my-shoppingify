@@ -42,6 +42,9 @@ module.exports = {
           '100%': { opacity: 0.5 }
         }
       },
+      screens: {
+        'xs': '450px'
+      }
     },
   },
   plugins: [],

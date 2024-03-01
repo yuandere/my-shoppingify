@@ -56,7 +56,7 @@ export default function SideBar({ activeTab, setActiveTab }: ISidebar) {
 			<div
 				className={`fixed flex items-center bg-white select-none ${
 					isMobileLayout
-						? 'z-30 bottom-1 inset-x-[16.67%] w-2/3 h-12 justify-evenly border-2 border-ui rounded-xl px-2 py-1 shadow-md'
+						? 'z-30 bottom-1 left-1/2 -ml-[128px] inset-x-[16.67%] w-[256px] h-12 justify-evenly border-2 border-ui rounded-xl px-2 py-1 shadow-md'
 						: 'bottom-0 left-0 flex-col justify-between items-center px-3 py-4 w-12 h-screen sm:w-16'
 				}`}
 			>

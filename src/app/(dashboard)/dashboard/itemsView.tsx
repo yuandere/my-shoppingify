@@ -2,6 +2,7 @@ import { useContext, useEffect, useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { CurrentUserContext, CartStatesContext } from '../providers';
 import ItemCard from '@/components/itemCard';
+import Loading from '@/components/loading';
 import { dashboardSorter } from '@/lib/utils';
 import { getItems } from '@/lib/fetchers';
 import useViewport from '@/lib/useViewport';
@@ -38,7 +39,7 @@ export default function ItemsView() {
 			className={`flex flex-col items-center ${
 				isMobileLayout
 					? 'w-screen px-2 text-sm'
-					: 'w-full px-4 md:min-w-[640px] overflow-y-scroll overflow-x-hidden'
+					: 'w-full px-4 overflow-y-scroll overflow-x-hidden'
 			}`}
 		>
 			{/* search bar */}
@@ -49,16 +50,16 @@ export default function ItemsView() {
 			>
 				<span className='material-icons select-none'>search</span>
 				<input
-					className='outline-none'
+					className='outline-none w-full'
 					type='search'
 					placeholder='search items'
 					onChange={(e) => setSearchTerm(e.target.value)}
 				></input>
 			</div>
-			{isPending ? <span className='w-full'>Loading...</span> : null}
-			{isError ? <span>Error: {error.message}</span> : null}
+			{isPending ? <Loading /> : null}
+			{isError ? <span className='mb-4'>Error: {error.message}</span> : null}
 			{/* items */}
-			{currentUser !== (null || undefined) ? (
+			{currentUser !== null && currentUser !== undefined ? (
 				searchTerm != '' ? (
 					<div className='flex flex-wrap justify-evenly px-2 w-full'>
 						{itemsData.map((item, i) => {
