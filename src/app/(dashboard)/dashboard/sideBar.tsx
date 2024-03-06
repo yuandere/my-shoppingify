@@ -3,7 +3,11 @@ import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import * as Avatar from '@radix-ui/react-avatar';
 import * as Tooltip from '@radix-ui/react-tooltip';
-import { DashboardStatesContext, CartStatesContext } from '../providers';
+import {
+	DashboardStatesContext,
+	CartStatesContext,
+	CurrentUserContext,
+} from '../providers';
 import { getListItems } from '@/lib/fetchers';
 import useViewport from '@/lib/useViewport';
 import '@/styles/radix-avatar.css';
@@ -22,7 +26,7 @@ interface ISidebar {
 
 export default function SideBar({ activeTab, setActiveTab }: ISidebar) {
 	const [cartItems, setCartItems] = useState<number>(0);
-	const [avatarFallback, setAvatarFallback] = useState<string>('MS');
+	const currentUser = useContext(CurrentUserContext)?.currentUser;
 	const selectedList = useContext(DashboardStatesContext)?.selectedList;
 	const showSidebarCartCount = useContext(
 		DashboardStatesContext
@@ -50,6 +54,14 @@ export default function SideBar({ activeTab, setActiveTab }: ISidebar) {
 		setCartItems(data.data.length);
 	}, [listId, data]);
 
+	const avatarInit = () => {
+		if (currentUser?.name) {
+			return currentUser.name
+				.split(/\s/)
+				.reduce((response, word) => (response += word.slice(0, 1)), '');
+		} else return '😎'
+	};
+	const [avatarFallback, setAvatarFallback] = useState<string>(avatarInit);
 	return (
 		<>
 			{!isMobileLayout ? <div className='w-12 sm:w-16 shrink-0'></div> : null}
@@ -69,8 +81,12 @@ export default function SideBar({ activeTab, setActiveTab }: ISidebar) {
 						>
 							<Avatar.Image
 								className='AvatarImage'
-								src='https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80'
-								alt={avatarFallback}
+								src={
+									currentUser?.image
+										? currentUser.image
+										: 'https://toppng.com/uploads/thumbnail/instagram-default-profile-picture-11562973083jyanpiuxw9.png'
+								}
+								alt='profile picture'
 							></Avatar.Image>
 							<Avatar.Fallback className='AvatarFallback'>
 								{avatarFallback}
