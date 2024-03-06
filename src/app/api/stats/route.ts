@@ -14,12 +14,16 @@ interface IListsStatsResponse {
 
 const statsConverter = (input: Array<IPrismaStatsResponse>) => {
 	const output = [];
+	let totalCount = 0;
+	for (let i = 0; i < input.length; i++) {
+		totalCount += Object.values(input[i]._count)[0];
+	}
 	for (let i = 0; i < 3; i++) {
 		output.push({
 			name: input[i].name,
 			count: Object.values(input[i]._count)[0],
 			ratio: Math.round(
-				(Object.values(input[i]._count)[0] / input.length) * 100
+				(Object.values(input[i]._count)[0] / totalCount) * 100
 			),
 		});
 	}
