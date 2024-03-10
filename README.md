@@ -16,7 +16,7 @@
   <img alt="screenshot" src="https://github.com/yuandere/my-shoppingify/assets/22509961/a08d63f4-46b9-410d-b5d9-cc3e5b8b7818">
 </p>
 
-This project was an exercise to familiarize myself with the NextJS 13+ app router and build a full stack app combining API routes, authentication, and CRUD database operations.
+Shoppingify allows you to create and edit shopping lists on the fly: add items, customize their details and check them off. Keep your lists organized in one place and easily switch between them for any occasion.
 
 ### Built With
 
