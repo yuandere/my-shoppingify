@@ -42,6 +42,11 @@ Shoppingify allows you to create and edit shopping lists on the fly: add items, 
 
  This app was created as a submission to a [DevChallenges](https://devchallenges.io) challenge. The [challenge](https://legacy.devchallenges.io/challenges/mGd5VpbO4JnzU6I9l96x) was to build an application to complete the given user stories.
 
+## Plans for Improvement
+
+- Redo project structure for readability (consolidate views, components)
+- Optimistic UI changes for better responsiveness
+
 ## Running Locally
 
 First, install dependencies:
