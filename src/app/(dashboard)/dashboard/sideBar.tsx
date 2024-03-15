@@ -68,7 +68,7 @@ export default function SideBar({ activeTab, setActiveTab }: ISidebar) {
 			<div
 				className={`fixed flex items-center bg-white select-none ${
 					isMobileLayout
-						? 'z-30 bottom-1 left-1/2 -ml-[128px] inset-x-[16.67%] w-[256px] h-12 justify-evenly border-2 border-ui rounded-xl px-2 py-1 shadow-md'
+						? 'z-30 bottom-1 left-1/2 -ml-[110px] inset-x-[16.67%] w-[220px] h-12 justify-evenly border-2 border-ui rounded-xl px-2 py-1 shadow-md'
 						: 'bottom-0 left-0 flex-col justify-between items-center px-3 py-4 w-12 h-screen sm:w-16'
 				}`}
 			>
@@ -109,7 +109,7 @@ export default function SideBar({ activeTab, setActiveTab }: ISidebar) {
 											<span
 												className={`block absolute bg-theme-1 ${
 													isMobileLayout
-														? '-bottom-2 w-6 h-1 rounded-t-xl animate-fadeInFromBottom'
+														? '-bottom-[10px] w-6 h-1 rounded-t-xl animate-fadeInFromBottom'
 														: '-left-[1.25rem] w-1.5 h-12 rounded-r-md animate-fadeInFromLeft'
 												}`}
 											></span>
