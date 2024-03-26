@@ -6,19 +6,19 @@ export const itemCardAdd = z.object({
 	imageUrl: z.string().url().nullable().optional(),
 	categoryId: z.string().min(1).nullable().optional(),
 });
-export const itemCardDelete = z.string().cuid();
+export const itemCardDelete = z.string().uuid();
 
 //listItem api schemas
-export const listItemsGet = z.string().cuid();
+export const listItemsGet = z.string().uuid();
 export const listItemRequest = z.object({
-	listItemId: z.string().cuid(),
-	listId: z.string().cuid(),
+	listItemId: z.string().uuid(),
+	listId: z.string().uuid(),
 	action: z.enum(['add', 'delete', 'quantity', 'check']),
 });
 export const listItemAdd = z.object({
-	listId: z.string().cuid(),
+	listId: z.string().uuid(),
 	action: z.enum(['add', 'delete', 'quantity', 'check']),
-	itemId: z.string().cuid(),
+	itemId: z.string().uuid(),
 	name: z.string().min(1),
 	categoryName: z.string().min(1).nullable().optional(),
 });
@@ -31,7 +31,7 @@ export const listItemChangeChecked = listItemRequest.extend({
 
 // list api schemas
 export const listEdit = z.object({
-	listId: z.string().cuid(),
+	listId: z.string().uuid(),
 	name: z.string().min(1).optional(),
 });
 export const listComplete = listEdit.extend({
@@ -41,9 +41,9 @@ export const listAdd = z.object({
 	name: z.string().min(1).optional(),
 	firstItemData: itemCardAdd
 		.extend({
-			id: z.string().cuid(),
+			id: z.string().uuid(),
 			categoryName: z.string().min(1).nullable().optional(),
-			ownerId: z.string().cuid(),
+			ownerId: z.string().uuid(),
 		})
 		.optional(),
 });

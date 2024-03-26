@@ -100,7 +100,7 @@ async function addItemCard(body: IItemCardAdd) {
 				...(body.imageUrl ? { imageUrl: body.imageUrl } : null),
 				...(body.categoryId
 					? {
-							category: {
+							Category: {
 								connect: {
 									id: body.categoryId,
 								},
