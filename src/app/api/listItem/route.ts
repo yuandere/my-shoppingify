@@ -93,12 +93,12 @@ async function addListItem(
 			await prisma.listItem.create({
 				data: {
 					name: body.name,
-					item: {
+					Item: {
 						connect: {
 							id: body.itemId,
 						},
 					},
-					list: {
+					List: {
 						connect: {
 							id: body.listId,
 						},

@@ -90,11 +90,11 @@ export async function GET(req: NextRequest, res: NextResponse) {
 			select: {
 				name: true,
 				_count: {
-					select: { items: true },
+					select: { Item: true },
 				},
 			},
 			orderBy: {
-				items: {
+				Item: {
 					_count: 'desc',
 				},
 			},
@@ -105,7 +105,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
 			select: {
 				updatedAt: true,
 				_count: {
-					select: { items: true },
+					select: { ListItem: true },
 				},
 			},
 			orderBy: {
