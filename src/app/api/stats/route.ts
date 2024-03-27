@@ -63,7 +63,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
 		);
 	}
 	try {
-		const resultZod = z.string().cuid().safeParse(userId);
+		const resultZod = z.string().uuid().safeParse(userId);
 		if (!resultZod.success) {
 			console.log(resultZod.error.format());
 			const zodIssues = resultZod.error.issues;

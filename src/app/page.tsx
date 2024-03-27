@@ -20,6 +20,7 @@ export default function Home() {
 					width={500}
 					alt='my-shoppingify but in cool wordart'
 					onError={() => setImgSrc(wordartpng)}
+					priority
 				></Image>
 				<div className='xs:w-[200px] xs:mx-0 xs:mb-8'>
 					<Link href='/signIn'>
