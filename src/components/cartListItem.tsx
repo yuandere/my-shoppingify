@@ -78,7 +78,7 @@ export default function CartListItem({ listItem }: { listItem: IListItem }) {
 
 	return (
 		<div
-			className={`flex items-center justify-between -mb-2 py-1 px-2 w-full rounded-lg bg-theme-3 hover:drop-shadow-[0_2px_9px_rgba(0,0,0,0.14)] cursor-pointer`}
+			className={`flex items-center justify-between py-1 px-2 w-full rounded-lg bg-theme-3 hover:drop-shadow-[0_2px_9px_rgba(0,0,0,0.14)] cursor-pointer`}
 			onClick={() => {
 				handleListItemClick();
 			}}

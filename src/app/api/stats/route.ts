@@ -34,7 +34,7 @@ const listsConverter = (input: Array<IListsStatsResponse>) => {
 		const currentMonth = input[i].updatedAt.toLocaleString('default', {
 			month: 'long',
 		});
-		const currentCount = input[i]._count.items;
+		const currentCount = input[i]._count.ListItem;
 		let existingMonthIndex = output.findIndex(
 			(item) => item.month === currentMonth
 		);

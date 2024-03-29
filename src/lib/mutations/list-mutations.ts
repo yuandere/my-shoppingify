@@ -28,6 +28,7 @@ const errorHandler = (
 
 export function useMutateAddNewList() {
 	const dashboardStates = useContext(DashboardStatesContext);
+	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: async () => {
 			const res = await fetch('/api/list', {
@@ -40,6 +41,7 @@ export function useMutateAddNewList() {
 			return res.json();
 		},
 		onSuccess: (data) => {
+			queryClient.invalidateQueries({ queryKey: ['lists'] });
 			dashboardStates?.setIsViewingList(true);
 			dashboardStates?.setSelectedList(data.data.newList);
 			dashboardStates?.setShowSidebarCartCount(true);
@@ -55,6 +57,7 @@ export function useMutateAddNewList() {
 
 export function useMutateAddToNewList(itemData: IItemCard | null | undefined) {
 	const dashboardStates = useContext(DashboardStatesContext);
+	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: async (itemData: IItemCard) => {
 			const res = await fetch('/api/list', {
@@ -70,6 +73,7 @@ export function useMutateAddToNewList(itemData: IItemCard | null | undefined) {
 			return res.json();
 		},
 		onSuccess: (data) => {
+			queryClient.invalidateQueries({ queryKey: ['lists'] });
 			dashboardStates?.setIsViewingList(true);
 			dashboardStates?.setSelectedList(data.data.newList);
 			dashboardStates?.setShowSidebarCartCount(true);
