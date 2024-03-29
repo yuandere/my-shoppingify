@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgres"
-  url      = "postgres://postgres.plonmhpwdcpkxuymfnex:vQaodiqfi1XkMmfn@aws-0-us-west-1.pooler.supabase.com:5432/postgres"
+  url          = env("DATABASE_URL")
 }
 
 model Account {
@@ -31,6 +31,8 @@ model Category {
   id      String @id @default(dbgenerated("gen_random_uuid_v7()")) @db.VarChar
   User    User   @relation(fields: [ownerId], references: [id], onDelete: Cascade, map: "public_categories_owner_id_fkey")
   Item    Item[]
+
+  @@unique([id, name], map: "unique_id_name")
 }
 
 model Item {
@@ -41,7 +43,7 @@ model Item {
   categoryName String?    @db.VarChar
   id           String     @id @default(dbgenerated("gen_random_uuid_v7()")) @db.VarChar
   categoryId   String?    @db.VarChar
-  Category     Category?  @relation(fields: [categoryId], references: [id], map: "public_item_categoryId_fkey")
+  Category     Category?  @relation(fields: [categoryId, categoryName], references: [id, name], map: "public_Item_categoryId_categoryName_fkey")
   User         User       @relation(fields: [ownerId], references: [id], onDelete: Cascade, map: "public_Item_ownerId_fkey")
   ListItem     ListItem[]
 }

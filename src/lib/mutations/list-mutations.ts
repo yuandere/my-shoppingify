@@ -40,7 +40,6 @@ export function useMutateAddNewList() {
 			return res.json();
 		},
 		onSuccess: (data) => {
-			console.log('new list added, ui response wip', data);
 			dashboardStates?.setIsViewingList(true);
 			dashboardStates?.setSelectedList(data.data.newList);
 			dashboardStates?.setShowSidebarCartCount(true);
@@ -71,7 +70,6 @@ export function useMutateAddToNewList(itemData: IItemCard | null | undefined) {
 			return res.json();
 		},
 		onSuccess: (data) => {
-			console.log('new list added, ui response wip', data);
 			dashboardStates?.setIsViewingList(true);
 			dashboardStates?.setSelectedList(data.data.newList);
 			dashboardStates?.setShowSidebarCartCount(true);
@@ -118,7 +116,6 @@ export function useMutateListAddItem({
 				queryKey: ['listItems', selectedListId],
 			});
 			// TODO: ui confirmation - turn + green or add animation?
-			console.log('item added to list (ui wip)');
 		},
 		onError: (error) => errorHandler(error, dashboardStates),
 	});
