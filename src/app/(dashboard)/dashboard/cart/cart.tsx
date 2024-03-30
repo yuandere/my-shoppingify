@@ -172,7 +172,7 @@ export default function Cart() {
 											<p className='text-xs text-[#888888] my-2'>
 												{category.categoryName}
 											</p>
-											<div className='flex flex-col items-center space-y-4'>
+											<div className='flex flex-col items-center space-y-2'>
 												{category.items.map((item, i) => {
 													return (
 														<CartListItem

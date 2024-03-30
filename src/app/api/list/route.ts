@@ -152,12 +152,12 @@ async function addListWithItem(body: {
 		const newListItem = await prisma.listItem.create({
 			data: {
 				name: body.firstItemData.name,
-				item: {
+				Item: {
 					connect: {
 						id: body.firstItemData.id,
 					},
 				},
-				list: {
+				List: {
 					connect: {
 						id: newList.id,
 					},

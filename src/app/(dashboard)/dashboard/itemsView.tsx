@@ -50,7 +50,7 @@ export default function ItemsView() {
 			>
 				<span className='material-icons select-none'>search</span>
 				<input
-					className='outline-none w-full'
+					className='outline-none w-full bg-white'
 					type='search'
 					placeholder='search items'
 					onChange={(e) => setSearchTerm(e.target.value)}
@@ -112,7 +112,10 @@ export default function ItemsView() {
 						})}
 						<div
 							className='group grid place-items-center mb-16 h-12 w-12 rounded-full bg-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.1)] cursor-pointer transition hover:scale-[1.03] hover:bg-theme-3 hover:drop-shadow-[0_2px_9px_rgba(0,0,0,0.14)]'
-							onClick={() => cartStates?.setIsCartAddingItem(true)}
+							onClick={() => {
+								cartStates?.setIsCartAddingItem(true);
+								cartStates?.setIsMobileCartOpen(true);
+							}}
 						>
 							<span className='material-icons transition text-ui cursor-pointer group-hover:text-ui-dark'>
 								add

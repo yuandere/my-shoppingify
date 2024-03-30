@@ -43,7 +43,7 @@ export const authOptions: NextAuthOptions = {
 			},
 			async authorize(credentials, req) {
 				const user = {
-					id: 'clt5hymyw000075m2o2pcu0tp',
+					id: '018e7eb3-0743-7156-8185-80be0e408647',
 					name: 'John Doe',
 					email: 'demo@example.com',
 				};

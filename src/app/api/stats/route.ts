@@ -18,13 +18,12 @@ const statsConverter = (input: Array<IPrismaStatsResponse>) => {
 	for (let i = 0; i < input.length; i++) {
 		totalCount += Object.values(input[i]._count)[0];
 	}
-	for (let i = 0; i < 3; i++) {
+	const loopLength = input.length > 3 ? 3 : input.length;
+	for (let i = 0; i < loopLength; i++) {
 		output.push({
 			name: input[i].name,
 			count: Object.values(input[i]._count)[0],
-			ratio: Math.round(
-				(Object.values(input[i]._count)[0] / totalCount) * 100
-			),
+			ratio: Math.round((Object.values(input[i]._count)[0] / totalCount) * 100),
 		});
 	}
 	return output;
@@ -35,7 +34,7 @@ const listsConverter = (input: Array<IListsStatsResponse>) => {
 		const currentMonth = input[i].updatedAt.toLocaleString('default', {
 			month: 'long',
 		});
-		const currentCount = input[i]._count.items;
+		const currentCount = input[i]._count.ListItem;
 		let existingMonthIndex = output.findIndex(
 			(item) => item.month === currentMonth
 		);
@@ -63,7 +62,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
 		);
 	}
 	try {
-		const resultZod = z.string().cuid().safeParse(userId);
+		const resultZod = z.string().uuid().safeParse(userId);
 		if (!resultZod.success) {
 			console.log(resultZod.error.format());
 			const zodIssues = resultZod.error.issues;
@@ -84,17 +83,17 @@ export async function GET(req: NextRequest, res: NextResponse) {
 				},
 			},
 		});
-		// returns [ { name: string, _count: { items: number } } ]
+		// returns [ { name: string, _count: { Item: number } } ]
 		const p2 = prisma.category.findMany({
 			where: { ownerId: userId },
 			select: {
 				name: true,
 				_count: {
-					select: { items: true },
+					select: { Item: true },
 				},
 			},
 			orderBy: {
-				items: {
+				Item: {
 					_count: 'desc',
 				},
 			},
@@ -105,7 +104,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
 			select: {
 				updatedAt: true,
 				_count: {
-					select: { items: true },
+					select: { ListItem: true },
 				},
 			},
 			orderBy: {
@@ -114,9 +113,13 @@ export async function GET(req: NextRequest, res: NextResponse) {
 		});
 		const [items, categories, lists] = await Promise.all([p1, p2, p3]);
 		const result = {
-			items: statsConverter(items),
-			categories: statsConverter(categories),
-			lists: listsConverter(lists),
+			items: items[0]
+				? statsConverter(items)
+				: [{ name: 'N/A', count: 0, ratio: 0 }],
+			categories: categories[0]
+				? statsConverter(categories)
+				: [{ name: 'N/A', count: 0, ratio: 0 }],
+			lists: lists[0] ? listsConverter(lists) : [{ month: 'N/A', count: 0 }],
 		};
 		return NextResponse.json({
 			message: 'Stats successfully retrieved',

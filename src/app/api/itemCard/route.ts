@@ -91,7 +91,7 @@ async function addItemCard(body: IItemCardAdd) {
 		const newItem = await prisma.item.create({
 			data: {
 				name: body.name,
-				owner: {
+				User: {
 					connect: {
 						id: body.userId,
 					},
@@ -100,7 +100,7 @@ async function addItemCard(body: IItemCardAdd) {
 				...(body.imageUrl ? { imageUrl: body.imageUrl } : null),
 				...(body.categoryId
 					? {
-							category: {
+							Category: {
 								connect: {
 									id: body.categoryId,
 								},
