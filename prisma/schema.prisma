@@ -22,7 +22,7 @@ model Account {
   id_token          String?
   session_state     String?  @db.VarChar
   userId            String   @db.VarChar
-  User              User     @relation(fields: [userId], references: [id], onDelete: Cascade, map: "public_Account_userId_fkey")
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade, map: "public_Account_userId_fkey")
   
   @@unique([provider, providerAccountId], map: "provider_providerAccountId")
 }

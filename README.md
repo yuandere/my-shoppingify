@@ -24,8 +24,8 @@ Shoppingify allows you to create and edit shopping lists on the fly: add items, 
 ![nextjs](https://img.shields.io/badge/NextJS-grey?style=for-the-badge&logo=nextdotjs&logoColor=black)
 ![nextauth.js](https://img.shields.io/badge/nextauthjs-green?style=for-the-badge&logo=React&logoColor=black)
 ![prisma](https://img.shields.io/badge/prisma-blue?style=for-the-badge&logo=prisma&logoColor=black)
-![planetscale](https://img.shields.io/badge/planetscale-red?style=for-the-badge&logo=planetscale&logoColor=black)
 ![tanstack-query](https://img.shields.io/badge/tanstack%20query-gold?style=for-the-badge&logo=reactquery&logoColor=black)
+![supabase](https://img.shields.io/badge/supabase-red?style=for-the-badge&logo=supabase&logoColor=black)
 
 ## Features
 
@@ -34,7 +34,7 @@ Shoppingify allows you to create and edit shopping lists on the fly: add items, 
  - Server state management with Tanstack Query
  - Data visualization using Recharts
  - ORM using Prisma
- - Database at PlanetScale
+ - PostgresQL database at Supabase
  - Validations using Zod
  - UI Components built using Radix UI
  - Styled using Tailwind CSS
@@ -44,7 +44,7 @@ Shoppingify allows you to create and edit shopping lists on the fly: add items, 
 
 ## Plans for Improvement
 
-- Redo project structure for readability (consolidate views, components)
+- Refactor for greater readability and project structure
 - Optimistic UI changes for better responsiveness
 
 ## Running Locally
