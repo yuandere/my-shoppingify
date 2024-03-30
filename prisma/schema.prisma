@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgres"
-  url          = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 model Account {
@@ -23,6 +23,8 @@ model Account {
   session_state     String?  @db.VarChar
   userId            String   @db.VarChar
   User              User     @relation(fields: [userId], references: [id], onDelete: Cascade, map: "public_Account_userId_fkey")
+  
+  @@unique([provider, providerAccountId], map: "provider_providerAccountId")
 }
 
 model Category {
