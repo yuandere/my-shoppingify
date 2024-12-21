@@ -75,9 +75,3 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 <!-- This section should list any articles or add-ons/plugins that helps you to complete the project. This is optional but it will help you in the future. For example -->
 
 - [Taxonomy NextJS 13 Sample App](https://github.com/shadcn-ui/taxonomy)
-
-## Contact
-
-- Email [Derek Lee](mailto:derek.lee881@gmail.com)
-- GitHub [@yuandere](https://github.com/yuandere)
-- Discord [@al doub#7487](https://discordapp.com)
